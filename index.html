@@ -49,45 +49,26 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .stat-lbl{font-size:12px;color:var(--text-3);margin-top:3px;letter-spacing:.3px}
 
 #page-visitor{overflow:hidden;background:#07111f}
-
-/* ── SEARCH PANEL ── */
-.search-panel{position:absolute;top:20px;left:20px;z-index:100;width:300px}
-.search-box{position:relative;display:flex;align-items:center}
-.search-icon{position:absolute;left:14px;font-size:15px;color:var(--text-3);pointer-events:none;transition:color .2s;z-index:1}
-.search-input{width:100%;padding:13px 42px 13px 40px;font-size:14px;font-family:'Outfit',sans-serif;font-weight:500;color:var(--text);background:rgba(255,255,255,0.97);border:1.5px solid transparent;border-radius:14px;outline:none;box-shadow:0 4px 24px rgba(0,0,0,0.18),0 1px 4px rgba(0,0,0,0.1);transition:all .25s;backdrop-filter:blur(20px)}
-.search-input::placeholder{color:var(--text-3)}
-.search-input:focus{border-color:var(--red);box-shadow:0 4px 24px rgba(0,0,0,0.18),0 0 0 3px var(--red-glow)}
-.search-input:focus ~ .search-icon, .search-box:focus-within .search-icon{color:var(--red)}
-.search-clear{position:absolute;right:12px;width:22px;height:22px;border-radius:50%;background:var(--bg2);border:none;cursor:pointer;font-size:12px;color:var(--text-3);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:all .2s}
-.search-clear.visible{opacity:1;pointer-events:auto}
-.search-clear:hover{background:var(--red-light);color:var(--red)}
-
-.search-dropdown{margin-top:8px;background:rgba(255,255,255,0.98);border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,0.22);overflow:hidden;max-height:0;opacity:0;transform:translateY(-6px);transition:max-height .3s cubic-bezier(0.4,0,0.2,1), opacity .2s, transform .25s;pointer-events:none;backdrop-filter:blur(20px)}
-.search-dropdown.open{max-height:340px;opacity:1;transform:translateY(0);pointer-events:auto}
-.search-results{overflow-y:auto;max-height:340px}
-.search-results::-webkit-scrollbar{width:3px}
-.search-results::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px}
-.search-section-label{padding:8px 14px 4px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-3)}
-.search-item{display:flex;align-items:center;gap:11px;padding:9px 14px;cursor:pointer;transition:background .15s;border-left:3px solid transparent}
-.search-item:hover{background:var(--bg)}
-.search-item.available:hover{border-left-color:rgba(200,16,46,0.35)}
-.search-item.active{background:var(--red-light);border-left-color:var(--red)}
-.search-item.unavailable{opacity:0.55;cursor:default}
-.search-item.unavailable:hover{background:transparent;border-left-color:transparent}
-.si-flag{font-size:20px;line-height:1;flex-shrink:0}
-.si-info{flex:1;min-width:0}
-.si-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.si-sub{font-size:10.5px;color:var(--text-3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.si-badge{font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 7px;border-radius:20px;flex-shrink:0}
-.si-badge.avail{background:var(--red-light);color:var(--red)}
-.si-badge.unavail{background:var(--bg2);color:var(--text-3)}
-.search-empty{padding:22px;text-align:center;color:var(--text-3);font-size:13px}
-.search-empty span{display:block;font-size:22px;margin-bottom:6px}
-
-.search-hint{margin-top:10px;display:flex;align-items:center;gap:7px;background:rgba(0,0,0,0.45);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:7px 13px;opacity:1;transition:opacity .3s}
-.search-hint.hidden{opacity:0;pointer-events:none}
-.search-hint-dot{width:6px;height:6px;background:var(--red);border-radius:50%;animation:pls 2s ease-in-out infinite;flex-shrink:0}
-.search-hint span{font-size:11.5px;color:rgba(255,255,255,0.85);font-weight:500}
+.sidebar{width:22%;min-width:210px;max-width:268px;height:100%;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;box-shadow:2px 0 24px rgba(0,0,0,0.07);z-index:10;flex-shrink:0}
+.sidebar-head{padding:22px 22px 14px;border-bottom:1px solid var(--border)}
+.sidebar-head h3{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--black)}
+.sidebar-head p{font-size:11.5px;color:var(--text-3);margin-top:3px}
+.country-list{flex:1;overflow-y:auto;padding:6px 0}
+.country-list::-webkit-scrollbar{width:3px}
+.country-list::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px}
+.country-item{display:flex;align-items:center;gap:12px;padding:10px 20px;cursor:pointer;transition:all .18s;border-left:3px solid transparent;user-select:none}
+.country-item:hover{background:var(--bg);border-left-color:rgba(200,16,46,0.3)}
+.country-item.active{background:var(--red-light);border-left-color:var(--red)}
+.country-flag{font-size:22px;line-height:1;flex-shrink:0}
+.country-info{flex:1;min-width:0}
+.country-name{font-size:13px;font-weight:600;color:var(--text)}
+.country-sub{font-size:11px;color:var(--text-3);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.country-item.active .country-name{color:var(--red)}
+.country-arr{font-size:15px;color:var(--text-3);opacity:0;transition:.15s}
+.country-item:hover .country-arr,.country-item.active .country-arr{opacity:1;color:var(--red)}
+.sidebar-footer{padding:16px 20px;border-top:1px solid var(--border);background:var(--red-light);flex-shrink:0}
+.sidebar-footer p{font-size:11px;color:var(--red);font-weight:600;line-height:1.5}
+.sidebar-footer p span{display:block;font-size:10.5px;color:var(--text-3);font-weight:400;margin-top:2px}
 
 .globe-area{flex:1;position:relative;overflow:hidden}
 #cesiumContainer{width:100%;height:100%}
@@ -177,22 +158,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 </div>
 
 <div class="page" id="page-visitor">
-  <div class="globe-area" style="position:relative;flex:1">
-    <div class="search-panel">
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input class="search-input" id="searchInput" type="text" placeholder="Search any country…" autocomplete="off" spellcheck="false">
-        <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
-      </div>
-      <div class="search-dropdown" id="searchDropdown">
-        <div class="search-results" id="searchResults"></div>
-      </div>
-      <div class="search-hint" id="searchHint">
-        <div class="search-hint-dot"></div>
-        <span id="hintText">Rotate the globe or search a destination</span>
-      </div>
-    </div>
-    <div class="globe-topbar" style="display:none"><div class="pulse"></div><span>Live</span></div>
+  <div class="sidebar">
+    <div class="sidebar-head"><h3>Destinations</h3><p>Select a country to explore</p></div>
+    <div class="country-list" id="countryList"></div>
+    <div class="sidebar-footer"><p>Need help choosing?<span>Talk to our experts — free</span></p></div>
+  </div>
+  <div class="globe-area">
+    <div class="globe-topbar"><div class="pulse"></div><span id="hintText">Rotate the globe or select a destination</span></div>
     <div id="cesiumContainer"></div>
     <div class="country-card" id="countryCard">
       <button class="card-close" onclick="closeCard()">✕</button>
@@ -218,7 +190,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 <div class="page minimal-page" id="page-contact"><div><div class="page-badge">Get In Touch</div><h2>Contact <span>Us</span></h2><p>Reach our experts in Ahmedabad, Mumbai, or Delhi — or just WhatsApp us anytime.</p></div></div>
 
 <script>
-// ── COUNTRIES WITH FULL VISA DETAILS (searchable + flyable) ────────────────
 const COUNTRIES = [
   {id:'usa', iso:'USA', name:'United States',  flag:'🇺🇸', lat:38.0,  lng:-97.0,  h:5500000, type:'B1/B2 Tourist & Business', proc:'10–15 days', validity:'10 years'},
   {id:'can', iso:'CAN', name:'Canada',          flag:'🇨🇦', lat:56.1,  lng:-106.3, h:7000000, type:'Temporary Resident Visa',  proc:'15–20 days', validity:'10 years'},
@@ -236,139 +207,15 @@ const COUNTRIES = [
   {id:'esp', iso:'ESP', name:'Spain',            flag:'🇪🇸', lat:40.5,  lng:-3.7,   h:2400000, type:'Schengen Visa (Type C)',   proc:'10–15 days', validity:'90 days'},
 ];
 
-// ── ALL WORLD COUNTRIES (for search display — no visa details) ──────────────
-const ALL_COUNTRIES = [
-  {name:'Afghanistan',flag:'🇦🇫',lat:33.9,lng:67.7},{name:'Albania',flag:'🇦🇱',lat:41.1,lng:20.2},
-  {name:'Algeria',flag:'🇩🇿',lat:28.0,lng:1.7},{name:'Andorra',flag:'🇦🇩',lat:42.5,lng:1.5},
-  {name:'Angola',flag:'🇦🇴',lat:-11.2,lng:17.9},{name:'Argentina',flag:'🇦🇷',lat:-38.4,lng:-63.6},
-  {name:'Armenia',flag:'🇦🇲',lat:40.1,lng:45.0},{name:'Austria',flag:'🇦🇹',lat:47.5,lng:14.6},
-  {name:'Azerbaijan',flag:'🇦🇿',lat:40.1,lng:47.6},{name:'Bahrain',flag:'🇧🇭',lat:26.0,lng:50.6},
-  {name:'Bangladesh',flag:'🇧🇩',lat:23.7,lng:90.4},{name:'Belarus',flag:'🇧🇾',lat:53.7,lng:28.0},
-  {name:'Belgium',flag:'🇧🇪',lat:50.5,lng:4.5},{name:'Bolivia',flag:'🇧🇴',lat:-16.3,lng:-63.6},
-  {name:'Brazil',flag:'🇧🇷',lat:-14.2,lng:-51.9},{name:'Brunei',flag:'🇧🇳',lat:4.5,lng:114.7},
-  {name:'Bulgaria',flag:'🇧🇬',lat:42.7,lng:25.5},{name:'Cambodia',flag:'🇰🇭',lat:12.6,lng:104.9},
-  {name:'Cameroon',flag:'🇨🇲',lat:3.8,lng:11.5},{name:'Chile',flag:'🇨🇱',lat:-35.7,lng:-71.5},
-  {name:'China',flag:'🇨🇳',lat:35.9,lng:104.2},{name:'Colombia',flag:'🇨🇴',lat:4.6,lng:-74.1},
-  {name:'Croatia',flag:'🇭🇷',lat:45.1,lng:15.2},{name:'Cuba',flag:'🇨🇺',lat:21.5,lng:-79.0},
-  {name:'Cyprus',flag:'🇨🇾',lat:35.1,lng:33.4},{name:'Czech Republic',flag:'🇨🇿',lat:49.8,lng:15.5},
-  {name:'Denmark',flag:'🇩🇰',lat:56.3,lng:9.5},{name:'Ecuador',flag:'🇪🇨',lat:-1.8,lng:-78.2},
-  {name:'Egypt',flag:'🇪🇬',lat:26.8,lng:30.8},{name:'Estonia',flag:'🇪🇪',lat:58.6,lng:25.0},
-  {name:'Ethiopia',flag:'🇪🇹',lat:9.1,lng:40.5},{name:'Finland',flag:'🇫🇮',lat:61.9,lng:25.7},
-  {name:'Georgia',flag:'🇬🇪',lat:42.3,lng:43.4},{name:'Ghana',flag:'🇬🇭',lat:7.9,lng:-1.0},
-  {name:'Greece',flag:'🇬🇷',lat:39.1,lng:21.8},{name:'Hungary',flag:'🇭🇺',lat:47.2,lng:19.5},
-  {name:'Iceland',flag:'🇮🇸',lat:64.9,lng:-18.7},{name:'Indonesia',flag:'🇮🇩',lat:-0.8,lng:113.9},
-  {name:'Iran',flag:'🇮🇷',lat:32.4,lng:53.7},{name:'Iraq',flag:'🇮🇶',lat:33.2,lng:43.7},
-  {name:'Ireland',flag:'🇮🇪',lat:53.1,lng:-8.2},{name:'Israel',flag:'🇮🇱',lat:31.0,lng:34.9},
-  {name:'Jordan',flag:'🇯🇴',lat:30.6,lng:36.2},{name:'Kazakhstan',flag:'🇰🇿',lat:48.0,lng:66.9},
-  {name:'Kenya',flag:'🇰🇪',lat:-0.0,lng:37.9},{name:'Kuwait',flag:'🇰🇼',lat:29.3,lng:47.5},
-  {name:'Kyrgyzstan',flag:'🇰🇬',lat:41.2,lng:74.8},{name:'Laos',flag:'🇱🇦',lat:19.9,lng:102.5},
-  {name:'Latvia',flag:'🇱🇻',lat:56.9,lng:24.6},{name:'Lebanon',flag:'🇱🇧',lat:33.9,lng:35.9},
-  {name:'Lithuania',flag:'🇱🇹',lat:55.2,lng:23.9},{name:'Luxembourg',flag:'🇱🇺',lat:49.8,lng:6.1},
-  {name:'Malaysia',flag:'🇲🇾',lat:4.2,lng:108.0},{name:'Maldives',flag:'🇲🇻',lat:3.2,lng:73.2},
-  {name:'Malta',flag:'🇲🇹',lat:35.9,lng:14.4},{name:'Mexico',flag:'🇲🇽',lat:23.6,lng:-102.6},
-  {name:'Moldova',flag:'🇲🇩',lat:47.4,lng:28.4},{name:'Mongolia',flag:'🇲🇳',lat:46.9,lng:103.8},
-  {name:'Morocco',flag:'🇲🇦',lat:31.8,lng:-7.1},{name:'Myanmar',flag:'🇲🇲',lat:21.9,lng:95.9},
-  {name:'Nepal',flag:'🇳🇵',lat:28.4,lng:84.1},{name:'Netherlands',flag:'🇳🇱',lat:52.1,lng:5.3},
-  {name:'Nigeria',flag:'🇳🇬',lat:9.1,lng:8.7},{name:'Norway',flag:'🇳🇴',lat:60.5,lng:8.5},
-  {name:'Oman',flag:'🇴🇲',lat:21.5,lng:55.9},{name:'Pakistan',flag:'🇵🇰',lat:30.4,lng:69.3},
-  {name:'Peru',flag:'🇵🇪',lat:-9.2,lng:-75.0},{name:'Philippines',flag:'🇵🇭',lat:12.9,lng:121.8},
-  {name:'Poland',flag:'🇵🇱',lat:51.9,lng:19.1},{name:'Portugal',flag:'🇵🇹',lat:39.4,lng:-8.2},
-  {name:'Qatar',flag:'🇶🇦',lat:25.4,lng:51.2},{name:'Romania',flag:'🇷🇴',lat:45.9,lng:24.9},
-  {name:'Russia',flag:'🇷🇺',lat:61.5,lng:105.3},{name:'Saudi Arabia',flag:'🇸🇦',lat:23.9,lng:45.1},
-  {name:'Serbia',flag:'🇷🇸',lat:44.0,lng:21.0},{name:'Slovakia',flag:'🇸🇰',lat:48.7,lng:19.7},
-  {name:'Slovenia',flag:'🇸🇮',lat:46.1,lng:14.9},{name:'South Africa',flag:'🇿🇦',lat:-30.6,lng:22.9},
-  {name:'South Korea',flag:'🇰🇷',lat:35.9,lng:127.8},{name:'Sri Lanka',flag:'🇱🇰',lat:7.9,lng:80.8},
-  {name:'Sweden',flag:'🇸🇪',lat:60.1,lng:18.6},{name:'Taiwan',flag:'🇹🇼',lat:23.7,lng:121.0},
-  {name:'Tajikistan',flag:'🇹🇯',lat:38.9,lng:71.3},{name:'Tanzania',flag:'🇹🇿',lat:-6.4,lng:34.9},
-  {name:'Turkey',flag:'🇹🇷',lat:38.9,lng:35.2},{name:'Turkmenistan',flag:'🇹🇲',lat:38.9,lng:59.6},
-  {name:'Uganda',flag:'🇺🇬',lat:1.4,lng:32.3},{name:'Ukraine',flag:'🇺🇦',lat:48.4,lng:31.2},
-  {name:'Uzbekistan',flag:'🇺🇿',lat:41.4,lng:64.6},{name:'Venezuela',flag:'🇻🇪',lat:6.4,lng:-66.6},
-  {name:'Vietnam',flag:'🇻🇳',lat:14.1,lng:108.3},{name:'Yemen',flag:'🇾🇪',lat:15.6,lng:48.5},
-  {name:'Zambia',flag:'🇿🇲',lat:-13.1,lng:27.8},{name:'Zimbabwe',flag:'🇿🇼',lat:-20.0,lng:29.2},
-];
-
-// Build fast lookup for which countries have full details
-const COUNTRY_MAP = {};
-COUNTRIES.forEach(c => { COUNTRY_MAP[c.name.toLowerCase()] = c; });
-
-// ── SEARCH LOGIC ──────────────────────────────────────────────────────────────
-const searchInput  = document.getElementById('searchInput');
-const searchClear  = document.getElementById('searchClear');
-const searchDropdown = document.getElementById('searchDropdown');
-const searchResults  = document.getElementById('searchResults');
-
-let allEntries = [];
-// Merge: start with COUNTRIES (full details), then append ALL_COUNTRIES that aren't duplicates
-const knownNames = new Set(COUNTRIES.map(c => c.name.toLowerCase()));
-allEntries = [
-  ...COUNTRIES.map(c => ({...c, available: true})),
-  ...ALL_COUNTRIES
-    .filter(c => !knownNames.has(c.name.toLowerCase()))
-    .map(c => ({...c, available: false, id: c.name.toLowerCase().replace(/\s+/g,'-')}))
-];
-allEntries.sort((a,b) => a.name.localeCompare(b.name));
-
-function renderResults(query) {
-  const q = query.trim().toLowerCase();
-  if (!q) { searchResults.innerHTML = ''; return; }
-
-  const matches = allEntries.filter(c => c.name.toLowerCase().includes(q));
-  const avail   = matches.filter(c => c.available);
-  const unavail = matches.filter(c => !c.available);
-
-  if (!matches.length) {
-    searchResults.innerHTML = `<div class="search-empty"><span>🌐</span>No country found for "<b>${query}</b>"</div>`;
-    return;
-  }
-
-  let html = '';
-  if (avail.length) {
-    html += `<div class="search-section-label">Available Visas</div>`;
-    avail.forEach(c => {
-      html += `<div class="search-item available" id="si-${c.id}" onclick="flyTo(COUNTRIES.find(x=>x.id==='${c.id}'))">
-        <span class="si-flag">${c.flag}</span>
-        <div class="si-info"><div class="si-name">${c.name}</div><div class="si-sub">${c.type}</div></div>
-        <span class="si-badge avail">Apply</span>
-      </div>`;
-    });
-  }
-  if (unavail.length) {
-    html += `<div class="search-section-label">Other Countries</div>`;
-    unavail.forEach(c => {
-      html += `<div class="search-item unavailable">
-        <span class="si-flag">${c.flag}</span>
-        <div class="si-info"><div class="si-name">${c.name}</div><div class="si-sub">Contact us to enquire</div></div>
-        <span class="si-badge unavail">Enquire</span>
-      </div>`;
-    });
-  }
-  searchResults.innerHTML = html;
-}
-
-searchInput.addEventListener('input', () => {
-  const q = searchInput.value;
-  searchClear.classList.toggle('visible', q.length > 0);
-  searchDropdown.classList.toggle('open', q.length > 0);
-  renderResults(q);
+// Sidebar
+const listEl = document.getElementById('countryList');
+COUNTRIES.forEach(c => {
+  const d = document.createElement('div');
+  d.className = 'country-item'; d.id = 'ci-' + c.id;
+  d.innerHTML = `<div class="country-flag">${c.flag}</div><div class="country-info"><div class="country-name">${c.name}</div><div class="country-sub">${c.type}</div></div><div class="country-arr">›</div>`;
+  d.onclick = () => flyTo(c);
+  listEl.appendChild(d);
 });
-
-searchInput.addEventListener('focus', () => {
-  if (searchInput.value.length > 0) searchDropdown.classList.add('open');
-});
-
-document.addEventListener('click', e => {
-  if (!e.target.closest('.search-panel')) {
-    searchDropdown.classList.remove('open');
-  }
-});
-
-function clearSearch() {
-  searchInput.value = '';
-  searchClear.classList.remove('visible');
-  searchDropdown.classList.remove('open');
-  searchResults.innerHTML = '';
-  searchInput.focus();
-}
 
 // Navigation
 let globeBuilt = false;
@@ -423,6 +270,9 @@ function initGlobe() {
 
   // ── PERFORMANCE-BALANCED QUALITY SETTINGS ───────────────
   globe.maximumScreenSpaceError = 2.0;   // Default — smooth panning & flight
+  // Reduce tessellation to avoid RangeError on complex polygons
+  Cesium.GeoJsonDataSource.crsLinkHrefs = {};
+  Cesium.GeoJsonDataSource.crsNames = {};
   globe.tileCacheSize = 150;             // Enough cache without hogging memory
   globe.preloadAncestors = true;
   globe.preloadSiblings = false;         // Reduces background tile requests
@@ -440,15 +290,25 @@ function initGlobe() {
   scene.backgroundColor = Cesium.Color.fromCssColorString('#020810');
 
   // ── LOAD COUNTRY POLYGONS (GeoJSON) ────────────────────
+  // Use the hosted simplified GeoJSON — fewer vertices = no rhumb-line overflow
   Cesium.GeoJsonDataSource.load(
-    'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson',
+    'https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson',
     {
       stroke: Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'),
       fill: Cesium.Color.fromCssColorString('rgba(0,0,0,0)'),
       strokeWidth: 1,
+      markerSymbol: ' ',
     }
   ).then(dataSource => {
     geoDataSource = dataSource;
+    // Prevent per-polygon height subdivision that triggers the RangeError
+    dataSource.entities.values.forEach(entity => {
+      if (entity.polygon) {
+        entity.polygon.perPositionHeight = new Cesium.ConstantProperty(false);
+        // NONE = no geodesic/rhumb subdivision → prevents RangeError
+        entity.polygon.arcType = new Cesium.ConstantProperty(Cesium.ArcType.NONE);
+      }
+    });
     viewer.dataSources.add(dataSource);
     buildEntityCache();
 
@@ -560,11 +420,9 @@ function flyTo(c) {
   isFlyingTo = true;
   currentCountry = c;
 
-  // Update search item highlight
-  document.querySelectorAll('.search-item').forEach(el => el.classList.remove('active'));
-  const siEl = document.getElementById('si-' + c.id);
-  if (siEl) siEl.classList.add('active');
-  searchDropdown.classList.remove('open');
+  document.querySelectorAll('.country-item').forEach(el => el.classList.remove('active'));
+  const sideEl = document.getElementById('ci-' + c.id);
+  if (sideEl) { sideEl.classList.add('active'); sideEl.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
 
   document.getElementById('countryCard').classList.remove('visible');
   document.getElementById('hintText').textContent = 'Flying to ' + c.name + '…';
@@ -626,8 +484,8 @@ function showCard(c) {
 
 function closeCard() {
   document.getElementById('countryCard').classList.remove('visible');
-  document.querySelectorAll('.search-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('hintText').textContent = 'Rotate the globe or search a destination';
+  document.querySelectorAll('.country-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('hintText').textContent = 'Rotate the globe or select a destination';
   currentCountry = null;
   clearHighlight();
   viewer.entities.removeById('dest-pin');

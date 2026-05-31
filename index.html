@@ -5,11 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Visavera – Global Visa Services</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<!-- CesiumJS — Google Earth quality tile streaming engine -->
 <link rel="stylesheet" href="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Widgets/widgets.css">
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Cesium.js"></script>
-
 <style>
 :root {
   --red:#C8102E; --red-dark:#9B0E24; --red-light:#fdeaed; --red-glow:rgba(200,16,46,0.2);
@@ -76,24 +73,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .globe-area{flex:1;position:relative;overflow:hidden}
 #cesiumContainer{width:100%;height:100%}
 
-/* Hide ALL Cesium default UI — we only want the earth */
-.cesium-widget-credits,
-.cesium-credit-logoContainer,
-.cesium-credit-textContainer,
-.cesium-viewer-bottom,
-.cesium-viewer-toolbar,
-.cesium-viewer-animationContainer,
-.cesium-viewer-timelineContainer,
-.cesium-viewer-geocoderContainer,
-.cesium-viewer-homeButtonContainer,
-.cesium-viewer-sceneModePicker,
-.cesium-viewer-navigationHelpButton,
-.cesium-navigation-help,
-.cesium-viewer-infoBoxContainer,
-.cesium-viewer-selectionIndicatorContainer,
-.cesium-infoBox,
-.cesium-selection-wrapper,
-.cesium-viewer-bottom { display:none !important; }
+/* Strip ALL Cesium default chrome */
+.cesium-widget-credits,.cesium-credit-logoContainer,.cesium-credit-textContainer,
+.cesium-viewer-bottom,.cesium-viewer-toolbar,.cesium-viewer-animationContainer,
+.cesium-viewer-timelineContainer,.cesium-viewer-geocoderContainer,
+.cesium-viewer-homeButtonContainer,.cesium-viewer-fullscreenContainer,
+.cesium-viewer-vrButton,.cesium-navigation-help,.cesium-infoBox,
+.cesium-selection-wrapper,.cesium-viewer-infoBoxContainer,
+.cesium-viewer-selectionIndicatorContainer { display:none !important; }
 
 .globe-topbar{position:absolute;top:20px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.92);backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:30px;padding:8px 22px;box-shadow:var(--shadow-sm);z-index:20;pointer-events:none;white-space:nowrap}
 .globe-topbar .pulse{width:8px;height:8px;background:var(--red);border-radius:50%;animation:pls 2s ease-in-out infinite}
@@ -115,7 +102,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .card-apply-btn:hover{background:var(--red-dark);transform:translateY(-2px);box-shadow:0 8px 24px var(--red-glow)}
 .card-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:var(--bg2);border:none;cursor:pointer;font-size:14px;color:var(--text-3);display:flex;align-items:center;justify-content:center;transition:all .2s}
 .card-close:hover{background:var(--red-light);color:var(--red)}
-.globe-coords{position:absolute;bottom:22px;left:22px;font-size:11px;color:rgba(255,255,255,0.9);font-weight:500;background:rgba(0,0,0,0.45);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:6px 14px;z-index:20;transition:all .4s;letter-spacing:.3px}
+.globe-coords{position:absolute;bottom:22px;left:22px;font-size:11px;color:rgba(255,255,255,0.9);font-weight:500;background:rgba(0,0,0,0.45);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:6px 14px;z-index:20;letter-spacing:.3px}
 
 .loader{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;z-index:999;transition:opacity .8s}
 .loader-logo{font-family:'Playfair Display',serif;font-size:38px;font-weight:900;color:var(--black)}
@@ -129,16 +116,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .minimal-page h2 span{color:var(--red)}
 .minimal-page>div>p{color:var(--text-2);font-size:16px;max-width:420px;margin-top:12px;line-height:1.7}
 .page-badge{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;color:var(--red);border:1px solid rgba(200,16,46,0.25);background:var(--red-light);padding:6px 16px;border-radius:20px;margin-bottom:20px;display:inline-block}
-
-/* Country highlight overlay drawn on Cesium canvas */
-.highlight-ring {
-  position:absolute;pointer-events:none;z-index:15;
-  border:3px solid rgba(200,16,46,0.9);
-  border-radius:50%;
-  box-shadow:0 0 20px rgba(200,16,46,0.5);
-  animation:ringPulse 1.5s ease-in-out infinite;
-}
-@keyframes ringPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.08);opacity:.6}}
 </style>
 </head>
 <body>
@@ -146,7 +123,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 <div class="loader" id="loader">
   <div class="loader-logo">Visa<span>vera</span></div>
   <div class="loader-bar"><div class="loader-fill" id="loaderFill"></div></div>
-  <div class="loader-text" id="loaderText">Loading Globe…</div>
+  <div class="loader-text">Loading Globe…</div>
 </div>
 
 <nav>
@@ -193,14 +170,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
       <button class="card-close" onclick="closeCard()">✕</button>
       <div class="card-top">
         <div class="card-flag-big" id="cardFlag">🇺🇸</div>
-        <div><div class="card-country-name" id="cardName">United States</div><div class="card-visa-type" id="cardType">B1/B2 Tourist & Business Visa</div></div>
+        <div><div class="card-country-name" id="cardName">United States</div><div class="card-visa-type" id="cardType"></div></div>
       </div>
       <div class="card-divider"></div>
       <div class="card-meta">
-        <div class="card-meta-item"><div class="card-meta-label">Processing</div><div class="card-meta-val" id="cardProc">10–15 days</div></div>
-        <div class="card-meta-item"><div class="card-meta-label">Validity</div><div class="card-meta-val" id="cardValidity">10 years</div></div>
+        <div class="card-meta-item"><div class="card-meta-label">Processing</div><div class="card-meta-val" id="cardProc"></div></div>
+        <div class="card-meta-item"><div class="card-meta-label">Validity</div><div class="card-meta-val" id="cardValidity"></div></div>
       </div>
-      <button class="card-apply-btn" id="cardApplyBtn">Apply for USA Visa →</button>
+      <button class="card-apply-btn" id="cardApplyBtn">Apply →</button>
     </div>
     <div class="globe-coords" id="globeCoords">20.59°N · 78.96°E · India</div>
   </div>
@@ -213,25 +190,24 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 <div class="page minimal-page" id="page-contact"><div><div class="page-badge">Get In Touch</div><h2>Contact <span>Us</span></h2><p>Reach our experts in Ahmedabad, Mumbai, or Delhi — or just WhatsApp us anytime.</p></div></div>
 
 <script>
-// ── COUNTRIES ───────────────────────────────────────────
 const COUNTRIES = [
-  {id:'usa', iso:'USA', name:'United States',  flag:'🇺🇸', lat:38.0,  lng:-97.0,  height:6500000,  type:'B1/B2 Tourist & Business', proc:'10–15 days', validity:'10 years'},
-  {id:'can', iso:'CAN', name:'Canada',          flag:'🇨🇦', lat:56.1,  lng:-106.3, height:8000000,  type:'Temporary Resident Visa',  proc:'15–20 days', validity:'10 years'},
-  {id:'gbr', iso:'GBR', name:'United Kingdom',  flag:'🇬🇧', lat:54.0,  lng:-2.0,   height:3500000,  type:'Standard Visitor Visa',    proc:'3 weeks',    validity:'6 months'},
-  {id:'are', iso:'ARE', name:'UAE',              flag:'🇦🇪', lat:24.0,  lng:54.0,   height:2200000,  type:'Tourist Visa on Arrival',  proc:'Instant',    validity:'30 days'},
-  {id:'aus', iso:'AUS', name:'Australia',        flag:'🇦🇺', lat:-25.3, lng:133.8,  height:8000000,  type:'Subclass 600 Visitor',     proc:'20–28 days', validity:'12 months'},
-  {id:'deu', iso:'DEU', name:'Germany',          flag:'🇩🇪', lat:51.2,  lng:10.5,   height:3000000,  type:'Schengen Visa (Type C)',   proc:'10–15 days', validity:'90 days'},
-  {id:'fra', iso:'FRA', name:'France',           flag:'🇫🇷', lat:46.2,  lng:2.2,    height:3200000,  type:'Schengen Visa (Type C)',   proc:'10–15 days', validity:'90 days'},
-  {id:'sgp', iso:'SGP', name:'Singapore',        flag:'🇸🇬', lat:1.35,  lng:103.8,  height:700000,   type:'Social Visit Pass',        proc:'3–5 days',   validity:'30 days'},
-  {id:'jpn', iso:'JPN', name:'Japan',            flag:'🇯🇵', lat:36.2,  lng:138.3,  height:3500000,  type:'Temporary Visitor Visa',   proc:'5–7 days',   validity:'90 days'},
-  {id:'tha', iso:'THA', name:'Thailand',         flag:'🇹🇭', lat:15.9,  lng:101.0,  height:2800000,  type:'Tourist Visa on Arrival',  proc:'Instant',    validity:'30 days'},
-  {id:'ita', iso:'ITA', name:'Italy',            flag:'🇮🇹', lat:41.9,  lng:12.6,   height:2800000,  type:'Schengen Visa (Type C)',   proc:'10–15 days', validity:'90 days'},
-  {id:'nzl', iso:'NZL', name:'New Zealand',      flag:'🇳🇿', lat:-40.9, lng:174.9,  height:3500000,  type:'Visitor Visa',             proc:'20–25 days', validity:'9 months'},
-  {id:'che', iso:'CHE', name:'Switzerland',      flag:'🇨🇭', lat:46.8,  lng:8.2,    height:1800000,  type:'Schengen Visa (Type C)',   proc:'10–15 days', validity:'90 days'},
-  {id:'esp', iso:'ESP', name:'Spain',            flag:'🇪🇸', lat:40.5,  lng:-3.7,   height:3000000,  type:'Schengen Visa (Type C)',   proc:'10–15 days', validity:'90 days'},
+  {id:'usa', iso:'USA', name:'United States',  flag:'🇺🇸', lat:38.0,  lng:-97.0,  h:5500000, type:'B1/B2 Tourist & Business', proc:'10–15 days', validity:'10 years'},
+  {id:'can', iso:'CAN', name:'Canada',          flag:'🇨🇦', lat:56.1,  lng:-106.3, h:7000000, type:'Temporary Resident Visa',  proc:'15–20 days', validity:'10 years'},
+  {id:'gbr', iso:'GBR', name:'United Kingdom',  flag:'🇬🇧', lat:54.0,  lng:-2.0,   h:2800000, type:'Standard Visitor Visa',    proc:'3 weeks',    validity:'6 months'},
+  {id:'are', iso:'ARE', name:'UAE',              flag:'🇦🇪', lat:24.0,  lng:54.0,   h:1800000, type:'Tourist Visa on Arrival',  proc:'Instant',    validity:'30 days'},
+  {id:'aus', iso:'AUS', name:'Australia',        flag:'🇦🇺', lat:-25.3, lng:133.8,  h:7000000, type:'Subclass 600 Visitor',     proc:'20–28 days', validity:'12 months'},
+  {id:'deu', iso:'DEU', name:'Germany',          flag:'🇩🇪', lat:51.2,  lng:10.5,   h:2200000, type:'Schengen Visa (Type C)',   proc:'10–15 days', validity:'90 days'},
+  {id:'fra', iso:'FRA', name:'France',           flag:'🇫🇷', lat:46.2,  lng:2.2,    h:2400000, type:'Schengen Visa (Type C)',   proc:'10–15 days', validity:'90 days'},
+  {id:'sgp', iso:'SGP', name:'Singapore',        flag:'🇸🇬', lat:1.35,  lng:103.8,  h:600000,  type:'Social Visit Pass',        proc:'3–5 days',   validity:'30 days'},
+  {id:'jpn', iso:'JPN', name:'Japan',            flag:'🇯🇵', lat:36.2,  lng:138.3,  h:2800000, type:'Temporary Visitor Visa',   proc:'5–7 days',   validity:'90 days'},
+  {id:'tha', iso:'THA', name:'Thailand',         flag:'🇹🇭', lat:15.9,  lng:101.0,  h:2200000, type:'Tourist Visa on Arrival',  proc:'Instant',    validity:'30 days'},
+  {id:'ita', iso:'ITA', name:'Italy',            flag:'🇮🇹', lat:41.9,  lng:12.6,   h:2200000, type:'Schengen Visa (Type C)',   proc:'10–15 days', validity:'90 days'},
+  {id:'nzl', iso:'NZL', name:'New Zealand',      flag:'🇳🇿', lat:-40.9, lng:174.9,  h:2800000, type:'Visitor Visa',             proc:'20–25 days', validity:'9 months'},
+  {id:'che', iso:'CHE', name:'Switzerland',      flag:'🇨🇭', lat:46.8,  lng:8.2,    h:1400000, type:'Schengen Visa (Type C)',   proc:'10–15 days', validity:'90 days'},
+  {id:'esp', iso:'ESP', name:'Spain',            flag:'🇪🇸', lat:40.5,  lng:-3.7,   h:2400000, type:'Schengen Visa (Type C)',   proc:'10–15 days', validity:'90 days'},
 ];
 
-// Build sidebar
+// Sidebar
 const listEl = document.getElementById('countryList');
 COUNTRIES.forEach(c => {
   const d = document.createElement('div');
@@ -241,7 +217,7 @@ COUNTRIES.forEach(c => {
   listEl.appendChild(d);
 });
 
-// ── NAVIGATION ──────────────────────────────────────────
+// Navigation
 let globeBuilt = false;
 function goPage(name, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -251,22 +227,29 @@ function goPage(name, el) {
   if (name === 'visitor' && !globeBuilt) { globeBuilt = true; setTimeout(initGlobe, 80); }
 }
 
-// ── CESIUM GLOBE ─────────────────────────────────────────
+// Cesium — disable default Ion requests entirely
+Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkMzhiOTQ5NS0wNGVjLTRhM2ItOWZiZC1jNjA5OWJlNGY5MjUiLCJpZCI6NDM4Njg2LCJpc3MiOiJodHRwczovL2FwaS5jZXNpdW0uY29tIiwiYXVkIjoidW5kZWZpbmVkX2RlZmF1bHQiLCJpYXQiOjE3ODAyNTI3Njh9.RXzlRrOzCNHHHS-4RmY3LPoUXVooaZpp7z2BeO-x7RM';
+
 let viewer = null;
 let currentCountry = null;
 let isFlyingTo = false;
-let countryEntities = {};
-
-// Cesium Ion token — default free token (rate limited but works for demos)
-// For production use, register at cesium.com/ion for a free token
-Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlYWE1OWUxNy1mMWZiLTQzYjYtYTQ0OS1kMWFjYmFkNjc4ZTciLCJpZCI6NTc3MzMsImlhdCI6MTYyNzg0NTE4Mn0.XcKpgANiY19MC4bdFUXMVEBToBmqS8kuYpUlxJHYZxk';
+let geoDataSource = null;
+let isoMap = {};
+COUNTRIES.forEach(c => isoMap[c.iso] = c);
 
 function initGlobe() {
-  // Remove all default Cesium UI — pure earth only
+  // Cesium 1.104+ requires baseLayer (not imageryProvider) in constructor
+  const arcgisProvider = new Cesium.UrlTemplateImageryProvider({
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    maximumLevel: 19,
+    credit: new Cesium.Credit('Esri, Maxar, Earthstar Geographics', false),
+    tileWidth: 256,
+    tileHeight: 256,
+  });
+
   viewer = new Cesium.Viewer('cesiumContainer', {
-    // Use Bing Maps Aerial — same imagery as Google Earth, full tile streaming
-    imageryProvider: new Cesium.IonImageryProvider({ assetId: 3 }), // Cesium World Imagery (HD satellite)
-    terrainProvider: new Cesium.IonTerrainProvider({ assetId: 1 }), // Cesium World Terrain — real elevation
+    baseLayer: new Cesium.ImageryLayer(arcgisProvider),
+    terrainProvider: new Cesium.EllipsoidTerrainProvider(),
     animation: false,
     baseLayerPicker: false,
     fullscreenButton: false,
@@ -278,160 +261,137 @@ function initGlobe() {
     selectionIndicator: false,
     timeline: false,
     navigationHelpButton: false,
-    navigationInstructionsInitiallyVisible: false,
-    creditContainer: document.createElement('div'), // redirect credits to hidden div
-    orderIndependentTranslucency: true,
-    shadows: false,
-    shouldAnimate: false,
+    requestRenderMode: false,
+    creditContainer: document.createElement('div'),
   });
 
   const scene = viewer.scene;
   const globe = scene.globe;
 
-  // ── MAXIMUM QUALITY SETTINGS ─────────────────────────────
-  // This is what makes it look like Google Earth / Apple Maps
-
-  // Max tile resolution — load the finest detail available
-  globe.maximumScreenSpaceError = 1.0;  // Default is 2 — lower = sharper (1 = max quality)
-
-  // Enable lighting for realistic look
-  globe.enableLighting = true;
-  globe.atmosphereHueShift = 0.0;
-  globe.atmosphereSaturationShift = 0.1;
-  globe.atmosphereBrightnessShift = 0.05;
-
-  // Show atmosphere like Apple Maps / Google Earth
-  scene.skyAtmosphere.show = true;
-  scene.skyAtmosphere.hueShift = 0.0;
-  scene.skyAtmosphere.saturationShift = 0.1;
-  scene.skyAtmosphere.brightnessShift = 0.1;
-
-  // High quality anti-aliasing
-  scene.fxaa = true;
-  scene.postProcessStages.fxaa.enabled = true;
-
-  // Realistic sky box
-  scene.skyBox = new Cesium.SkyBox({
-    sources: {
-      positiveX: 'https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Assets/Textures/SkyBox/tycho2t3_80_px.jpg',
-      negativeX: 'https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Assets/Textures/SkyBox/tycho2t3_80_mx.jpg',
-      positiveY: 'https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Assets/Textures/SkyBox/tycho2t3_80_py.jpg',
-      negativeY: 'https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Assets/Textures/SkyBox/tycho2t3_80_my.jpg',
-      positiveZ: 'https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Assets/Textures/SkyBox/tycho2t3_80_pz.jpg',
-      negativeZ: 'https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Assets/Textures/SkyBox/tycho2t3_80_mz.jpg',
-    }
-  });
-
-  // Background color — deep space black
-  scene.backgroundColor = new Cesium.Color(0.02, 0.04, 0.08, 1.0);
-
-  // Tile cache size — more tiles = sharper during zoom
-  globe.tileCacheSize = 300;
-
-  // Preload ancestors for instant detail when zooming
+  // ── MAX QUALITY SETTINGS ────────────────────────────────
+  globe.maximumScreenSpaceError = 1.0;   // Finest tile detail (default=2)
+  globe.tileCacheSize = 500;             // Cache more tiles = instant on revisit
   globe.preloadAncestors = true;
   globe.preloadSiblings = true;
+  globe.enableLighting = true;           // Sun shading for realism
 
-  // Depth test against terrain — correct depth sorting
-  scene.globe.depthTestAgainstTerrain = false;
+  // Anti-aliasing
+  scene.fxaa = true;
+  if (scene.postProcessStages && scene.postProcessStages.fxaa)
+    scene.postProcessStages.fxaa.enabled = true;
 
-  // ── COUNTRY HIGHLIGHT ENTITIES (GeoJSON polygons) ────────────────────
-  // Load GeoJSON and add country polygon entities for hover/click
-  fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson')
-    .then(r => r.json())
-    .then(data => {
-      data.features.forEach(feature => {
-        const isoA3 = feature.properties.ADM0_A3 || feature.properties.ISO_A3;
-        if (!isoA3) return;
+  // Atmosphere — same as Google Earth's blue halo
+  scene.skyAtmosphere.show = true;
+  scene.fog.enabled = true;
+  scene.fog.density = 0.0001;
 
-        const entity = viewer.entities.add({
-          id: 'country-' + isoA3,
-          name: isoA3,
-          polygon: {
-            hierarchy: Cesium.GeoJsonDataSource.load ? undefined :
-              new Cesium.PolygonHierarchy(
-                Cesium.Cartesian3.fromDegreesArray(
-                  flattenCoords(feature.geometry)
-                )
-              ),
-            material: Cesium.Color.fromCssColorString('rgba(200,16,46,0)'),
-            outline: true,
-            outlineColor: Cesium.Color.fromCssColorString('rgba(255,255,255,0.12)'),
-            outlineWidth: 1,
-            height: 0,
-            classificationType: Cesium.ClassificationType.TERRAIN,
-          }
-        });
-        countryEntities[isoA3] = entity;
-      });
+  // Deep space background
+  scene.backgroundColor = Cesium.Color.fromCssColorString('#020810');
 
-      // Add click handler
-      const handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
-      handler.setInputAction(movement => {
-        const picked = scene.pick(movement.position);
-        if (picked && picked.id && picked.id.name) {
-          const iso = picked.id.name;
-          const country = COUNTRIES.find(c => c.iso === iso);
-          if (country) flyTo(country);
-        }
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+  // ── LOAD COUNTRY POLYGONS (GeoJSON) ────────────────────
+  Cesium.GeoJsonDataSource.load(
+    'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson',
+    {
+      stroke: Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'),
+      fill: Cesium.Color.fromCssColorString('rgba(0,0,0,0)'),
+      strokeWidth: 1,
+    }
+  ).then(dataSource => {
+    geoDataSource = dataSource;
+    viewer.dataSources.add(dataSource);
 
-      // Hover cursor
-      handler.setInputAction(movement => {
-        const picked = scene.pick(movement.endPosition);
-        const iso = picked?.id?.name;
-        const isKnown = iso && COUNTRIES.find(c => c.iso === iso);
-        scene.canvas.style.cursor = isKnown ? 'pointer' : 'grab';
-      }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-    })
-    .catch(() => {});
+    // Click handler
+    const handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+    handler.setInputAction(e => {
+      const picked = viewer.scene.pick(e.position);
+      if (Cesium.defined(picked) && picked.id instanceof Cesium.Entity) {
+        const props = picked.id.properties;
+        const iso = props.ADM0_A3?._value || props.ISO_A3?._value;
+        if (iso && isoMap[iso]) flyTo(isoMap[iso]);
+      }
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
-  // ── START POSITION — India ───────────────────────────────
+    // Hover cursor
+    handler.setInputAction(e => {
+      const picked = viewer.scene.pick(e.endPosition);
+      let isCountry = false;
+      if (Cesium.defined(picked) && picked.id instanceof Cesium.Entity) {
+        const props = picked.id.properties;
+        const iso = props.ADM0_A3?._value || props.ISO_A3?._value;
+        isCountry = !!(iso && isoMap[iso]);
+      }
+      scene.canvas.style.cursor = isCountry ? 'pointer' : 'grab';
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+  });
+
+  // Start at India
   viewer.camera.setView({
     destination: Cesium.Cartesian3.fromDegrees(78.96, 20.59, 18000000),
     orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 }
   });
-
-  // Smooth intro zoom
   setTimeout(() => {
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(78.96, 20.59, 14000000),
       orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 },
-      duration: 2.0,
+      duration: 2.5,
       easingFunction: Cesium.EasingFunction.QUADRATIC_OUT
     });
-  }, 300);
+  }, 400);
 
-  // Update coords display
+  // Coords display
   setInterval(() => {
     if (!viewer || currentCountry) return;
-    const cam = viewer.camera;
-    const cartographic = Cesium.Cartographic.fromCartesian(cam.positionWC);
-    const lat = Cesium.Math.toDegrees(cartographic.latitude);
-    const lng = Cesium.Math.toDegrees(cartographic.longitude);
-    document.getElementById('globeCoords').textContent =
-      `${Math.abs(lat).toFixed(2)}°${lat>=0?'N':'S'} · ${Math.abs(lng).toFixed(2)}°${lng>=0?'E':'W'}`;
-  }, 500);
+    try {
+      const pos = viewer.camera.positionCartographic;
+      const lat = Cesium.Math.toDegrees(pos.latitude);
+      const lng = Cesium.Math.toDegrees(pos.longitude);
+      document.getElementById('globeCoords').textContent =
+        `${Math.abs(lat).toFixed(2)}°${lat>=0?'N':'S'} · ${Math.abs(lng).toFixed(2)}°${lng>=0?'E':'W'}`;
+    } catch(e){}
+  }, 600);
 }
 
-// Helper — flatten GeoJSON geometry coords to flat [lng,lat,...] array
-function flattenCoords(geometry) {
-  const coords = [];
-  function walk(arr, depth) {
-    if (depth === 0) { coords.push(arr[0], arr[1]); return; }
-    arr.forEach(a => walk(a, depth - 1));
-  }
-  if (geometry.type === 'Polygon') geometry.coordinates.forEach(ring => ring.forEach(pt => walk(pt, 0)));
-  else if (geometry.type === 'MultiPolygon') geometry.coordinates.forEach(poly => poly.forEach(ring => ring.forEach(pt => walk(pt, 0))));
-  return coords;
+// ── HIGHLIGHT ─────────────────────────────────────────────
+function highlightCountry(iso) {
+  if (!geoDataSource) return;
+  geoDataSource.entities.values.forEach(entity => {
+    if (!entity.polygon) return;
+    const eIso = entity.properties.ADM0_A3?._value || entity.properties.ISO_A3?._value;
+    if (eIso === iso) {
+      entity.polygon.material = new Cesium.ColorMaterialProperty(
+        Cesium.Color.fromCssColorString('rgba(200,16,46,0.22)'));
+      entity.polygon.outlineColor = new Cesium.ConstantProperty(
+        Cesium.Color.fromCssColorString('rgba(200,16,46,1.0)'));
+      entity.polygon.outlineWidth = new Cesium.ConstantProperty(3);
+      entity.polygon.outline = new Cesium.ConstantProperty(true);
+    } else {
+      entity.polygon.material = new Cesium.ColorMaterialProperty(
+        Cesium.Color.fromCssColorString('rgba(0,0,0,0)'));
+      entity.polygon.outlineColor = new Cesium.ConstantProperty(
+        Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'));
+      entity.polygon.outlineWidth = new Cesium.ConstantProperty(1);
+    }
+  });
 }
 
-// ── FLY TO ───────────────────────────────────────────────
+function clearHighlight() {
+  if (!geoDataSource) return;
+  geoDataSource.entities.values.forEach(entity => {
+    if (!entity.polygon) return;
+    entity.polygon.material = new Cesium.ColorMaterialProperty(
+      Cesium.Color.fromCssColorString('rgba(0,0,0,0)'));
+    entity.polygon.outlineColor = new Cesium.ConstantProperty(
+      Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'));
+    entity.polygon.outlineWidth = new Cesium.ConstantProperty(1);
+  });
+}
+
+// ── FLY TO ────────────────────────────────────────────────
 function flyTo(c) {
   if (isFlyingTo || !viewer) return;
   isFlyingTo = true;
+  currentCountry = c;
 
-  // Sidebar
   document.querySelectorAll('.country-item').forEach(el => el.classList.remove('active'));
   const sideEl = document.getElementById('ci-' + c.id);
   if (sideEl) { sideEl.classList.add('active'); sideEl.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
@@ -441,47 +401,41 @@ function flyTo(c) {
   document.getElementById('globeCoords').textContent =
     `${Math.abs(c.lat).toFixed(2)}°${c.lat>=0?'N':'S'} · ${Math.abs(c.lng).toFixed(2)}°${c.lng>=0?'E':'W'} · ${c.name}`;
 
-  currentCountry = c;
-
-  // Highlight selected country polygon
   highlightCountry(c.iso);
 
-  // Add a pulsing point entity on the country
+  // Destination pin
   viewer.entities.removeById('dest-pin');
   viewer.entities.add({
     id: 'dest-pin',
-    position: Cesium.Cartesian3.fromDegrees(c.lng, c.lat, 0),
+    position: Cesium.Cartesian3.fromDegrees(c.lng, c.lat),
     point: {
-      pixelSize: 14,
+      pixelSize: 16,
       color: Cesium.Color.fromCssColorString('#C8102E'),
       outlineColor: Cesium.Color.WHITE,
-      outlineWidth: 2,
-      heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+      outlineWidth: 3,
       disableDepthTestDistance: Number.POSITIVE_INFINITY,
     }
   });
 
-  // Phase 1: zoom out to space (1s)
-  const curCam = viewer.camera;
-  const curCart = Cesium.Cartographic.fromCartesian(curCam.positionWC);
+  // 3-phase flight: pull back → arc over → zoom in
+  const curPos = viewer.camera.positionCartographic;
   viewer.camera.flyTo({
-    destination: Cesium.Cartesian3.fromRadians(curCart.longitude, curCart.latitude, 22000000),
+    destination: Cesium.Cartesian3.fromRadians(curPos.longitude, curPos.latitude, 20000000),
     orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 },
-    duration: 1.0,
+    duration: 1.2,
     easingFunction: Cesium.EasingFunction.QUADRATIC_IN,
     complete: () => {
-      // Phase 2: arc across to destination at high altitude (2s)
       viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(c.lng, c.lat, 22000000),
+        destination: Cesium.Cartesian3.fromDegrees(c.lng, c.lat, 20000000),
         orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 },
-        duration: 2.0,
+        duration: 1.8,
         easingFunction: Cesium.EasingFunction.LINEAR_NONE,
         complete: () => {
-          // Phase 3: zoom in to country — THIS is where HD tiles stream in live
+          // Final zoom-in — HD satellite tiles stream in live as camera descends
           viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(c.lng, c.lat, c.height),
+            destination: Cesium.Cartesian3.fromDegrees(c.lng, c.lat, c.h),
             orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 },
-            duration: 2.2,
+            duration: 2.5,
             easingFunction: Cesium.EasingFunction.QUADRATIC_OUT,
             complete: () => {
               isFlyingTo = false;
@@ -493,26 +447,6 @@ function flyTo(c) {
       });
     }
   });
-}
-
-// Highlight country polygon
-function highlightCountry(iso) {
-  // Reset all
-  Object.keys(countryEntities).forEach(k => {
-    const e = countryEntities[k];
-    if (e && e.polygon) {
-      e.polygon.material = Cesium.Color.fromCssColorString('rgba(200,16,46,0)');
-      e.polygon.outlineColor = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString('rgba(255,255,255,0.12)'));
-      e.polygon.outlineWidth = new Cesium.ConstantProperty(1);
-    }
-  });
-  // Highlight target
-  const e = countryEntities[iso];
-  if (e && e.polygon) {
-    e.polygon.material = Cesium.Color.fromCssColorString('rgba(200,16,46,0.18)');
-    e.polygon.outlineColor = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString('rgba(200,16,46,0.9)'));
-    e.polygon.outlineWidth = new Cesium.ConstantProperty(3);
-  }
 }
 
 function showCard(c) {
@@ -530,31 +464,17 @@ function closeCard() {
   document.querySelectorAll('.country-item').forEach(el => el.classList.remove('active'));
   document.getElementById('hintText').textContent = 'Rotate the globe or select a destination';
   currentCountry = null;
-
-  // Reset all highlights
-  Object.keys(countryEntities).forEach(k => {
-    const e = countryEntities[k];
-    if (e && e.polygon) {
-      e.polygon.material = Cesium.Color.fromCssColorString('rgba(200,16,46,0)');
-      e.polygon.outlineColor = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString('rgba(255,255,255,0.12)'));
-      e.polygon.outlineWidth = new Cesium.ConstantProperty(1);
-    }
-  });
-
+  clearHighlight();
   viewer.entities.removeById('dest-pin');
-
-  if (viewer) {
-    viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(78.96, 20.59, 14000000),
-      orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 },
-      duration: 2.0,
-      easingFunction: Cesium.EasingFunction.QUADRATIC_OUT
-    });
-    document.getElementById('globeCoords').textContent = '20.59°N · 78.96°E · India';
-  }
+  viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(78.96, 20.59, 14000000),
+    orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 },
+    duration: 2.0,
+    easingFunction: Cesium.EasingFunction.QUADRATIC_OUT
+  });
+  document.getElementById('globeCoords').textContent = '20.59°N · 78.96°E · India';
 }
 
-// ── LOADER ───────────────────────────────────────────────
 window.addEventListener('load', () => {
   document.getElementById('loaderFill').style.width = '100%';
   setTimeout(() => {

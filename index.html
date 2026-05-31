@@ -516,14 +516,24 @@ searchResults.addEventListener('mousedown', e => {
 });
 
 // Tapping a result on mobile
+let _touchStartY = 0;
+let _touchMoved = false;
+
 searchResults.addEventListener('touchstart', e => {
+  _touchStartY = e.touches[0].clientY;
+  _touchMoved = false;
   const item = e.target.closest('.search-item.available');
   if (!item) return;
   clearTimeout(_searchBlurTimer);
   e.stopPropagation();
 }, {passive: true});
 
+searchResults.addEventListener('touchmove', e => {
+  if (Math.abs(e.touches[0].clientY - _touchStartY) > 8) _touchMoved = true;
+}, {passive: true});
+
 searchResults.addEventListener('touchend', e => {
+  if (_touchMoved || _srMoved) return; // swipe — don't select
   const item = e.target.closest('.search-item.available');
   if (!item) return;
   e.preventDefault();
@@ -532,7 +542,6 @@ searchResults.addEventListener('touchend', e => {
   const id = item.id.replace('si-', '');
   const country = COUNTRIES.find(x => x.id === id);
   if (country) {
-    // Dismiss keyboard and close dropdown before flying
     _suppressReopen = true;
     searchInput.blur();
     searchDropdown.classList.remove('open');
@@ -591,16 +600,40 @@ function toggleMobileMenu() {
   menu.classList.toggle('open', !isOpen);
 }
 
-// Fix: body has overflow:hidden which blocks all scroll including fixed menus.
-// Intercept touchmove on the menu and manually scroll it.
+// Fix: body overflow:hidden blocks search results scrolling on mobile.
+// Manually scroll the results container on touchmove.
+(function() {
+  const results = document.getElementById('searchResults');
+  let _srStartY = 0;
+  let _srMoved = false;
+  results.addEventListener('touchstart', e => {
+    _srStartY = e.touches[0].clientY;
+    _srMoved = false;
+  }, {passive: true});
+  results.addEventListener('touchmove', e => {
+    const dy = _srStartY - e.touches[0].clientY;
+    if (Math.abs(dy) > 8) _srMoved = true;
+    const atTop = results.scrollTop === 0 && dy < 0;
+    const atBot = results.scrollTop + results.clientHeight >= results.scrollHeight && dy > 0;
+    if (!atTop && !atBot) {
+      results.scrollTop += dy;
+      _srStartY = e.touches[0].clientY;
+    }
+    e.preventDefault();
+    e.stopPropagation();
+  }, {passive: false});
+})();
 (function() {
   const menu = document.getElementById('mobileMenu');
   let _startY = 0;
+  let _menuMoved = false;
   menu.addEventListener('touchstart', e => {
     _startY = e.touches[0].clientY;
+    _menuMoved = false;
   }, {passive: true});
   menu.addEventListener('touchmove', e => {
     const dy = _startY - e.touches[0].clientY;
+    if (Math.abs(dy) > 8) _menuMoved = true;
     const atTop = menu.scrollTop === 0 && dy < 0;
     const atBot = menu.scrollTop + menu.clientHeight >= menu.scrollHeight && dy > 0;
     if (!atTop && !atBot) {
@@ -609,6 +642,10 @@ function toggleMobileMenu() {
       _startY = e.touches[0].clientY;
     }
     e.preventDefault();
+  }, {passive: false});
+  // Block link clicks if finger moved (swipe, not tap)
+  menu.addEventListener('touchend', e => {
+    if (_menuMoved) { e.preventDefault(); e.stopPropagation(); }
   }, {passive: false});
 })();
 

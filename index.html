@@ -138,51 +138,90 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .mobile-menu .mob-cta{background:var(--red);color:#fff!important;font-weight:600!important;text-align:center;margin-top:6px;box-shadow:0 2px 12px var(--red-glow)}
 
 /* ── MARQUEE STRIP ── */
-.visa-marquee-wrap{position:absolute;bottom:0;left:0;right:0;z-index:25;background:rgba(7,17,31,0.88);backdrop-filter:blur(14px);border-top:1px solid rgba(255,255,255,0.12);height:54px;display:flex;align-items:center;overflow:hidden}
-.visa-marquee-inner{display:flex;align-items:center;width:max-content;animation:marqueeScroll 40s linear infinite;will-change:transform}
+.visa-marquee-wrap{position:absolute;bottom:0;left:0;right:0;z-index:25;background:rgba(5,13,25,0.92);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.08);height:80px;display:flex;align-items:center;overflow:hidden}
+.visa-marquee-inner{display:flex;align-items:center;width:max-content;animation:marqueeScroll 45s linear infinite;will-change:transform}
 .visa-marquee-inner:hover{animation-play-state:paused}
-.visa-marquee-track{display:flex;align-items:center}
-.vm-chip{display:inline-flex;align-items:center;gap:10px;padding:0 22px;cursor:pointer;border-right:1px solid rgba(255,255,255,0.08);transition:background .2s;white-space:nowrap;font-family:'Outfit',sans-serif;height:54px;box-sizing:border-box}
-.vm-chip:hover{background:rgba(200,16,46,0.28)}
-.vm-chip.active{background:rgba(200,16,46,0.42);border-right-color:rgba(200,16,46,0.3)}
-.vm-flag-img{width:36px;height:24px;object-fit:cover;border-radius:3px;border:1px solid rgba(255,255,255,0.2);flex-shrink:0;display:block}
-.vm-name{font-size:12.5px;font-weight:600;color:rgba(255,255,255,0.92);letter-spacing:.2px;flex-shrink:0}
+.visa-marquee-track{display:flex;align-items:center;gap:0}
+.vm-chip{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0 24px;cursor:pointer;border-right:1px solid rgba(255,255,255,0.06);transition:all .22s ease;white-space:nowrap;font-family:'Outfit',sans-serif;height:80px;box-sizing:border-box;position:relative}
+.vm-chip::before{content:'';position:absolute;inset:0;background:var(--red);opacity:0;transition:opacity .22s}
+.vm-chip:hover::before{opacity:0.18}
+.vm-chip.active::before{opacity:0.32}
+.vm-chip:hover .vm-flag-img{transform:scale(1.08);box-shadow:0 4px 16px rgba(0,0,0,0.5)}
+.vm-flag-img{width:44px;height:30px;object-fit:cover;border-radius:4px;border:1px solid rgba(255,255,255,0.15);flex-shrink:0;display:block;position:relative;z-index:1;transition:all .22s ease;box-shadow:0 2px 8px rgba(0,0,0,0.35)}
+.vm-name{font-size:10.5px;font-weight:600;color:rgba(255,255,255,0.75);letter-spacing:.6px;text-transform:uppercase;position:relative;z-index:1;transition:color .22s}
+.vm-chip:hover .vm-name{color:rgba(255,255,255,1)}
+.vm-chip.active .vm-name{color:#fff}
 @keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* ── RESPONSIVE ── */
 @media (max-width:768px){
-  nav{padding:0 16px}
+  /* Nav */
+  nav{padding:0 16px;height:56px}
   .nav-links{display:none}
   .nav-hamburger{display:flex}
-  .mobile-menu{display:flex}
+  .mobile-menu{display:flex;top:56px}
+  .page{padding-top:56px}
 
-  #page-home{padding-top:62px}
-  #page-home>div{padding:28px 20px}
-  #page-home h1{font-size:clamp(28px,8vw,52px)}
-  #page-home>div>p{font-size:15px}
-  .home-stats{gap:20px;flex-wrap:wrap;justify-content:center}
-  .stat-num{font-size:24px}
-  .home-btns{flex-direction:column;align-items:center}
-  .btn-primary,.btn-ghost{width:100%;max-width:280px;text-align:center}
+  /* Home page */
+  #page-home{overflow-y:auto}
+  #page-home>div{padding:32px 20px 40px;min-height:calc(100vh - 56px)}
+  #page-home h1{font-size:clamp(26px,7vw,44px)}
+  #page-home>div>p{font-size:14px;margin-top:14px}
+  .home-badge{font-size:10px;padding:5px 14px;margin-bottom:18px}
+  .home-stats{gap:0;flex-wrap:wrap;justify-content:center;margin-top:36px;padding-top:24px}
+  .home-stats>div{flex:0 0 50%;padding:14px 0;text-align:center}
+  .home-stats>div:nth-child(1),.home-stats>div:nth-child(2){border-bottom:1px solid var(--border)}
+  .home-stats>div:nth-child(1),.home-stats>div:nth-child(3){border-right:1px solid var(--border)}
+  .stat-num{font-size:26px}
+  .stat-lbl{font-size:11px}
+  .home-btns{flex-direction:column;align-items:stretch;gap:10px;margin-top:28px}
+  .btn-primary,.btn-ghost{width:100%;text-align:center;padding:14px 20px}
 
-  .search-panel{left:12px;right:12px;width:auto;top:12px}
+  /* Globe / Visitor page */
+  .search-panel{left:10px;right:10px;width:auto;top:10px}
+  .search-input{font-size:13px;padding:11px 38px 11px 36px}
+  .search-dropdown.open{max-height:260px}
+  .search-results{max-height:260px}
 
-  .visa-marquee-wrap{height:48px;z-index:35}
-  .vm-chip{height:48px;padding:0 16px;gap:8px}
-  .vm-flag-img{width:30px;height:20px}
-  .vm-name{font-size:11.5px}
+  /* Marquee */
+  .visa-marquee-wrap{height:68px;z-index:35}
+  .vm-chip{height:68px;padding:0 18px;gap:5px}
+  .vm-flag-img{width:36px;height:24px;border-radius:3px}
+  .vm-name{font-size:9.5px;letter-spacing:.5px}
 
-  .country-card{bottom:58px;right:12px;left:12px;min-width:0;max-width:none}
-  .globe-coords{left:12px;bottom:60px;font-size:10px}
+  /* Country card — sits above marquee */
+  .country-card{bottom:76px;right:10px;left:10px;min-width:0;max-width:none;padding:18px 18px 16px;border-radius:16px}
+  .card-flag-big{font-size:36px}
+  .card-country-name{font-size:17px}
+  .card-apply-btn{padding:11px}
 
-  .minimal-page h2{font-size:36px}
-  .minimal-page>div>p{font-size:14px;padding:0 20px}
+  /* Coords */
+  .globe-coords{left:10px;bottom:78px;font-size:10px;padding:4px 10px}
+
+  /* Other pages */
+  .minimal-page h2{font-size:34px}
+  .minimal-page>div>p{font-size:14px;padding:0 24px}
+  .page-badge{font-size:9.5px}
 }
+
 @media (max-width:480px){
+  nav{height:52px}
+  .mobile-menu{top:52px}
+  .page{padding-top:52px}
+
+  .search-panel{left:8px;right:8px;top:8px}
+
+  .visa-marquee-wrap{height:62px}
+  .vm-chip{height:62px;padding:0 14px;gap:4px}
+  .vm-flag-img{width:32px;height:21px}
+  .vm-name{font-size:9px}
+
+  .country-card{bottom:70px;left:8px;right:8px;padding:14px 14px 12px}
   .card-meta{flex-direction:column;gap:6px}
-  .vm-chip{padding:0 12px;gap:7px}
-  .vm-flag-img{width:26px;height:18px}
-  .vm-name{font-size:11px}
+  .card-flag-big{font-size:30px}
+  .card-country-name{font-size:15px}
+  .globe-coords{bottom:72px;left:8px}
+  .minimal-page h2{font-size:28px}
 }
 
 .loader{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;z-index:999;transition:opacity .8s}
@@ -271,7 +310,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
     <div class="country-card" id="countryCard">
       <button class="card-close" onclick="closeCard()">✕</button>
       <div class="card-top">
-        <div class="card-flag-big" id="cardFlag">🇺🇸</div>
+        <img class="card-flag-big" id="cardFlag" src="" alt="" style="width:56px;height:38px;object-fit:cover;border-radius:6px;border:1px solid rgba(0,0,0,0.1);box-shadow:0 2px 8px rgba(0,0,0,0.12);flex-shrink:0">
         <div><div class="card-country-name" id="cardName">United States</div><div class="card-visa-type" id="cardType"></div></div>
       </div>
       <div class="card-divider"></div>
@@ -391,9 +430,10 @@ allEntries.sort((a,b) => a.name.localeCompare(b.name));
 function renderResults(query) {
   const q = query.trim().toLowerCase();
   if (!q) {
-    // Show all available countries when no query
+    // Show all available countries alphabetically when no query
+    const sorted = [...COUNTRIES].sort((a,b) => a.name.localeCompare(b.name));
     let html = `<div class="search-section-label">Available Visas</div>`;
-    COUNTRIES.forEach(c => {
+    sorted.forEach(c => {
       html += `<div class="search-item available" id="si-${c.id}" onclick="flyTo(COUNTRIES.find(x=>x.id==='${c.id}'))">
         <span class="si-flag">${c.flag}</span>
         <div class="si-info"><div class="si-name">${c.name}</div><div class="si-sub">${c.type}</div></div>
@@ -405,8 +445,8 @@ function renderResults(query) {
   }
 
   const matches = allEntries.filter(c => c.name.toLowerCase().includes(q));
-  const avail   = matches.filter(c => c.available);
-  const unavail = matches.filter(c => !c.available);
+  const avail   = matches.filter(c => c.available).sort((a,b) => a.name.localeCompare(b.name));
+  const unavail = matches.filter(c => !c.available).sort((a,b) => a.name.localeCompare(b.name));
 
   if (!matches.length) {
     searchResults.innerHTML = `<div class="search-empty"><span>🌐</span>No country found for "<b>${query}</b>"</div>`;
@@ -503,13 +543,6 @@ function goPageMob(name) {
   document.getElementById('navHamburger').classList.remove('open');
   document.getElementById('mobileMenu').classList.remove('open');
 }
-
-document.addEventListener('click', e => {
-  if (!e.target.closest('#navHamburger') && !e.target.closest('#mobileMenu')) {
-    document.getElementById('navHamburger').classList.remove('open');
-    document.getElementById('mobileMenu').classList.remove('open');
-  }
-});
 
 // ── MARQUEE STRIP ────────────────────────────────────────────
 // ISO3 → ISO2 map for flagcdn.com
@@ -796,7 +829,10 @@ function flyTo(c) {
 }
 
 function showCard(c) {
-  document.getElementById('cardFlag').textContent = c.flag;
+  const code = (ISO2[c.iso] || c.iso.toLowerCase().slice(0,2));
+  const flagEl = document.getElementById('cardFlag');
+  flagEl.src = `https://flagcdn.com/w80/${code}.png`;
+  flagEl.alt = c.name + ' flag';
   document.getElementById('cardName').textContent = c.name;
   document.getElementById('cardType').textContent = c.type;
   document.getElementById('cardProc').textContent = c.proc;

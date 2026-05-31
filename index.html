@@ -567,50 +567,65 @@ function toggleMobileMenu() {
 }
 
 // ── SMOOTH MOMENTUM SCROLL HELPER ─────────────────────────────────────────────
-// Gives native-feel inertia scrolling to any element inside body{overflow:hidden}
+// Native-feel inertia scroll for elements inside body{overflow:hidden}
 function makeMomentumScroll(el, onTap) {
-  let startY = 0, lastY = 0, velY = 0;
+  const FRICTION     = 0.978;   // high = long glide (0.97–0.99 feels native)
+  const MIN_VEL      = 0.3;     // stop threshold px/frame
+  const TAP_MAX_MOVE = 8;       // px — above this = scroll, below = tap
+  const VEL_HISTORY  = 5;       // frames to average for launch velocity
+  const MAX_VEL      = 40;      // cap px/frame so fast flings don't teleport
+
+  let startY = 0, lastY = 0;
   let didScroll = false, rafId = null;
-  const FRICTION = 0.92, MIN_VEL = 0.5, TAP_THRESHOLD = 6;
-  let lastTime = 0;
+  let velY = 0;
+  // Rolling history for smooth velocity estimate
+  const hist = [];
 
-  function cancelMomentum() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
+  function stop() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    velY = 0;
+  }
 
-  function momentum() {
+  function coast() {
     velY *= FRICTION;
-    if (Math.abs(velY) < MIN_VEL) { velY = 0; return; }
+    if (Math.abs(velY) < MIN_VEL) { stop(); return; }
     el.scrollTop += velY;
-    rafId = requestAnimationFrame(momentum);
+    rafId = requestAnimationFrame(coast);
   }
 
   el.addEventListener('touchstart', e => {
-    cancelMomentum();
+    stop();
     startY = lastY = e.touches[0].clientY;
-    velY = 0; didScroll = false;
-    lastTime = Date.now();
+    didScroll = false;
+    hist.length = 0;
   }, {passive: true});
 
   el.addEventListener('touchmove', e => {
-    const y = e.touches[0].clientY;
-    const now = Date.now();
-    const dt = Math.max(now - lastTime, 1);
-    const dy = lastY - y;
-    if (Math.abs(y - startY) > TAP_THRESHOLD) didScroll = true;
+    const y   = e.touches[0].clientY;
+    const dy  = lastY - y;
+    if (Math.abs(startY - y) > TAP_MAX_MOVE) didScroll = true;
+
     if (didScroll) {
-      velY = dy / dt * 16;
       el.scrollTop += dy;
+      // Keep a rolling window of recent deltas for velocity
+      hist.push(dy);
+      if (hist.length > VEL_HISTORY) hist.shift();
       e.preventDefault();
       e.stopPropagation();
     }
     lastY = y;
-    lastTime = now;
   }, {passive: false});
 
   el.addEventListener('touchend', e => {
     if (didScroll) {
       e.preventDefault();
       e.stopPropagation();
-      if (Math.abs(velY) > MIN_VEL) rafId = requestAnimationFrame(momentum);
+      // Launch velocity = average of recent deltas, capped
+      if (hist.length) {
+        const avg = hist.reduce((a, b) => a + b, 0) / hist.length;
+        velY = Math.max(-MAX_VEL, Math.min(MAX_VEL, avg));
+        if (Math.abs(velY) > MIN_VEL) rafId = requestAnimationFrame(coast);
+      }
       return;
     }
     if (onTap) onTap(e);

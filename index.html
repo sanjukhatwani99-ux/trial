@@ -481,6 +481,7 @@ function renderResults(query) {
 
 // ── SEARCH EVENTS (desktop + mobile) ─────────────────────────
 let _searchBlurTimer = null;
+let _suppressReopen = false;
 
 searchInput.addEventListener('input', () => {
   const q = searchInput.value;
@@ -490,6 +491,7 @@ searchInput.addEventListener('input', () => {
 });
 
 searchInput.addEventListener('focus', () => {
+  if (_suppressReopen) { _suppressReopen = false; return; }
   clearTimeout(_searchBlurTimer);
   renderResults(searchInput.value);
   searchDropdown.classList.add('open');
@@ -529,7 +531,13 @@ searchResults.addEventListener('touchend', e => {
   clearTimeout(_searchBlurTimer);
   const id = item.id.replace('si-', '');
   const country = COUNTRIES.find(x => x.id === id);
-  if (country) flyTo(country);
+  if (country) {
+    // Dismiss keyboard and close dropdown before flying
+    _suppressReopen = true;
+    searchInput.blur();
+    searchDropdown.classList.remove('open');
+    flyTo(country);
+  }
 }, {passive: false});
 
 // Stop search panel touches from bubbling to Cesium/nav
@@ -782,15 +790,26 @@ function buildEntityCache() {
 }
 
 // Reusable constants — avoids creating new objects on every click
-const MAT_HIGHLIGHT  = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString('rgba(200,16,46,0.22)'));
 const MAT_CLEAR      = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString('rgba(0,0,0,0)'));
-const COL_OUTLINE_HI = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString('rgba(200,16,46,1.0)'));
 const COL_OUTLINE_DM = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'));
-const WIDTH_HI       = new Cesium.ConstantProperty(3);
+const WIDTH_HI       = new Cesium.ConstantProperty(4);
 const WIDTH_DM       = new Cesium.ConstantProperty(1);
 const OUTLINE_ON     = new Cesium.ConstantProperty(true);
 const FILL_ON        = new Cesium.ConstantProperty(true);
 const FILL_OFF       = new Cesium.ConstantProperty(false);
+
+// Glowing pulsing outline for selected country
+let _glowTime = 0;
+const COL_OUTLINE_HI = new Cesium.CallbackProperty(() => {
+  _glowTime += 0.04;
+  const pulse = 0.55 + 0.45 * Math.sin(_glowTime * 2.5);
+  return Cesium.Color.fromCssColorString(`rgba(255,255,255,${pulse.toFixed(2)})`);
+}, false);
+
+// Subtle fill tint — nearly transparent so only border glows
+const MAT_HIGHLIGHT = new Cesium.ColorMaterialProperty(
+  Cesium.Color.fromCssColorString('rgba(255,255,255,0.06)')
+);
 
 let highlightedIso = null;
 

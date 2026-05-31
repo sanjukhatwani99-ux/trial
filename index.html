@@ -504,7 +504,7 @@ searchInput.addEventListener('blur', () => {
   }, 200);
 });
 
-// Clicking a result: cancel the blur-close and fly
+// Clicking a result: desktop only
 searchResults.addEventListener('mousedown', e => {
   const item = e.target.closest('.search-item.available');
   if (!item) return;
@@ -514,40 +514,6 @@ searchResults.addEventListener('mousedown', e => {
   const country = COUNTRIES.find(x => x.id === id);
   if (country) flyTo(country);
 });
-
-// Tapping a result on mobile
-let _touchStartY = 0;
-let _touchMoved = false;
-
-searchResults.addEventListener('touchstart', e => {
-  _touchStartY = e.touches[0].clientY;
-  _touchMoved = false;
-  const item = e.target.closest('.search-item.available');
-  if (!item) return;
-  clearTimeout(_searchBlurTimer);
-  e.stopPropagation();
-}, {passive: true});
-
-searchResults.addEventListener('touchmove', e => {
-  if (Math.abs(e.touches[0].clientY - _touchStartY) > 8) _touchMoved = true;
-}, {passive: true});
-
-searchResults.addEventListener('touchend', e => {
-  if (_touchMoved || _srMoved) return; // swipe — don't select
-  const item = e.target.closest('.search-item.available');
-  if (!item) return;
-  e.preventDefault();
-  e.stopPropagation();
-  clearTimeout(_searchBlurTimer);
-  const id = item.id.replace('si-', '');
-  const country = COUNTRIES.find(x => x.id === id);
-  if (country) {
-    _suppressReopen = true;
-    searchInput.blur();
-    searchDropdown.classList.remove('open');
-    flyTo(country);
-  }
-}, {passive: false});
 
 // Stop search panel touches from bubbling to Cesium/nav
 document.querySelector('.search-panel').addEventListener('touchstart', e => {
@@ -600,27 +566,47 @@ function toggleMobileMenu() {
   menu.classList.toggle('open', !isOpen);
 }
 
-// Fix: body overflow:hidden blocks search results scrolling on mobile.
-// Manually scroll the results container on touchmove.
+// ── SEARCH RESULTS: unified touch handler (scroll + tap, no accidental select on swipe) ──
 (function() {
   const results = document.getElementById('searchResults');
-  let _srStartY = 0;
-  let _srMoved = false;
+  let _startY = 0;
+  let _startScrollTop = 0;
+  let _didScroll = false;
+
   results.addEventListener('touchstart', e => {
-    _srStartY = e.touches[0].clientY;
-    _srMoved = false;
+    _startY = e.touches[0].clientY;
+    _startScrollTop = results.scrollTop;
+    _didScroll = false;
+    clearTimeout(_searchBlurTimer);
   }, {passive: true});
+
   results.addEventListener('touchmove', e => {
-    const dy = _srStartY - e.touches[0].clientY;
-    if (Math.abs(dy) > 8) _srMoved = true;
-    const atTop = results.scrollTop === 0 && dy < 0;
-    const atBot = results.scrollTop + results.clientHeight >= results.scrollHeight && dy > 0;
-    if (!atTop && !atBot) {
-      results.scrollTop += dy;
-      _srStartY = e.touches[0].clientY;
-    }
+    const dy = _startY - e.touches[0].clientY;
+    if (Math.abs(dy) > 6) _didScroll = true;
+    results.scrollTop = _startScrollTop + dy;
     e.preventDefault();
     e.stopPropagation();
+  }, {passive: false});
+
+  results.addEventListener('touchend', e => {
+    if (_didScroll) {
+      e.preventDefault();
+      e.stopPropagation();
+      return; // was a swipe — do nothing
+    }
+    // Was a tap — select the country
+    const item = e.target.closest('.search-item.available');
+    if (!item) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const id = item.id.replace('si-', '');
+    const country = COUNTRIES.find(x => x.id === id);
+    if (country) {
+      _suppressReopen = true;
+      searchInput.blur();
+      searchDropdown.classList.remove('open');
+      flyTo(country);
+    }
   }, {passive: false});
 })();
 (function() {

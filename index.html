@@ -244,6 +244,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .minimal-page h2 span{color:var(--red)}
 .minimal-page>div>p{color:var(--text-2);font-size:16px;max-width:420px;margin-top:12px;line-height:1.7}
 .page-badge{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;color:var(--red);border:1px solid rgba(200,16,46,0.25);background:var(--red-light);padding:6px 16px;border-radius:20px;margin-bottom:20px;display:inline-block}
+
+/* ── PACKAGES PAGE ── */
+.pkg-chip{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;cursor:pointer;transition:all .2s;letter-spacing:.3px}
+.pkg-chip:hover{background:rgba(200,16,46,0.25);border-color:var(--red);color:#fff}
+.pkg-card{flex-shrink:0;width:220px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;overflow:hidden;cursor:pointer;transition:all .25s;position:relative}
+.pkg-card:hover{transform:translateY(-4px);border-color:rgba(200,16,46,0.5);box-shadow:0 12px 40px rgba(200,16,46,0.2)}
+.pkg-card-img{width:100%;height:110px;object-fit:cover;display:block;background:linear-gradient(135deg,#1a2a3a,#0d1b2a)}
+.pkg-card-body{padding:14px}
+.pkg-card-dest{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;margin-bottom:4px}
+.pkg-card-days{font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:10px}
+.pkg-card-price{font-size:18px;font-weight:700;color:var(--red);font-family:'Outfit',sans-serif}
+.pkg-card-price span{font-size:11px;font-weight:500;color:rgba(255,255,255,0.4)}
+.pkg-card-tag{position:absolute;top:10px;right:10px;background:var(--red);color:#fff;font-size:9px;font-weight:700;letter-spacing:.5px;padding:3px 8px;border-radius:10px;text-transform:uppercase}
+
 </style>
 </head>
 <body>
@@ -261,7 +275,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
     <li><a onclick="goPage('visitor',this)">Visitor Visa</a></li>
     <li><a onclick="goPage('student',this)">Student Visa</a></li>
     <li><a onclick="goPage('work',this)">Work Visa</a></li>
-    <li><a onclick="goPage('tickets',this)">Tickets & Packages</a></li>
+    <li><a onclick="goPage('tickets',this)">Packages</a></li>
     <li><a onclick="goPage('about',this)">About</a></li>
     <li><a class="nav-cta" onclick="goPage('contact',this)">Contact Us</a></li>
   </ul>
@@ -274,7 +288,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
   <a id="mob-visitor" onclick="goPageMob('visitor')">Visitor Visa</a>
   <a id="mob-student" onclick="goPageMob('student')">Student Visa</a>
   <a id="mob-work" onclick="goPageMob('work')">Work Visa</a>
-  <a id="mob-tickets" onclick="goPageMob('tickets')">Tickets &amp; Packages</a>
+  <a id="mob-tickets" onclick="goPageMob('tickets')">Packages</a>
   <a id="mob-about" onclick="goPageMob('about')">About</a>
   <a class="mob-cta" id="mob-contact" onclick="goPageMob('contact')">Contact Us</a>
 </div>
@@ -340,7 +354,65 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 
 <div class="page minimal-page" id="page-student"><div><div class="page-badge">Student Visa</div><h2>Study <span>Abroad</span></h2><p>Your gateway to world-class education. We handle the paperwork — you focus on your future.</p></div></div>
 <div class="page minimal-page" id="page-work"><div><div class="page-badge">Work Visa</div><h2>Work <span>Global</span></h2><p>Employment and skilled worker visas for professionals ready to go worldwide.</p></div></div>
-<div class="page minimal-page" id="page-tickets"><div><div class="page-badge">Tickets & Packages</div><h2>Travel <span>Packages</span></h2><p>All-inclusive visa + flight + hotel bundles for the modern Indian traveler.</p></div></div>
+<div class="page" id="page-tickets" style="flex-direction:column;overflow:hidden;background:#07111f;position:relative">
+
+  <!-- Top bar -->
+  <div style="position:absolute;top:0;left:0;right:0;z-index:40;padding:18px 28px 0;display:flex;align-items:center;justify-content:space-between;pointer-events:none">
+    <div>
+      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:var(--red);margin-bottom:5px">&#10022; Packages</div>
+      <div style="font-family:'Playfair Display',serif;font-size:clamp(18px,2.5vw,28px);font-weight:700;color:#fff;line-height:1.15">Flight <em style="color:var(--red);font-style:italic">Routes</em> &amp; Packages</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:6px 16px">
+      <div style="width:7px;height:7px;background:#22c55e;border-radius:50%;animation:pls 2s ease-in-out infinite"></div>
+      <span style="font-size:11px;color:rgba(255,255,255,0.75);font-weight:600;letter-spacing:.5px">Live Routes</span>
+    </div>
+  </div>
+
+  <!-- Search bar -->
+  <div style="position:absolute;top:80px;left:50%;transform:translateX(-50%);z-index:50;width:min(440px,90vw)">
+    <div style="position:relative;display:flex;align-items:center">
+      <span style="position:absolute;left:16px;font-size:16px;z-index:1">&#9992;&#65039;</span>
+      <input id="pkgSearch" type="text" placeholder="Search destination... (e.g. Japan, Paris)" autocomplete="off" spellcheck="false"
+        style="width:100%;padding:14px 100px 14px 46px;font-size:14px;font-family:'Outfit',sans-serif;font-weight:500;color:var(--text);background:rgba(255,255,255,0.97);border:2px solid transparent;border-radius:50px;outline:none;box-shadow:0 8px 40px rgba(0,0,0,0.4);transition:border-color .25s"
+        onkeydown="if(event.key==='Enter')triggerFlightSearch()">
+      <button onclick="triggerFlightSearch()" style="position:absolute;right:6px;background:var(--red);color:#fff;border:none;border-radius:40px;padding:8px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:background .2s" onmouseover="this.style.background='var(--red-dark)'" onmouseout="this.style.background='var(--red)'">Go</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;justify-content:center;flex-wrap:wrap">
+      <button class="pkg-chip" onclick="quickSearch('Japan')">&#127481;&#127477; Japan</button>
+      <button class="pkg-chip" onclick="quickSearch('France')">&#127467;&#127479; Paris</button>
+      <button class="pkg-chip" onclick="quickSearch('UAE')">&#127462;&#127466; Dubai</button>
+      <button class="pkg-chip" onclick="quickSearch('Singapore')">&#127480;&#127468; Singapore</button>
+      <button class="pkg-chip" onclick="quickSearch('Thailand')">&#127481;&#127469; Bangkok</button>
+      <button class="pkg-chip" onclick="quickSearch('United States')">&#127482;&#127480; New York</button>
+    </div>
+  </div>
+
+  <!-- Map canvas -->
+  <canvas id="flightCanvas" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
+
+  <!-- Status strip -->
+  <div id="flightStatus" style="position:absolute;top:178px;left:50%;transform:translateX(-50%);z-index:45;opacity:0;transition:opacity .4s;white-space:nowrap">
+    <div style="background:rgba(0,0,0,0.7);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:8px 20px;display:flex;align-items:center;gap:10px">
+      <span id="flightStatusIcon" style="font-size:18px">&#9992;&#65039;</span>
+      <span id="flightStatusText" style="font-size:13px;color:#fff;font-weight:500"></span>
+    </div>
+  </div>
+
+  <!-- Packages panel -->
+  <div id="pkgPanel" style="position:absolute;bottom:0;left:0;right:0;z-index:50;transform:translateY(100%);transition:transform .6s cubic-bezier(0.34,1.56,0.64,1);max-height:52vh;overflow-y:auto">
+    <div style="background:rgba(7,17,31,0.97);backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.1);padding:20px 24px 28px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div>
+          <div id="pkgPanelTitle" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff"></div>
+          <div id="pkgPanelSub" style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px"></div>
+        </div>
+        <button onclick="closePkgPanel()" style="background:rgba(255,255,255,0.08);border:none;color:rgba(255,255,255,0.6);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0">&#10005;</button>
+      </div>
+      <div id="pkgCards" style="display:flex;gap:14px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch"></div>
+    </div>
+  </div>
+
+</div>
 <div class="page minimal-page" id="page-about"><div><div class="page-badge">About Visavera</div><h2>Our <span>Story</span></h2><p>Since 2016, helping Indian families unlock the world — one visa at a time.</p></div></div>
 <div class="page minimal-page" id="page-contact"><div><div class="page-badge">Get In Touch</div><h2>Contact <span>Us</span></h2><p>Reach our experts in Ahmedabad, Mumbai, or Delhi — or just WhatsApp us anytime.</p></div></div>
 
@@ -1023,6 +1095,357 @@ window.addEventListener('load', () => {
     setTimeout(() => l.remove(), 800);
   }, 1800);
 });
+
+// ── PACKAGES / FLIGHT MAP ──────────────────────────────────────────────────
+(function(){
+  const INDIA = { lat: 20.59, lng: 78.96, name: 'India' };
+
+  const PACKAGES = {
+    'Japan':       { dest:{lat:35.68,lng:139.69}, city:'Tokyo', days:'6N/7D', price:'₹85,000', tag:'Popular', img:'https://images.unsplash.com/photo-1492571350019-22de08371fd3?w=400&q=80', sub:'Visa + Flight + Hotel included' },
+    'France':      { dest:{lat:48.86,lng:2.35},   city:'Paris', days:'7N/8D', price:'₹1,10,000', tag:'Trending', img:'https://images.unsplash.com/photo-1431274172761-fcdab704a100?w=400&q=80', sub:'Visa + Flight + Hotel included' },
+    'UAE':         { dest:{lat:25.2,lng:55.27},   city:'Dubai', days:'4N/5D', price:'₹45,000', tag:'Best Value', img:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=80', sub:'Visa + Flight + Hotel included' },
+    'Singapore':   { dest:{lat:1.35,lng:103.82},  city:'Singapore', days:'4N/5D', price:'₹55,000', tag:'Popular', img:'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400&q=80', sub:'Visa + Flight + Hotel included' },
+    'Thailand':    { dest:{lat:13.76,lng:100.50},  city:'Bangkok', days:'5N/6D', price:'₹38,000', tag:'Budget Pick', img:'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&q=80', sub:'Visa + Flight + Hotel included' },
+    'United States':{ dest:{lat:40.71,lng:-74.01}, city:'New York', days:'9N/10D', price:'₹1,75,000', tag:'Luxury', img:'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=400&q=80', sub:'Visa + Flight + Hotel included' },
+    'Australia':   { dest:{lat:-33.87,lng:151.21}, city:'Sydney', days:'8N/9D', price:'₹1,40,000', tag:'Trending', img:'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=400&q=80', sub:'Visa + Flight + Hotel included' },
+    'United Kingdom':{ dest:{lat:51.51,lng:-0.13}, city:'London', days:'7N/8D', price:'₹1,25,000', tag:'Premium', img:'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&q=80', sub:'Visa + Flight + Hotel included' },
+    'Germany':     { dest:{lat:52.52,lng:13.40},  city:'Berlin', days:'6N/7D', price:'₹95,000', tag:'Popular', img:'https://images.unsplash.com/photo-1587330979470-3595ac045ab0?w=400&q=80', sub:'Visa + Flight + Hotel included' },
+    'Italy':       { dest:{lat:41.9,lng:12.5},    city:'Rome', days:'6N/7D', price:'₹90,000', tag:'Popular', img:'https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=400&q=80', sub:'Visa + Flight + Hotel included' },
+    'New Zealand': { dest:{lat:-36.86,lng:174.77},city:'Auckland', days:'9N/10D', price:'₹1,55,000', tag:'Adventure', img:'https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=400&q=80', sub:'Visa + Flight + Hotel included' },
+    'Switzerland': { dest:{lat:46.95,lng:7.45},   city:'Bern', days:'7N/8D', price:'₹1,30,000', tag:'Luxury', img:'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80', sub:'Visa + Flight + Hotel included' },
+  };
+
+  // Related packages for popular searches
+  const RELATED = {
+    'Japan':        ['South Korea','Thailand','Singapore'],
+    'France':       ['Italy','Switzerland','Germany'],
+    'UAE':          ['Thailand','Singapore','Australia'],
+    'Singapore':    ['Thailand','Japan','Australia'],
+    'Thailand':     ['Singapore','UAE','Japan'],
+    'United States':['United Kingdom','Canada','Australia'],
+    'Australia':    ['New Zealand','Japan','Singapore'],
+    'United Kingdom':['France','Germany','Italy'],
+    'Germany':      ['France','Switzerland','Italy'],
+    'Italy':        ['France','Germany','Switzerland'],
+    'New Zealand':  ['Australia','Japan','Thailand'],
+    'Switzerland':  ['France','Germany','Italy'],
+  };
+
+  let canvas, ctx, W, H;
+  let animFrame, flightAnim = null;
+  let activeCountry = null;
+  let stars = [];
+
+  function toXY(lat, lng) {
+    const x = ((lng + 180) / 360) * W;
+    const y = ((90 - lat) / 180) * H;
+    return { x, y };
+  }
+
+  function initCanvas() {
+    canvas = document.getElementById('flightCanvas');
+    if (!canvas) return;
+    ctx = canvas.getContext('2d');
+    resize();
+    window.addEventListener('resize', resize);
+    makeStars();
+    loop();
+  }
+
+  function resize() {
+    if (!canvas) return;
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+    makeStars();
+  }
+
+  function makeStars() {
+    stars = [];
+    const n = Math.floor((W * H) / 6000);
+    for (let i = 0; i < n; i++) {
+      stars.push({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.2 + 0.2, a: Math.random() });
+    }
+  }
+
+  function drawBase() {
+    // Deep space background gradient
+    const bg = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H)*0.7);
+    bg.addColorStop(0, '#0d1f35');
+    bg.addColorStop(1, '#07111f');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Stars
+    stars.forEach(s => {
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(255,255,255,${s.a * 0.5})`;
+      ctx.fill();
+    });
+
+    // Grid lines (longitude / latitude faint)
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    for (let lng = -180; lng <= 180; lng += 30) {
+      const {x} = toXY(0, lng);
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let lat = -90; lat <= 90; lat += 30) {
+      const {y} = toXY(lat, 0);
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+
+    // India origin dot
+    const ind = toXY(INDIA.lat, INDIA.lng);
+    const pulseR = 8 + 4 * Math.sin(Date.now() / 500);
+    ctx.beginPath();
+    ctx.arc(ind.x, ind.y, pulseR, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(200,16,46,0.15)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(ind.x, ind.y, 5, 0, Math.PI*2);
+    ctx.fillStyle = '#C8102E';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(ind.x, ind.y, 3, 0, Math.PI*2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+
+    // India label
+    ctx.font = '600 11px Outfit, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.fillText('India ✈', ind.x + 9, ind.y - 8);
+  }
+
+  function drawCurvedRoute(p1, p2, progress, color, alpha) {
+    const mx = (p1.x + p2.x) / 2;
+    const my = (p1.y + p2.y) / 2 - Math.abs(p2.x - p1.x) * 0.22 - 40;
+
+    // Full ghost route
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.quadraticCurveTo(mx, my, p2.x, p2.y);
+    ctx.strokeStyle = `rgba(255,255,255,0.07)`;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 8]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Animated portion
+    if (progress > 0) {
+      // Sample points along the bezier
+      const pts = [];
+      const steps = 120;
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const bx = (1-t)*(1-t)*p1.x + 2*(1-t)*t*mx + t*t*p2.x;
+        const by = (1-t)*(1-t)*p1.y + 2*(1-t)*t*my + t*t*p2.y;
+        pts.push({x:bx, y:by});
+      }
+      const endIdx = Math.floor(progress * steps);
+
+      // Glow trail
+      for (let width of [6, 3, 1.5]) {
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        for (let i = 1; i <= endIdx; i++) ctx.lineTo(pts[i].x, pts[i].y);
+        ctx.strokeStyle = width === 1.5 ? `rgba(255,255,255,${alpha})` : `rgba(200,16,46,${alpha * (width===6?0.15:0.3)})`;
+        ctx.lineWidth = width;
+        ctx.stroke();
+      }
+
+      // Plane emoji at tip
+      if (endIdx > 0 && endIdx < pts.length) {
+        const tip = pts[endIdx];
+        const prev = pts[Math.max(0, endIdx-2)];
+        const angle = Math.atan2(tip.y - prev.y, tip.x - prev.x);
+        ctx.save();
+        ctx.translate(tip.x, tip.y);
+        ctx.rotate(angle);
+        ctx.font = '16px serif';
+        ctx.fillText('✈', -8, 6);
+        ctx.restore();
+      }
+    }
+  }
+
+  function drawDestinationPin(pt, label, arrived) {
+    if (!arrived) return;
+    // Glow
+    const g = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 20);
+    g.addColorStop(0, 'rgba(200,16,46,0.4)');
+    g.addColorStop(1, 'rgba(200,16,46,0)');
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 20, 0, Math.PI*2);
+    ctx.fillStyle = g;
+    ctx.fill();
+    // Dot
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 6, 0, Math.PI*2);
+    ctx.fillStyle = '#C8102E';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 3, 0, Math.PI*2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    // Label
+    ctx.font = 'bold 12px Playfair Display, serif';
+    ctx.fillStyle = '#fff';
+    ctx.fillText(label, pt.x + 10, pt.y - 8);
+  }
+
+  let _loopRunning = false;
+  function loop() {
+    if (_loopRunning) return;
+    _loopRunning = true;
+    function frame() {
+      if (!canvas || !document.getElementById('page-tickets') || !document.getElementById('page-tickets').classList.contains('active')) {
+        _loopRunning = false;
+        return;
+      }
+      drawBase();
+      if (flightAnim) {
+        const now = Date.now();
+        const elapsed = now - flightAnim.startTime;
+        const duration = flightAnim.duration;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = progress < 0.5 ? 2*progress*progress : 1-Math.pow(-2*progress+2,2)/2;
+
+        const src = toXY(INDIA.lat, INDIA.lng);
+        const dst = toXY(flightAnim.dest.lat, flightAnim.dest.lng);
+        drawCurvedRoute(src, dst, eased, '#C8102E', 0.9);
+        drawDestinationPin(dst, flightAnim.city, progress >= 1);
+
+        // Draw related routes (faint, staggered)
+        if (flightAnim.related) {
+          flightAnim.related.forEach((rel, i) => {
+            const delay = (i+1) * 0.15;
+            const rp = Math.max(0, (eased - delay) / (1 - delay));
+            const rPkg = PACKAGES[rel];
+            if (!rPkg) return;
+            const rDst = toXY(rPkg.dest.lat, rPkg.dest.lng);
+            drawCurvedRoute(src, rDst, rp * 0.8, '#888', 0.3);
+            drawDestinationPin(rDst, rPkg.city, rp >= 1);
+          });
+        }
+
+        if (progress >= 1 && !flightAnim.panelShown) {
+          flightAnim.panelShown = true;
+          showPkgPanel(flightAnim.countryKey, flightAnim.related);
+          // Update status
+          document.getElementById('flightStatusText').textContent = 'Arrived in ' + flightAnim.city + ' · Packages ready!';
+          document.getElementById('flightStatusIcon').textContent = '🎉';
+        }
+      }
+      animFrame = requestAnimationFrame(frame);
+    }
+    frame();
+  }
+
+  function showStatus(icon, text) {
+    const el = document.getElementById('flightStatus');
+    document.getElementById('flightStatusIcon').textContent = icon;
+    document.getElementById('flightStatusText').textContent = text;
+    el.style.opacity = '1';
+  }
+
+  function hideStatus() {
+    document.getElementById('flightStatus').style.opacity = '0';
+  }
+
+  window.triggerFlightSearch = function() {
+    const val = document.getElementById('pkgSearch').value.trim();
+    if (!val) return;
+    // Find best match
+    const key = Object.keys(PACKAGES).find(k => k.toLowerCase().includes(val.toLowerCase()) || val.toLowerCase().includes(k.toLowerCase().split(' ')[0]));
+    if (!key) {
+      showStatus('🔍', 'No packages found for "' + val + '"');
+      setTimeout(hideStatus, 2500);
+      return;
+    }
+    startFlight(key);
+  };
+
+  window.quickSearch = function(key) {
+    document.getElementById('pkgSearch').value = key;
+    startFlight(key);
+  };
+
+  function startFlight(key) {
+    closePkgPanel();
+    const pkg = PACKAGES[key];
+    if (!pkg) return;
+    activeCountry = key;
+    flightAnim = {
+      dest: pkg.dest,
+      city: pkg.city,
+      countryKey: key,
+      startTime: Date.now(),
+      duration: 2200,
+      panelShown: false,
+      related: RELATED[key] ? RELATED[key].slice(0, 2) : [],
+    };
+    if (!_loopRunning) loop();
+    showStatus('✈️', 'Departing from India to ' + pkg.city + '…');
+  }
+
+  function showPkgPanel(key, related) {
+    const pkg = PACKAGES[key];
+    if (!pkg) return;
+    document.getElementById('pkgPanelTitle').textContent = pkg.city + ' Package';
+    document.getElementById('pkgPanelSub').textContent = pkg.sub;
+    const container = document.getElementById('pkgCards');
+    const allKeys = [key, ...(related || [])];
+    container.innerHTML = allKeys.map(k => {
+      const p = PACKAGES[k];
+      if (!p) return '';
+      return `<div class="pkg-card">
+        <div class="pkg-card-tag">${p.tag}</div>
+        <div style="width:100%;height:110px;background:linear-gradient(135deg,#1a2a3a 0%,#0d1b2a 100%);position:relative;overflow:hidden">
+          <img src="${p.img}" alt="${p.city}" style="width:100%;height:100%;object-fit:cover;display:block;opacity:0.85" onerror="this.style.display='none'">
+        </div>
+        <div class="pkg-card-body">
+          <div class="pkg-card-dest">${p.city}</div>
+          <div class="pkg-card-days">${p.days} &bull; ${k}</div>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:10px">
+            <div class="pkg-card-price">${p.price} <span>/ person</span></div>
+            <button onclick="goPage('contact',document.querySelectorAll('.nav-links a')[6])" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif">Book</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    document.getElementById('pkgPanel').style.transform = 'translateY(0)';
+  }
+
+  window.closePkgPanel = function() {
+    document.getElementById('pkgPanel').style.transform = 'translateY(100%)';
+    flightAnim = null;
+    activeCountry = null;
+    hideStatus();
+    if (!_loopRunning) loop();
+  };
+
+  // Init when page becomes active
+  const origGoPage = window.goPage;
+  window.goPage = function(name, el) {
+    origGoPage(name, el);
+    if (name === 'tickets') {
+      setTimeout(() => {
+        if (!canvas) initCanvas();
+        else { resize(); if(!_loopRunning) loop(); }
+      }, 50);
+    }
+  };
+
+  // Also init if tickets page is already active on load (edge case)
+  window.addEventListener('load', () => {
+    const pg = document.getElementById('page-tickets');
+    if (pg && pg.classList.contains('active')) {
+      setTimeout(initCanvas, 100);
+    }
+  });
+})();
+
 </script>
 </body>
 </html>

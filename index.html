@@ -247,7 +247,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 </div>
 
 <nav>
-  <div class="nav-logo" onclick="goPage('home',null)">Visa<span>vera</span><div class="nav-dot"></div></div>
+  <div class="nav-logo" onclick="goPage('home',null)" ontouchstart="event.stopPropagation()">Visa<span>vera</span><div class="nav-dot"></div></div>
   <ul class="nav-links">
     <li><a class="active" onclick="goPage('home',this)">Home</a></li>
     <li><a onclick="goPage('visitor',this)">Visitor Visa</a></li>
@@ -477,6 +477,9 @@ function renderResults(query) {
   searchResults.innerHTML = html;
 }
 
+// ── SEARCH EVENTS (desktop + mobile) ─────────────────────────
+let _searchBlurTimer = null;
+
 searchInput.addEventListener('input', () => {
   const q = searchInput.value;
   searchClear.classList.toggle('visible', q.length > 0);
@@ -485,39 +488,52 @@ searchInput.addEventListener('input', () => {
 });
 
 searchInput.addEventListener('focus', () => {
+  clearTimeout(_searchBlurTimer);
   renderResults(searchInput.value);
   searchDropdown.classList.add('open');
-  // Disable Cesium canvas pointer events while search is open so it doesn't steal taps
-  const cc = document.getElementById('cesiumContainer');
-  if (cc) cc.style.pointerEvents = 'none';
 });
 
 searchInput.addEventListener('blur', () => {
-  // Re-enable Cesium after a short delay (so item tap fires first)
-  setTimeout(() => {
-    const cc = document.getElementById('cesiumContainer');
-    if (cc) cc.style.pointerEvents = 'auto';
-  }, 300);
+  // Delay close so a click/tap on a result fires first
+  _searchBlurTimer = setTimeout(() => {
+    searchDropdown.classList.remove('open');
+  }, 200);
 });
 
-// Prevent ALL touch/pointer events on the search panel from bubbling to Cesium or the nav
-const searchPanelEl = document.querySelector('.search-panel');
-['touchstart','touchend','touchmove','pointerdown','pointerup'].forEach(evt => {
-  searchPanelEl.addEventListener(evt, e => e.stopPropagation(), {passive: true});
+// Clicking a result: cancel the blur-close and fly
+searchResults.addEventListener('mousedown', e => {
+  const item = e.target.closest('.search-item.available');
+  if (!item) return;
+  e.preventDefault(); // prevents blur firing before click
+  clearTimeout(_searchBlurTimer);
+  const id = item.id.replace('si-', '');
+  const country = COUNTRIES.find(x => x.id === id);
+  if (country) flyTo(country);
 });
 
-// Touch-friendly tap handler for search result items
-function handleSearchResultTap(e) {
+// Tapping a result on mobile
+searchResults.addEventListener('touchstart', e => {
+  const item = e.target.closest('.search-item.available');
+  if (!item) return;
+  clearTimeout(_searchBlurTimer);
+  e.stopPropagation();
+}, {passive: true});
+
+searchResults.addEventListener('touchend', e => {
   const item = e.target.closest('.search-item.available');
   if (!item) return;
   e.preventDefault();
   e.stopPropagation();
+  clearTimeout(_searchBlurTimer);
   const id = item.id.replace('si-', '');
   const country = COUNTRIES.find(x => x.id === id);
   if (country) flyTo(country);
-}
-searchResults.addEventListener('mousedown', handleSearchResultTap);
-searchResults.addEventListener('touchend', handleSearchResultTap, {passive: false});
+}, {passive: false});
+
+// Stop search panel touches from bubbling to Cesium/nav (but DON'T block pointerdown on input)
+document.querySelector('.search-panel').addEventListener('touchstart', e => {
+  e.stopPropagation();
+}, {passive: true});
 
 document.addEventListener('click', e => {
   if (!e.target.closest('.search-panel')) {
@@ -528,13 +544,6 @@ document.addEventListener('click', e => {
     document.getElementById('mobileMenu').classList.remove('open');
   }
 });
-
-// Close dropdown on touch outside (mobile)
-document.addEventListener('touchend', e => {
-  if (!e.target.closest('.search-panel')) {
-    searchDropdown.classList.remove('open');
-  }
-}, {passive: true});
 
 function clearSearch() {
   searchInput.value = '';

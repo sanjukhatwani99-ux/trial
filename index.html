@@ -566,74 +566,74 @@ function toggleMobileMenu() {
   menu.classList.toggle('open', !isOpen);
 }
 
-// ── SEARCH RESULTS: unified touch handler (scroll + tap, no accidental select on swipe) ──
-(function() {
-  const results = document.getElementById('searchResults');
-  let _startY = 0;
-  let _startScrollTop = 0;
-  let _didScroll = false;
+// ── SMOOTH MOMENTUM SCROLL HELPER ─────────────────────────────────────────────
+// Gives native-feel inertia scrolling to any element inside body{overflow:hidden}
+function makeMomentumScroll(el, onTap) {
+  let startY = 0, lastY = 0, velY = 0;
+  let didScroll = false, rafId = null;
+  const FRICTION = 0.92, MIN_VEL = 0.5, TAP_THRESHOLD = 6;
+  let lastTime = 0;
 
-  results.addEventListener('touchstart', e => {
-    _startY = e.touches[0].clientY;
-    _startScrollTop = results.scrollTop;
-    _didScroll = false;
-    clearTimeout(_searchBlurTimer);
+  function cancelMomentum() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
+
+  function momentum() {
+    velY *= FRICTION;
+    if (Math.abs(velY) < MIN_VEL) { velY = 0; return; }
+    el.scrollTop += velY;
+    rafId = requestAnimationFrame(momentum);
+  }
+
+  el.addEventListener('touchstart', e => {
+    cancelMomentum();
+    startY = lastY = e.touches[0].clientY;
+    velY = 0; didScroll = false;
+    lastTime = Date.now();
   }, {passive: true});
 
-  results.addEventListener('touchmove', e => {
-    const dy = _startY - e.touches[0].clientY;
-    if (Math.abs(dy) > 6) _didScroll = true;
-    results.scrollTop = _startScrollTop + dy;
-    e.preventDefault();
-    e.stopPropagation();
-  }, {passive: false});
-
-  results.addEventListener('touchend', e => {
-    if (_didScroll) {
+  el.addEventListener('touchmove', e => {
+    const y = e.touches[0].clientY;
+    const now = Date.now();
+    const dt = Math.max(now - lastTime, 1);
+    const dy = lastY - y;
+    if (Math.abs(y - startY) > TAP_THRESHOLD) didScroll = true;
+    if (didScroll) {
+      velY = dy / dt * 16;
+      el.scrollTop += dy;
       e.preventDefault();
       e.stopPropagation();
-      return; // was a swipe — do nothing
     }
-    // Was a tap — select the country
-    const item = e.target.closest('.search-item.available');
-    if (!item) return;
-    e.preventDefault();
-    e.stopPropagation();
-    const id = item.id.replace('si-', '');
-    const country = COUNTRIES.find(x => x.id === id);
-    if (country) {
-      _suppressReopen = true;
-      searchInput.blur();
-      searchDropdown.classList.remove('open');
-      flyTo(country);
-    }
+    lastY = y;
+    lastTime = now;
   }, {passive: false});
-})();
-(function() {
-  const menu = document.getElementById('mobileMenu');
-  let _startY = 0;
-  let _menuMoved = false;
-  menu.addEventListener('touchstart', e => {
-    _startY = e.touches[0].clientY;
-    _menuMoved = false;
-  }, {passive: true});
-  menu.addEventListener('touchmove', e => {
-    const dy = _startY - e.touches[0].clientY;
-    if (Math.abs(dy) > 8) _menuMoved = true;
-    const atTop = menu.scrollTop === 0 && dy < 0;
-    const atBot = menu.scrollTop + menu.clientHeight >= menu.scrollHeight && dy > 0;
-    if (!atTop && !atBot) {
+
+  el.addEventListener('touchend', e => {
+    if (didScroll) {
+      e.preventDefault();
       e.stopPropagation();
-      menu.scrollTop += dy;
-      _startY = e.touches[0].clientY;
+      if (Math.abs(velY) > MIN_VEL) rafId = requestAnimationFrame(momentum);
+      return;
     }
-    e.preventDefault();
+    if (onTap) onTap(e);
   }, {passive: false});
-  // Block link clicks if finger moved (swipe, not tap)
-  menu.addEventListener('touchend', e => {
-    if (_menuMoved) { e.preventDefault(); e.stopPropagation(); }
-  }, {passive: false});
-})();
+}
+
+// Search results: smooth scroll + tap-to-select
+makeMomentumScroll(document.getElementById('searchResults'), e => {
+  const item = e.target.closest('.search-item.available');
+  if (!item) return;
+  e.preventDefault();
+  const id = item.id.replace('si-', '');
+  const country = COUNTRIES.find(x => x.id === id);
+  if (country) {
+    _suppressReopen = true;
+    searchInput.blur();
+    searchDropdown.classList.remove('open');
+    flyTo(country);
+  }
+});
+
+// Mobile menu: smooth scroll only (links handle their own taps via onclick)
+makeMomentumScroll(document.getElementById('mobileMenu'), null);
 
 function goPageMob(name) {
   // Update desktop nav active state

@@ -228,7 +228,7 @@ function goPage(name, el) {
 }
 
 // Cesium — disable default Ion requests entirely
-Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkMzhiOTQ5NS0wNGVjLTRhM2ItOWZiZC1jNjA5OWJlNGY5MjUiLCJpZCI6NDM4Njg2LCJpc3MiOiJodHRwczovL2FwaS5jZXNpdW0uY29tIiwiYXVkIjoidW5kZWZpbmVkX2RlZmF1bHQiLCJpYXQiOjE3ODAyNTI3Njh9.RXzlRrOzCNHHHS-4RmY3LPoUXVooaZpp7z2BeO-x7RM';
+Cesium.Ion.defaultAccessToken = '';
 
 let viewer = null;
 let currentCountry = null;
@@ -238,16 +238,26 @@ let isoMap = {};
 COUNTRIES.forEach(c => isoMap[c.iso] = c);
 
 function initGlobe() {
-  // Cesium 1.104+ API: use baseLayer instead of imageryProvider
+  // ── FREE HD SATELLITE IMAGERY — no API key needed ──────────────────
+  // ArcGIS World Imagery: same as Esri/Google satellite tiles, free, unlimited
+  const satelliteLayer = new Cesium.UrlTemplateImageryProvider({
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    maximumLevel: 19,
+    credit: new Cesium.Credit('Esri, Maxar, Earthstar Geographics', false),
+    tileWidth: 256,
+    tileHeight: 256,
+  });
+
+  // Night lights layer blended on top for the dark-side of the globe
+  const nightLayer = new Cesium.UrlTemplateImageryProvider({
+    url: 'https://map1.vis.earthdata.nasa.gov/wmts-webmercator/VIIRS_CityLights_2012/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg',
+    maximumLevel: 8,
+    credit: new Cesium.Credit('NASA', false),
+  });
+
   viewer = new Cesium.Viewer('cesiumContainer', {
-    baseLayer: new Cesium.ImageryLayer(
-      new Cesium.UrlTemplateImageryProvider({
-        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        maximumLevel: 19,
-        credit: new Cesium.Credit('Esri', false),
-      })
-    ),
-    terrainProvider: new Cesium.EllipsoidTerrainProvider(),
+    imageryProvider: satelliteLayer,
+    terrainProvider: new Cesium.EllipsoidTerrainProvider(), // flat terrain — no Ion needed
     animation: false,
     baseLayerPicker: false,
     fullscreenButton: false,

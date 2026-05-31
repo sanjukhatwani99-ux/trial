@@ -268,22 +268,20 @@ function initGlobe() {
   const scene = viewer.scene;
   const globe = scene.globe;
 
-  // ── MAX QUALITY SETTINGS ────────────────────────────────
-  globe.maximumScreenSpaceError = 1.0;   // Finest tile detail (default=2)
-  globe.tileCacheSize = 500;             // Cache more tiles = instant on revisit
+  // ── PERFORMANCE-BALANCED QUALITY SETTINGS ───────────────
+  globe.maximumScreenSpaceError = 2.0;   // Default — smooth panning & flight
+  globe.tileCacheSize = 150;             // Enough cache without hogging memory
   globe.preloadAncestors = true;
-  globe.preloadSiblings = true;
-  globe.enableLighting = true;           // Sun shading for realism
+  globe.preloadSiblings = false;         // Reduces background tile requests
+  globe.enableLighting = false;          // Disabling saves significant GPU during flight
 
-  // Anti-aliasing
+  // Anti-aliasing — keep FXAA, skip expensive MSAA
   scene.fxaa = true;
-  if (scene.postProcessStages && scene.postProcessStages.fxaa)
-    scene.postProcessStages.fxaa.enabled = true;
 
-  // Atmosphere — same as Google Earth's blue halo
+  // Atmosphere
   scene.skyAtmosphere.show = true;
   scene.fog.enabled = true;
-  scene.fog.density = 0.0001;
+  scene.fog.density = 0.0002;
 
   // Deep space background
   scene.backgroundColor = Cesium.Color.fromCssColorString('#020810');
@@ -299,6 +297,7 @@ function initGlobe() {
   ).then(dataSource => {
     geoDataSource = dataSource;
     viewer.dataSources.add(dataSource);
+    buildEntityCache();
 
     // Click handler
     const handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
@@ -352,38 +351,54 @@ function initGlobe() {
 }
 
 // ── HIGHLIGHT ─────────────────────────────────────────────
-function highlightCountry(iso) {
+// Pre-built ISO → entity map so highlight/clear are O(1) instead of O(n)
+let entityByIso = {};
+function buildEntityCache() {
+  entityByIso = {};
   if (!geoDataSource) return;
   geoDataSource.entities.values.forEach(entity => {
     if (!entity.polygon) return;
-    const eIso = entity.properties.ADM0_A3?._value || entity.properties.ISO_A3?._value;
-    if (eIso === iso) {
-      entity.polygon.material = new Cesium.ColorMaterialProperty(
-        Cesium.Color.fromCssColorString('rgba(200,16,46,0.22)'));
-      entity.polygon.outlineColor = new Cesium.ConstantProperty(
-        Cesium.Color.fromCssColorString('rgba(200,16,46,1.0)'));
-      entity.polygon.outlineWidth = new Cesium.ConstantProperty(3);
-      entity.polygon.outline = new Cesium.ConstantProperty(true);
-    } else {
-      entity.polygon.material = new Cesium.ColorMaterialProperty(
-        Cesium.Color.fromCssColorString('rgba(0,0,0,0)'));
-      entity.polygon.outlineColor = new Cesium.ConstantProperty(
-        Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'));
-      entity.polygon.outlineWidth = new Cesium.ConstantProperty(1);
-    }
+    const iso = entity.properties.ADM0_A3?._value || entity.properties.ISO_A3?._value;
+    if (iso) entityByIso[iso] = entity;
   });
 }
 
+// Reusable constants — avoids creating new objects on every click
+const MAT_HIGHLIGHT  = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString('rgba(200,16,46,0.22)'));
+const MAT_CLEAR      = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString('rgba(0,0,0,0)'));
+const COL_OUTLINE_HI = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString('rgba(200,16,46,1.0)'));
+const COL_OUTLINE_DM = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'));
+const WIDTH_HI       = new Cesium.ConstantProperty(3);
+const WIDTH_DM       = new Cesium.ConstantProperty(1);
+const OUTLINE_ON     = new Cesium.ConstantProperty(true);
+
+let highlightedIso = null;
+
+function highlightCountry(iso) {
+  if (highlightedIso && entityByIso[highlightedIso]) {
+    const prev = entityByIso[highlightedIso];
+    prev.polygon.material = MAT_CLEAR;
+    prev.polygon.outlineColor = COL_OUTLINE_DM;
+    prev.polygon.outlineWidth = WIDTH_DM;
+  }
+  if (entityByIso[iso]) {
+    const ent = entityByIso[iso];
+    ent.polygon.material = MAT_HIGHLIGHT;
+    ent.polygon.outlineColor = COL_OUTLINE_HI;
+    ent.polygon.outlineWidth = WIDTH_HI;
+    ent.polygon.outline = OUTLINE_ON;
+  }
+  highlightedIso = iso;
+}
+
 function clearHighlight() {
-  if (!geoDataSource) return;
-  geoDataSource.entities.values.forEach(entity => {
-    if (!entity.polygon) return;
-    entity.polygon.material = new Cesium.ColorMaterialProperty(
-      Cesium.Color.fromCssColorString('rgba(0,0,0,0)'));
-    entity.polygon.outlineColor = new Cesium.ConstantProperty(
-      Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'));
-    entity.polygon.outlineWidth = new Cesium.ConstantProperty(1);
-  });
+  if (highlightedIso && entityByIso[highlightedIso]) {
+    const ent = entityByIso[highlightedIso];
+    ent.polygon.material = MAT_CLEAR;
+    ent.polygon.outlineColor = COL_OUTLINE_DM;
+    ent.polygon.outlineWidth = WIDTH_DM;
+  }
+  highlightedIso = null;
 }
 
 // ── FLY TO ────────────────────────────────────────────────
@@ -417,32 +432,27 @@ function flyTo(c) {
     }
   });
 
-  // 3-phase flight: pull back → arc over → zoom in
-  const curPos = viewer.camera.positionCartographic;
+  // Raise SSE during flight so fewer tiles load mid-air → smooth animation
+  viewer.scene.globe.maximumScreenSpaceError = 8.0;
+
+  // 2-phase flight: arc up to globe height → zoom in to destination
   viewer.camera.flyTo({
-    destination: Cesium.Cartesian3.fromRadians(curPos.longitude, curPos.latitude, 20000000),
+    destination: Cesium.Cartesian3.fromDegrees(c.lng, c.lat, 18000000),
     orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 },
-    duration: 1.2,
-    easingFunction: Cesium.EasingFunction.QUADRATIC_IN,
+    duration: 1.8,
+    easingFunction: Cesium.EasingFunction.QUADRATIC_IN_OUT,
     complete: () => {
       viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(c.lng, c.lat, 20000000),
+        destination: Cesium.Cartesian3.fromDegrees(c.lng, c.lat, c.h),
         orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 },
         duration: 1.8,
-        easingFunction: Cesium.EasingFunction.LINEAR_NONE,
+        easingFunction: Cesium.EasingFunction.QUADRATIC_OUT,
         complete: () => {
-          // Final zoom-in — HD satellite tiles stream in live as camera descends
-          viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(c.lng, c.lat, c.h),
-            orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 },
-            duration: 2.5,
-            easingFunction: Cesium.EasingFunction.QUADRATIC_OUT,
-            complete: () => {
-              isFlyingTo = false;
-              document.getElementById('hintText').textContent = 'Arrived · ' + c.name;
-              showCard(c);
-            }
-          });
+          // Restore full quality once landed
+          viewer.scene.globe.maximumScreenSpaceError = 2.0;
+          isFlyingTo = false;
+          document.getElementById('hintText').textContent = 'Arrived · ' + c.name;
+          showCard(c);
         }
       });
     }
@@ -466,11 +476,13 @@ function closeCard() {
   currentCountry = null;
   clearHighlight();
   viewer.entities.removeById('dest-pin');
+  viewer.scene.globe.maximumScreenSpaceError = 8.0;
   viewer.camera.flyTo({
     destination: Cesium.Cartesian3.fromDegrees(78.96, 20.59, 14000000),
     orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 },
-    duration: 2.0,
-    easingFunction: Cesium.EasingFunction.QUADRATIC_OUT
+    duration: 1.8,
+    easingFunction: Cesium.EasingFunction.QUADRATIC_OUT,
+    complete: () => { viewer.scene.globe.maximumScreenSpaceError = 2.0; }
   });
   document.getElementById('globeCoords').textContent = '20.59°N · 78.96°E · India';
 }

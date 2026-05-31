@@ -446,9 +446,16 @@ function initGlobe() {
       stroke: Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'),
       fill: Cesium.Color.fromCssColorString('rgba(0,0,0,0)'),
       strokeWidth: 1,
+      clampToGround: false,
     }
   ).then(dataSource => {
     geoDataSource = dataSource;
+    // Set arcType to NONE on all polygon entities to prevent rhumb line subdivision errors
+    dataSource.entities.values.forEach(entity => {
+      if (entity.polygon) {
+        entity.polygon.arcType = new Cesium.ConstantProperty(Cesium.ArcType.NONE);
+      }
+    });
     viewer.dataSources.add(dataSource);
     buildEntityCache();
 

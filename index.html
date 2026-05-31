@@ -446,15 +446,8 @@ function initGlobe() {
       stroke: Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'),
       fill: Cesium.Color.fromCssColorString('rgba(0,0,0,0)'),
       strokeWidth: 1,
-      clampToGround: false,  // Prevents computeRhumbLineSubdivision overflow (RangeError fix)
     }
   ).then(dataSource => {
-    // Limit polygon granularity to prevent "Too many properties to enumerate" on complex shapes
-    dataSource.entities.values.forEach(entity => {
-      if (entity.polygon) {
-        entity.polygon.granularity = Cesium.Math.toRadians(2.0);
-      }
-    });
     geoDataSource = dataSource;
     viewer.dataSources.add(dataSource);
     buildEntityCache();

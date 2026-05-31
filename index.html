@@ -123,6 +123,59 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .card-close:hover{background:var(--red-light);color:var(--red)}
 .globe-coords{position:absolute;bottom:22px;left:22px;font-size:11px;color:rgba(255,255,255,0.9);font-weight:500;background:rgba(0,0,0,0.45);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:6px 14px;z-index:20;letter-spacing:.3px}
 
+/* ── HAMBURGER / MOBILE NAV ── */
+.nav-hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:36px;height:36px;background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;transition:background .2s}
+.nav-hamburger:hover{background:var(--bg2)}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;background:rgba(248,246,243,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.1);z-index:499;padding:12px 16px 16px;flex-direction:column;gap:4px;transform:translateY(-10px);opacity:0;transition:all .25s}
+.mobile-menu.open{transform:translateY(0);opacity:1}
+.mobile-menu a{display:block;color:var(--text-2);text-decoration:none;font-size:14px;font-weight:500;padding:10px 14px;border-radius:9px;transition:all .2s;cursor:pointer}
+.mobile-menu a:hover{color:var(--text);background:var(--bg2)}
+.mobile-menu a.active{color:var(--red);background:var(--red-light);font-weight:600}
+.mobile-menu .mob-cta{background:var(--red);color:#fff!important;font-weight:600!important;text-align:center;margin-top:6px;box-shadow:0 2px 12px var(--red-glow)}
+
+/* ── QUICK FILTER CHIPS ── */
+.search-quick-filter{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.qf-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,0.6);border-radius:20px;font-size:11.5px;font-weight:600;color:var(--text);cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,0.12);white-space:nowrap;font-family:'Outfit',sans-serif}
+.qf-chip:hover{background:#fff;border-color:var(--red);color:var(--red);transform:translateY(-1px);box-shadow:0 4px 14px rgba(200,16,46,0.18)}
+.qf-chip.active{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 4px 14px var(--red-glow)}
+.qf-chip-flag{font-size:14px;line-height:1}
+
+/* ── RESPONSIVE ── */
+@media (max-width:768px){
+  nav{padding:0 16px}
+  .nav-links{display:none}
+  .nav-hamburger{display:flex}
+  .mobile-menu{display:flex}
+
+  #page-home{padding-top:62px}
+  #page-home>div{padding:28px 20px}
+  #page-home h1{font-size:clamp(28px,8vw,52px)}
+  #page-home>div>p{font-size:15px}
+  .home-stats{gap:20px;flex-wrap:wrap;justify-content:center}
+  .stat-num{font-size:24px}
+  .home-btns{flex-direction:column;align-items:center}
+  .btn-primary,.btn-ghost{width:100%;max-width:280px;text-align:center}
+
+  .search-panel{left:12px;right:12px;width:auto;top:12px}
+  .search-quick-filter{gap:5px}
+  .qf-chip{font-size:10.5px;padding:4px 8px}
+
+  .country-card{bottom:16px;right:12px;left:12px;min-width:0;max-width:none}
+  .globe-coords{bottom:auto;top:auto;left:12px;bottom:130px;font-size:10px}
+
+  .minimal-page h2{font-size:36px}
+  .minimal-page>div>p{font-size:14px;padding:0 20px}
+}
+@media (max-width:480px){
+  .search-quick-filter{gap:4px}
+  .qf-chip{font-size:10px;padding:4px 7px}
+  .card-meta{flex-direction:column;gap:6px}
+}
+
 .loader{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;z-index:999;transition:opacity .8s}
 .loader-logo{font-family:'Playfair Display',serif;font-size:38px;font-weight:900;color:var(--black)}
 .loader-logo span{color:var(--red)}
@@ -156,7 +209,19 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
     <li><a onclick="goPage('about',this)">About</a></li>
     <li><a class="nav-cta" onclick="goPage('contact',this)">Contact Us</a></li>
   </ul>
+  <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a class="active" id="mob-home" onclick="goPageMob('home')">Home</a>
+  <a id="mob-visitor" onclick="goPageMob('visitor')">Visitor Visa</a>
+  <a id="mob-student" onclick="goPageMob('student')">Student Visa</a>
+  <a id="mob-work" onclick="goPageMob('work')">Work Visa</a>
+  <a id="mob-tickets" onclick="goPageMob('tickets')">Tickets &amp; Packages</a>
+  <a id="mob-about" onclick="goPageMob('about')">About</a>
+  <a class="mob-cta" id="mob-contact" onclick="goPageMob('contact')">Contact Us</a>
+</div>
 
 <div class="page active" id="page-home">
   <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;text-align:center;padding:40px 20px">
@@ -191,6 +256,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
         <div class="search-hint-dot"></div>
         <span id="hintText">Rotate the globe or search a destination</span>
       </div>
+      <div class="search-quick-filter" id="quickFilter"></div>
     </div>
     <div class="globe-topbar" style="display:none"><div class="pulse"></div><span>Live</span></div>
     <div id="cesiumContainer"></div>
@@ -310,7 +376,19 @@ allEntries.sort((a,b) => a.name.localeCompare(b.name));
 
 function renderResults(query) {
   const q = query.trim().toLowerCase();
-  if (!q) { searchResults.innerHTML = ''; return; }
+  if (!q) {
+    // Show all available countries when no query
+    let html = `<div class="search-section-label">Available Visas</div>`;
+    COUNTRIES.forEach(c => {
+      html += `<div class="search-item available" id="si-${c.id}" onclick="flyTo(COUNTRIES.find(x=>x.id==='${c.id}'))">
+        <span class="si-flag">${c.flag}</span>
+        <div class="si-info"><div class="si-name">${c.name}</div><div class="si-sub">${c.type}</div></div>
+        <span class="si-badge avail">Apply</span>
+      </div>`;
+    });
+    searchResults.innerHTML = html;
+    return;
+  }
 
   const matches = allEntries.filter(c => c.name.toLowerCase().includes(q));
   const avail   = matches.filter(c => c.available);
@@ -348,17 +426,22 @@ function renderResults(query) {
 searchInput.addEventListener('input', () => {
   const q = searchInput.value;
   searchClear.classList.toggle('visible', q.length > 0);
-  searchDropdown.classList.toggle('open', q.length > 0);
+  searchDropdown.classList.add('open');
   renderResults(q);
 });
 
 searchInput.addEventListener('focus', () => {
-  if (searchInput.value.length > 0) searchDropdown.classList.add('open');
+  renderResults(searchInput.value);
+  searchDropdown.classList.add('open');
 });
 
 document.addEventListener('click', e => {
   if (!e.target.closest('.search-panel')) {
     searchDropdown.classList.remove('open');
+  }
+  if (!e.target.closest('#navHamburger') && !e.target.closest('#mobileMenu')) {
+    document.getElementById('navHamburger').classList.remove('open');
+    document.getElementById('mobileMenu').classList.remove('open');
   }
 });
 
@@ -379,6 +462,67 @@ function goPage(name, el) {
   if (el) el.classList.add('active');
   if (name === 'visitor' && !globeBuilt) { globeBuilt = true; setTimeout(initGlobe, 80); }
 }
+
+// ── MOBILE MENU ─────────────────────────────────────────────
+function toggleMobileMenu() {
+  const ham = document.getElementById('navHamburger');
+  const menu = document.getElementById('mobileMenu');
+  const isOpen = menu.classList.contains('open');
+  ham.classList.toggle('open', !isOpen);
+  menu.classList.toggle('open', !isOpen);
+}
+
+function goPageMob(name) {
+  // Update desktop nav active state
+  const desktopLinks = document.querySelectorAll('.nav-links a');
+  const names = ['home','visitor','student','work','tickets','about','contact'];
+  desktopLinks.forEach((a,i) => a.classList.toggle('active', names[i] === name));
+  // Update mobile nav active state
+  document.querySelectorAll('.mobile-menu a').forEach(a => a.classList.remove('active'));
+  const mobEl = document.getElementById('mob-' + name);
+  if (mobEl) mobEl.classList.add('active');
+  // Navigate
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (name === 'visitor' && !globeBuilt) { globeBuilt = true; setTimeout(initGlobe, 80); }
+  // Close menu
+  document.getElementById('navHamburger').classList.remove('open');
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#navHamburger') && !e.target.closest('#mobileMenu')) {
+    document.getElementById('navHamburger').classList.remove('open');
+    document.getElementById('mobileMenu').classList.remove('open');
+  }
+});
+(function buildQuickFilter() {
+  const qf = document.getElementById('quickFilter');
+  let activeChip = null;
+  COUNTRIES.forEach(c => {
+    const chip = document.createElement('button');
+    chip.className = 'qf-chip';
+    chip.innerHTML = `<span class="qf-chip-flag">${c.flag}</span>${c.name}`;
+    chip.title = c.type;
+    chip.addEventListener('click', () => {
+      if (activeChip === chip) {
+        // Deselect
+        chip.classList.remove('active');
+        activeChip = null;
+        clearSearch();
+      } else {
+        if (activeChip) activeChip.classList.remove('active');
+        chip.classList.add('active');
+        activeChip = chip;
+        searchInput.value = c.name;
+        searchClear.classList.add('visible');
+        searchDropdown.classList.remove('open');
+        flyTo(c);
+      }
+    });
+    qf.appendChild(chip);
+  });
+})();
 
 // Cesium — disable default Ion requests entirely
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkMzhiOTQ5NS0wNGVjLTRhM2ItOWZiZC1jNjA5OWJlNGY5MjUiLCJpZCI6NDM4Njg2LCJpc3MiOiJodHRwczovL2FwaS5jZXNpdW0uY29tIiwiYXVkIjoidW5kZWZpbmVkX2RlZmF1bHQiLCJpYXQiOjE3ODAyNTI3Njh9.RXzlRrOzCNHHHS-4RmY3LPoUXVooaZpp7z2BeO-x7RM';
@@ -644,6 +788,7 @@ function showCard(c) {
 function closeCard() {
   document.getElementById('countryCard').classList.remove('visible');
   document.querySelectorAll('.search-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.qf-chip').forEach(el => el.classList.remove('active'));
   document.getElementById('hintText').textContent = 'Rotate the globe or search a destination';
   currentCountry = null;
   clearHighlight();

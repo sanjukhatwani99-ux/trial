@@ -41,9 +41,9 @@ body{
 
 /* Nav: absolute wall — never moves, never hides */
 nav{
-  position:fixed;
-  top:0;left:0;right:0;
-  z-index:9000;           /* well above everything */
+  position:fixed !important;
+  top:0 !important;left:0;right:0;
+  z-index:9000;
   height:62px;
   display:flex;
   align-items:center;
@@ -54,10 +54,11 @@ nav{
   -webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);
   box-shadow:var(--shadow-sm);
-  /* GPU layer so it never repaints with page content */
-  transform:translateZ(0);
-  -webkit-transform:translateZ(0);
+  transform:translate3d(0,0,0) !important;
+  -webkit-transform:translate3d(0,0,0) !important;
   will-change:transform;
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
 }
 .nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--black);display:flex;align-items:center;gap:2px;letter-spacing:-0.5px;cursor:pointer}
 .nav-logo span{color:var(--red)}
@@ -483,6 +484,7 @@ nav{
     height:calc(100dvh - 56px) !important;
     min-height:calc(100dvh - 56px) !important;
     max-height:calc(100dvh - 56px) !important;
+    padding-top:0 !important;
   }
 
   /* Search bar — full width, below the HUD gradient */
@@ -570,6 +572,7 @@ nav{
     height:calc(100dvh - 52px) !important;
     min-height:calc(100dvh - 52px) !important;
     max-height:calc(100dvh - 52px) !important;
+    padding-top:0 !important;
   }
   #pkgSearchWrap{
     top:50px !important;
@@ -585,6 +588,12 @@ nav{
 
 /* Tablet landscape */
 @media (min-width:769px) and (max-width:1024px){
+  #page-tickets{
+    height:calc(100dvh - 62px) !important;
+    min-height:calc(100dvh - 62px) !important;
+    max-height:calc(100dvh - 62px) !important;
+    padding-top:0 !important;
+  }
   #pkgSearchWrap{width:min(420px,88vw) !important}
   #pkgPanel>div{padding:16px 18px 20px !important}
   .pkg-card2{width:180px !important}
@@ -2072,20 +2081,24 @@ function stopIdleRotation() {
 function updateSVGSize() {
   const svg = document.getElementById('pkgFlightSVG');
   const mapDiv = document.getElementById('pkgMap');
-  if (svg && mapDiv) {
-    const W = mapDiv.offsetWidth || window.innerWidth;
-    const H = mapDiv.offsetHeight || window.innerHeight;
-    svg.setAttribute('width', W);
-    svg.setAttribute('height', H);
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  }
+  if (!svg || !mapDiv) return;
+  // Use getBoundingClientRect for accurate pixel dimensions on all screens/orientations
+  const rect = mapDiv.getBoundingClientRect();
+  const W = rect.width  || mapDiv.offsetWidth  || window.innerWidth;
+  const H = rect.height || mapDiv.offsetHeight || window.innerHeight;
+  svg.setAttribute('width',   W);
+  svg.setAttribute('height',  H);
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  // Force map to recalculate its internal canvas to match the container
+  if (map && mapReady) map.resize();
 }
 
 function lngLatToXY(lngLat) {
   if (!map) return { x: 0, y: 0 };
-  // map.project returns pixel coords relative to map canvas origin
+  // map.project returns pixel coords relative to the map canvas origin.
+  // The SVG overlay and #pkgMap share inset:0 in the same parent, so origins match.
   const pt = map.project(lngLat);
-  return { x: Math.round(pt.x), y: Math.round(pt.y) };
+  return { x: Math.round(isFinite(pt.x) ? pt.x : 0), y: Math.round(isFinite(pt.y) ? pt.y : 0) };
 }
 
 function bezierPath(src, dst) {

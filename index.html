@@ -493,7 +493,7 @@ nav{
 
   /* Search bar — full width, below the HUD gradient */
   #pkgSearchWrap{
-    top:12px !important;
+    top:58px !important;
     left:12px !important;
     right:12px !important;
     width:auto !important;
@@ -576,7 +576,7 @@ nav{
     top:52px !important;
   }
   #pkgSearchWrap{
-    top:8px !important;
+    top:50px !important;
     left:8px !important;
     right:8px !important;
   }
@@ -753,6 +753,11 @@ nav{
   <!-- Top HUD bar -->
   <div id="pkgHUD" style="position:absolute;top:0;left:0;right:0;z-index:20;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(6,14,26,0.92) 0%,transparent 100%);pointer-events:none">
     <div style="display:flex;align-items:center;gap:14px">
+      <div>
+        <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;font-weight:700;color:#C8102E;margin-bottom:3px;opacity:0.9">✦ VISAVERA ROUTES</div>
+        <div style="font-family:'Playfair Display',serif;font-size:clamp(15px,2vw,22px);font-weight:700;color:#fff;line-height:1.1">Aviation <em style="color:#e8c06a;font-style:italic">Route</em> Explorer</div>
+      </div>
+      <div style="width:1px;height:32px;background:rgba(255,255,255,0.12);margin:0 4px"></div>
       <div id="pkgFlightInfo" style="opacity:0;transition:opacity .4s">
         <div style="font-size:9px;color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase">Active Route</div>
         <div id="pkgFlightRoute" style="font-size:13px;font-weight:600;color:#fff;margin-top:1px">DEL → TYO</div>
@@ -771,7 +776,7 @@ nav{
   </div>
 
   <!-- Search bar with dropdown -->
-  <div id="pkgSearchWrap" style="position:absolute;top:20px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
+  <div id="pkgSearchWrap" style="position:absolute;top:72px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
     <div style="position:relative">
       <div style="position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:15px;z-index:1;pointer-events:none">✈️</div>
       <input id="pkgSearch" type="text" placeholder="Select a destination country…" autocomplete="off" spellcheck="false" readonly

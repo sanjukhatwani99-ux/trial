@@ -491,9 +491,9 @@ nav{
     top:56px !important;
   }
 
-  /* Search bar — full width, below the HUD gradient */
+  /* Search bar — full width, near top on mobile */
   #pkgSearchWrap{
-    top:58px !important;
+    top:10px !important;
     left:12px !important;
     right:12px !important;
     width:auto !important;
@@ -529,7 +529,7 @@ nav{
   /* Progress HUD — full width, sits above panel */
   #pkgProgressHUD{
     bottom:auto !important;
-    top:130px !important;
+    top:80px !important;
     left:12px !important;
     right:12px !important;
     width:auto !important;
@@ -576,11 +576,11 @@ nav{
     top:52px !important;
   }
   #pkgSearchWrap{
-    top:50px !important;
+    top:6px !important;
     left:8px !important;
     right:8px !important;
   }
-  #pkgProgressHUD{top:118px !important}
+  #pkgProgressHUD{top:70px !important}
   #pkgPanel>div{padding:10px 8px 14px !important}
   .pkg-card2{width:138px !important}
   .pkg-card2-img{height:76px !important}
@@ -1860,15 +1860,16 @@ function setupMap() {
     zoom: isMob ? 2.2 : 2.8,
     pitch: 0,
     bearing: 0,
-    antialias: !isMob,          // antialias is expensive on mobile GPU
+    antialias: false,             // disable for performance on all devices
     interactive: true,
     // Smoother panning on mobile
     touchZoomRotate: true,
-    touchPitch: false,          // disable pitch-on-touch to avoid accidental tilt
-    dragRotate: false,          // keep map flat, no rotation confusion
+    touchPitch: false,            // disable pitch-on-touch to avoid accidental tilt
+    dragRotate: false,            // keep map flat, no rotation confusion
     // Performance: reduce overdraw on mobile
-    fadeDuration: 200,
-    maxTileCacheSize: isMob ? 40 : 100,
+    fadeDuration: isMob ? 100 : 200,
+    maxTileCacheSize: isMob ? 30 : 80,
+    refreshExpiredTiles: false,   // skip background tile refresh for performance
   });
 
   // GPU compositing layer for the map canvas — avoids janky repaints
@@ -1911,6 +1912,88 @@ function setupMap() {
       mc.addEventListener('touchend',    () => {}, { passive: true });
     }
 
+    // ── COUNTRY MAP CLICK — make every country name clickable ──────────────
+    // On both click and touchend, check if the tap lands on a country feature
+    // (place label or country boundary). If that country has a package, trigger it.
+    function handleMapTap(e) {
+      if (!mapReady) return;
+      // Query rendered features at the tap point — look for country/place labels
+      const features = map.queryRenderedFeatures(e.point, {
+        layers: [] // empty = all layers; we filter by properties below
+      });
+      if (!features || !features.length) return;
+      // Find the first feature that looks like a country
+      for (const f of features) {
+        const props = f.properties || {};
+        // MapTiler satellite uses various name props
+        const rawName = props.name_en || props.name || props['name:en'] || props.country_name || '';
+        if (!rawName) continue;
+        const name = rawName.toString().trim();
+        if (!name) continue;
+        // Check direct match in PKG_DATA
+        if (PKG_DATA[name]) {
+          window.selectPkgCountry(name);
+          return;
+        }
+        // Fuzzy match — check if any PKG_DATA key is contained in the feature name or vice versa
+        const lname = name.toLowerCase();
+        const matchedKey = Object.keys(PKG_DATA).find(k => {
+          const lk = k.toLowerCase();
+          return lname === lk || lname.includes(lk) || lk.includes(lname);
+        });
+        if (matchedKey) {
+          window.selectPkgCountry(matchedKey);
+          return;
+        }
+      }
+    }
+
+    map.on('click', handleMapTap);
+    // Also handle touchend for fast tap response on mobile
+    if (mc) {
+      mc.addEventListener('touchend', (e) => {
+        if (e.changedTouches && e.changedTouches.length === 1) {
+          const touch = e.changedTouches[0];
+          const rect = mc.getBoundingClientRect();
+          const point = {
+            x: touch.clientX - rect.left,
+            y: touch.clientY - rect.top
+          };
+          if (mapReady) {
+            const features = map.queryRenderedFeatures(point);
+            if (features && features.length) {
+              for (const f of features) {
+                const props = f.properties || {};
+                const rawName = props.name_en || props.name || props['name:en'] || props.country_name || '';
+                if (!rawName) continue;
+                const name = rawName.toString().trim();
+                const matchedKey = Object.keys(PKG_DATA).find(k => {
+                  const lk = k.toLowerCase(), ln = name.toLowerCase();
+                  return ln === lk || ln.includes(lk) || lk.includes(ln);
+                });
+                if (matchedKey) { window.selectPkgCountry(matchedKey); return; }
+              }
+            }
+          }
+        }
+      }, { passive: true });
+    }
+    // Change cursor to pointer when hovering a country that has a package
+    map.on('mousemove', (e) => {
+      const features = map.queryRenderedFeatures(e.point);
+      const hasMatch = features && features.some(f => {
+        const props = f.properties || {};
+        const rawName = props.name_en || props.name || props['name:en'] || '';
+        if (!rawName) return false;
+        const lname = rawName.toString().toLowerCase();
+        return Object.keys(PKG_DATA).some(k => {
+          const lk = k.toLowerCase();
+          return lname === lk || lname.includes(lk) || lk.includes(lname);
+        });
+      });
+      map.getCanvas().style.cursor = hasMatch ? 'pointer' : '';
+    });
+
     // If a search was triggered before map was ready
     if (pendingFly) { const p = pendingFly; pendingFly = null; doFlight(p); }
   });
@@ -1921,10 +2004,8 @@ function setupMap() {
 // ── ORIGIN MARKER (India) ──────────────────────────────────────────────────
 function addOriginMarker() {
   const el = document.createElement('div');
-  el.style.cssText = 'width:52px;height:52px;position:relative;display:flex;align-items:center;justify-content:center;';
+  el.style.cssText = 'width:20px;height:20px;position:relative;display:flex;align-items:center;justify-content:center;';
   el.innerHTML = `
-    <div style="position:absolute;width:52px;height:52px;border-radius:50%;background:rgba(232,192,106,0.12);animation:pkgPulse 2s ease-in-out infinite"></div>
-    <div style="position:absolute;width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(232,192,106,0.5);animation:pkgPulse 2.2s ease-in-out infinite .3s"></div>
     <div style="width:13px;height:13px;border-radius:50%;background:#e8c06a;border:2.5px solid #fff;box-shadow:0 0 16px rgba(232,192,106,0.9);z-index:2"></div>
   `;
   new maptilersdk.Marker({ element: el, anchor: 'center' }).setLngLat([INDIA_LNG, INDIA_LAT]).addTo(map);
@@ -2768,6 +2849,12 @@ window.addEventListener('load', () => {
   const ticketsPage = document.getElementById('page-tickets');
   if (ticketsPage && ticketsPage.classList.contains('active')) {
     setTimeout(initMap, 100);
+  } else if (window.innerWidth <= 1024) {
+    // On mobile/tablet, preload the map SDK in background so it's ready instantly
+    // when user navigates to Packages — use a short delay to not block initial render
+    setTimeout(() => {
+      if (!mapInited) initMap();
+    }, 1500);
   }
 });
 

@@ -737,20 +737,12 @@ nav{
     </div>
   </div>
 
-  <!-- Flight progress HUD -->
-  <div id="pkgProgressHUD" style="position:absolute;bottom:260px;left:50%;transform:translateX(-50%);z-index:25;opacity:0;transition:opacity .5s;white-space:nowrap;pointer-events:none">
-    <div style="background:rgba(6,14,26,0.88);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:12px 24px;display:flex;align-items:center;gap:16px">
-      <div style="font-size:22px" id="pkgProgIcon">✈️</div>
-      <div>
-        <div id="pkgProgTitle" style="font-size:13px;font-weight:700;color:#fff;letter-spacing:.3px"></div>
-        <div id="pkgProgSub" style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px"></div>
-      </div>
-      <div style="width:1px;height:28px;background:rgba(255,255,255,0.1)"></div>
-      <div style="text-align:center">
-        <div id="pkgProgEta" style="font-size:14px;font-weight:700;color:#e8c06a;font-family:monospace"></div>
-        <div style="font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:1px;text-transform:uppercase;margin-top:1px">Duration</div>
-      </div>
-    </div>
+  <!-- Flight progress HUD (hidden — kept for JS references only) -->
+  <div id="pkgProgressHUD" style="display:none">
+    <div id="pkgProgIcon"></div>
+    <div id="pkgProgTitle"></div>
+    <div id="pkgProgSub"></div>
+    <div id="pkgProgEta"></div>
   </div>
 
   <!-- Packages panel (slides up) -->
@@ -2088,23 +2080,26 @@ function doFlight(pkg) {
   clearFlightVisuals();
   highlightCityDot(activePkg);
 
-  // Show progress HUD — departing
-  showHUD('✈️', `Departing for ${pkg.city}`, `India → ${pkg.city}`, pkg.flight);
-
-  // Phase 1: zoom out flat to show both India and destination
+  // Calculate zoom level to show both India and destination
   const midLng = (INDIA_LNG + pkg.lng) / 2;
   const midLat = (INDIA_LAT + pkg.lat) / 2;
   const dist = Math.sqrt(Math.pow(pkg.lng - INDIA_LNG, 2) + Math.pow(pkg.lat - INDIA_LAT, 2));
   const zoomOut = Math.max(1.2, 4.8 - dist * 0.020);
 
-  map.flyTo({
-    center: [midLng, midLat],
-    zoom: zoomOut,
-    pitch: 0,
-    bearing: 0,
-    duration: 900,
-    essential: true,
-  });
+  // Always snap back to India first so the flight visibly departs from India
+  map.jumpTo({ center: [INDIA_LNG, INDIA_LAT], zoom: 3.2, pitch: 0, bearing: 0 });
+
+  // Phase 1: smoothly zoom out to show both origin and destination
+  setTimeout(() => {
+    map.flyTo({
+      center: [midLng, midLat],
+      zoom: zoomOut,
+      pitch: 0,
+      bearing: 0,
+      duration: 900,
+      essential: true,
+    });
+  }, 200); // small delay so jumpTo settles before flyTo begins
 
   // Phase 2: draw path AFTER map finishes flying (moveend = accurate coordinates)
   let phase2Done = false;
@@ -2425,6 +2420,71 @@ function buildPkgDropdown() {
   }
 }
 
+// ── KEYBOARD-AWARE DROPDOWN POSITIONING ───────────────────────────────────
+// On mobile/tablet the virtual keyboard shrinks the visual viewport.
+// We reposition the dropdown to be fixed relative to the visual viewport
+// so it always appears above the keyboard, never gets clipped.
+
+function isMobileOrTablet() {
+  return window.innerWidth <= 1024;
+}
+
+function positionPkgDropdownFixed() {
+  const dd = document.getElementById('pkgDropdown');
+  const wrap = document.getElementById('pkgSearchWrap');
+  if (!dd || !wrap || !pkgDropOpen) return;
+
+  const vv = window.visualViewport;
+  const wrapRect = wrap.getBoundingClientRect();
+
+  // Input bar bottom relative to the visual viewport
+  const inputBottom = wrapRect.bottom - (vv ? vv.offsetTop : 0);
+
+  // Available space below the input bar (above keyboard)
+  const viewportBottom = vv ? vv.height : window.innerHeight;
+  const spaceBelow = viewportBottom - inputBottom - 8; // 8px gap
+
+  const maxDropHeight = Math.min(320, Math.max(120, spaceBelow));
+
+  // Switch to fixed so keyboard doesn't push it off screen
+  dd.style.position = 'fixed';
+  dd.style.top = (inputBottom + (vv ? vv.offsetTop : 0) + 6) + 'px';
+  dd.style.left = wrapRect.left + 'px';
+  dd.style.width = wrapRect.width + 'px';
+  dd.style.marginTop = '0';
+  dd.style.maxHeight = maxDropHeight + 'px';
+
+  // Also constrain the inner list height
+  const list = document.getElementById('pkgDropList');
+  if (list) list.style.maxHeight = (maxDropHeight - 56) + 'px'; // subtract filter row
+}
+
+function resetPkgDropdownPosition() {
+  const dd = document.getElementById('pkgDropdown');
+  const list = document.getElementById('pkgDropList');
+  if (!dd) return;
+  dd.style.position = '';
+  dd.style.top = '';
+  dd.style.left = '';
+  dd.style.width = '';
+  dd.style.marginTop = '';
+  if (list) list.style.maxHeight = '';
+}
+
+// Reposition whenever the visual viewport resizes (keyboard open/close)
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', function() {
+    if (pkgDropOpen && isMobileOrTablet()) {
+      positionPkgDropdownFixed();
+    }
+  });
+  window.visualViewport.addEventListener('scroll', function() {
+    if (pkgDropOpen && isMobileOrTablet()) {
+      positionPkgDropdownFixed();
+    }
+  });
+}
+
 window.togglePkgDropdown = function() {
   const dd = document.getElementById('pkgDropdown');
   const chevron = document.getElementById('pkgChevron');
@@ -2438,7 +2498,20 @@ window.togglePkgDropdown = function() {
     dd.style.pointerEvents = 'auto';
     chevron.style.transform = 'translateY(-50%) rotate(180deg)';
     chevron.style.color = '#C8102E';
-    if (filterInput) { filterInput.value = ''; setTimeout(()=>filterInput.focus(), 50); }
+    if (filterInput) {
+      filterInput.value = '';
+      setTimeout(() => {
+        filterInput.focus();
+        // After keyboard appears, reposition dropdown above it
+        if (isMobileOrTablet()) {
+          setTimeout(positionPkgDropdownFixed, 350);
+        }
+      }, 50);
+    }
+    if (isMobileOrTablet()) {
+      // Initial position before keyboard opens
+      setTimeout(positionPkgDropdownFixed, 10);
+    }
   } else {
     closePkgDropdown();
   }
@@ -2455,6 +2528,7 @@ function closePkgDropdown() {
   dd.style.pointerEvents = 'none';
   chevron.style.transform = 'translateY(-50%) rotate(0deg)';
   chevron.style.color = '#888';
+  resetPkgDropdownPosition();
 }
 
 window.filterPkgDropdown = function(q) {
@@ -2484,11 +2558,18 @@ window.selectPkgCountry = function(key) {
   setTimeout(() => window.pkgQuick(key), 50);
 };
 
-// Close dropdown on outside click — use mousedown so it fires before click on items
-document.addEventListener('mousedown', function(e) {
+// Close dropdown on outside click/touch — mousedown for desktop, touchstart for mobile
+function outsidePkgClose(e) {
   const wrap = document.getElementById('pkgSearchWrap');
-  if (wrap && !wrap.contains(e.target) && pkgDropOpen) closePkgDropdown();
-});
+  const dd = document.getElementById('pkgDropdown');
+  if (!pkgDropOpen) return;
+  // Allow touches/clicks inside the wrap or the (fixed-positioned) dropdown
+  if (wrap && wrap.contains(e.target)) return;
+  if (dd && dd.contains(e.target)) return;
+  closePkgDropdown();
+}
+document.addEventListener('mousedown', outsidePkgClose);
+document.addEventListener('touchstart', outsidePkgClose, { passive: true });
 
 window.triggerFlightSearch = function() {
   togglePkgDropdown();

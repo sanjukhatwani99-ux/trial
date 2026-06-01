@@ -17,9 +17,48 @@
   --shadow-lg:0 12px 48px rgba(0,0,0,0.16);
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
+/* Use dvh so mobile browser chrome collapse doesn't shift layout */
+html{
+  height:100%;
+  height:100dvh;
+  overflow:hidden;
+  /* Prevent elastic overscroll on iOS from pulling the nav off-screen */
+  overscroll-behavior:none;
+  -webkit-overflow-scrolling:auto;
+}
+body{
+  height:100%;
+  height:100dvh;
+  overflow:hidden;
+  overscroll-behavior:none;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Outfit',sans-serif;
+  /* GPU-promote body so sub-elements get their own compositing layer */
+  transform:translateZ(0);
+  -webkit-transform:translateZ(0);
+}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(248,246,243,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm)}
+/* Nav: absolute wall — never moves, never hides */
+nav{
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:9000;           /* well above everything */
+  height:62px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 32px;
+  background:rgba(248,246,243,0.98);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  box-shadow:var(--shadow-sm);
+  /* GPU layer so it never repaints with page content */
+  transform:translateZ(0);
+  -webkit-transform:translateZ(0);
+  will-change:transform;
+}
 .nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--black);display:flex;align-items:center;gap:2px;letter-spacing:-0.5px;cursor:pointer}
 .nav-logo span{color:var(--red)}
 .nav-dot{width:7px;height:7px;background:var(--red);border-radius:50%;margin-left:3px}
@@ -30,7 +69,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .nav-cta{background:var(--red)!important;color:#fff!important;padding:8px 20px!important;border-radius:8px!important;font-weight:600!important;box-shadow:0 2px 12px var(--red-glow)}
 .nav-cta:hover{background:var(--red-dark)!important;transform:translateY(-1px)}
 
-.page{display:none;width:100%;height:100vh;padding-top:62px}
+.page{display:none;width:100%;height:100vh;height:100dvh;padding-top:62px}
 .page.active{display:flex}
 
 #page-home{flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse 70% 55% at 50% 38%,rgba(200,16,46,0.07) 0%,transparent 70%),var(--bg)}
@@ -136,7 +175,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 }
 .search-filter-input:focus{border-color:var(--red)}
 
-.search-results{overflow-y:auto;max-height:300px;-webkit-overflow-scrolling:touch;padding:6px 0}
+.search-results{overflow-y:auto;max-height:300px;-webkit-overflow-scrolling:touch;padding:6px 0;overscroll-behavior:contain}
 .search-results::-webkit-scrollbar{width:3px}
 .search-results::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px}
 .search-section-label{padding:8px 14px 4px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-3)}
@@ -204,7 +243,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
 .nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;background:rgba(248,246,243,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.1);z-index:600;padding:12px 16px 16px;flex-direction:column;gap:4px;transform:translateY(-10px);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-height:calc(100vh - 62px);overflow-y:scroll;-webkit-overflow-scrolling:touch}
+.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;background:rgba(248,246,243,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.1);z-index:8999;padding:12px 16px 16px;flex-direction:column;gap:4px;transform:translateY(-10px);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-height:calc(100dvh - 62px);overflow-y:scroll;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .mobile-menu.open{transform:translateY(0);opacity:1;pointer-events:auto}
 .mobile-menu a{display:block;color:var(--text-2);text-decoration:none;font-size:14px;font-weight:500;padding:10px 14px;border-radius:9px;transition:all .2s;cursor:pointer}
 .mobile-menu a:hover{color:var(--text);background:var(--bg2)}
@@ -233,12 +272,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
   nav{padding:0 16px;height:56px}
   .nav-links{display:none}
   .nav-hamburger{display:flex}
-  .mobile-menu{display:flex;top:56px;max-height:calc(100vh - 56px)}
-  .page{padding-top:56px}
+  .mobile-menu{display:flex;top:56px;max-height:calc(100dvh - 56px)}
+  .page{padding-top:56px;height:100dvh}
 
   /* Home page */
   #page-home{overflow-y:auto}
-  #page-home>div{padding:32px 20px 40px;min-height:calc(100vh - 56px)}
+  #page-home>div{padding:32px 20px 40px;min-height:calc(100dvh - 56px)}
   #page-home h1{font-size:clamp(26px,7vw,44px)}
   #page-home>div>p{font-size:14px;margin-top:14px}
   .home-badge{font-size:10px;padding:5px 14px;margin-bottom:18px}
@@ -262,10 +301,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
   .search-input{font-size:16px;padding:13px 48px 13px 46px;min-height:50px}
   .search-dropdown.open{max-height:52vh}
   .search-results{max-height:calc(52vh - 60px)}
-  #page-visitor{overflow:visible}
-  .globe-area{height:calc(100vh - 56px);min-height:calc(100vh - 56px);overflow:visible}
+  #page-visitor{overflow:hidden}
+  .globe-area{height:calc(100dvh - 56px);min-height:calc(100dvh - 56px);overflow:hidden}
   .visa-marquee-wrap{position:fixed;bottom:0;left:0;right:0;z-index:200}
-  #cesiumContainer{height:calc(100vh - 56px - 68px)}
+  #cesiumContainer{width:100%;height:calc(100dvh - 56px - 68px) !important}
 
   /* Marquee */
   .visa-marquee-wrap{height:68px;z-index:200;border-top:1px solid rgba(255,255,255,0.08)}
@@ -290,8 +329,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 
 @media (max-width:480px){
   nav{height:52px}
-  .mobile-menu{top:52px;max-height:calc(100vh - 52px)}
-  .page{padding-top:52px}
+  .mobile-menu{top:52px;max-height:calc(100dvh - 52px)}
+  .page{padding-top:52px;height:100dvh}
 
   .search-panel{
     left:8px !important;
@@ -301,8 +340,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
     transform:none !important;
   }
   .search-input{font-size:16px;padding:12px 44px 12px 44px;min-height:48px}
-  .globe-area{height:calc(100vh - 52px);min-height:calc(100vh - 52px)}
-  #cesiumContainer{height:calc(100vh - 52px - 62px)}
+  .globe-area{height:calc(100dvh - 52px);min-height:calc(100dvh - 52px)}
+  #cesiumContainer{width:100%;height:calc(100dvh - 52px - 62px) !important}
   .visa-marquee-wrap{position:fixed;bottom:0;left:0;right:0}
 
   .visa-marquee-wrap{height:62px;z-index:200}
@@ -334,8 +373,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
   #page-visitor{overflow:hidden}
   .globe-area{
     position:relative;
-    height:calc(100vh - 62px) !important;
-    min-height:calc(100vh - 62px) !important;
+    height:calc(100dvh - 62px) !important;
+    min-height:calc(100dvh - 62px) !important;
     overflow:hidden !important;
     display:flex;
     flex-direction:column;
@@ -942,8 +981,17 @@ window.handleVisitorSearch = function(q) {
   renderResults(q);
 };
 
-// Clicking/touching a result
+// ── Search result selection — scroll-safe ──────────────────────────────────
+// Desktop: mousedown records position, mouseup only fires if mouse barely moved
+let _mouseDownY = 0, _mouseDownX = 0;
 searchResults.addEventListener('mousedown', e => {
+  _mouseDownY = e.clientY;
+  _mouseDownX = e.clientX;
+});
+searchResults.addEventListener('mouseup', e => {
+  const dy = Math.abs(e.clientY - _mouseDownY);
+  const dx = Math.abs(e.clientX - _mouseDownX);
+  if (dy > 6 || dx > 6) return; // dragged — not a click
   const item = e.target.closest('.search-item.available');
   if (!item) return;
   e.preventDefault();
@@ -951,14 +999,8 @@ searchResults.addEventListener('mousedown', e => {
   const country = COUNTRIES.find(x => x.id === id);
   if (country) selectVisitorCountry(country);
 });
-searchResults.addEventListener('touchend', e => {
-  const item = e.target.closest('.search-item.available');
-  if (!item) return;
-  e.preventDefault();
-  const id = item.id.replace('si-', '');
-  const country = COUNTRIES.find(x => x.id === id);
-  if (country) selectVisitorCountry(country);
-}, {passive: false});
+// Touch: handled exclusively by makeMomentumScroll's onTap callback below
+// (the touchend listener above is intentionally removed — no duplicate handler)
 
 function selectVisitorCountry(country) {
   const panel = document.getElementById('visitorSearchPanel');
@@ -1028,16 +1070,16 @@ function toggleMobileMenu() {
 // ── SMOOTH MOMENTUM SCROLL HELPER ─────────────────────────────────────────────
 // Native-feel inertia scroll for elements inside body{overflow:hidden}
 function makeMomentumScroll(el, onTap) {
-  const FRICTION     = 0.978;   // high = long glide (0.97–0.99 feels native)
-  const MIN_VEL      = 0.3;     // stop threshold px/frame
-  const TAP_MAX_MOVE = 8;       // px — above this = scroll, below = tap
-  const VEL_HISTORY  = 5;       // frames to average for launch velocity
-  const MAX_VEL      = 40;      // cap px/frame so fast flings don't teleport
+  const FRICTION     = 0.978;
+  const MIN_VEL      = 0.3;
+  const TAP_MAX_MOVE = 6;        // px total finger travel — must be LESS than this to count as tap
+  const VEL_HISTORY  = 5;
+  const MAX_VEL      = 40;
 
-  let startY = 0, lastY = 0;
+  let startX = 0, startY = 0, lastY = 0;
+  let totalMove = 0;             // accumulated absolute movement — key fix
   let didScroll = false, rafId = null;
   let velY = 0;
-  // Rolling history for smooth velocity estimate
   const hist = [];
 
   function stop() {
@@ -1054,19 +1096,22 @@ function makeMomentumScroll(el, onTap) {
 
   el.addEventListener('touchstart', e => {
     stop();
+    startX = e.touches[0].clientX;
     startY = lastY = e.touches[0].clientY;
+    totalMove = 0;
     didScroll = false;
     hist.length = 0;
   }, {passive: true});
 
   el.addEventListener('touchmove', e => {
-    const y   = e.touches[0].clientY;
-    const dy  = lastY - y;
-    if (Math.abs(startY - y) > TAP_MAX_MOVE) didScroll = true;
+    const y  = e.touches[0].clientY;
+    const dy = lastY - y;
+    // Track TOTAL absolute movement (not just vertical) to catch diagonal swipes
+    totalMove += Math.abs(dy) + Math.abs(e.touches[0].clientX - startX) * 0.5;
+    if (totalMove > TAP_MAX_MOVE) didScroll = true;
 
     if (didScroll) {
       el.scrollTop += dy;
-      // Keep a rolling window of recent deltas for velocity
       hist.push(dy);
       if (hist.length > VEL_HISTORY) hist.shift();
       e.preventDefault();
@@ -1079,14 +1124,14 @@ function makeMomentumScroll(el, onTap) {
     if (didScroll) {
       e.preventDefault();
       e.stopPropagation();
-      // Launch velocity = average of recent deltas, capped
       if (hist.length) {
         const avg = hist.reduce((a, b) => a + b, 0) / hist.length;
         velY = Math.max(-MAX_VEL, Math.min(MAX_VEL, avg));
         if (Math.abs(velY) > MIN_VEL) rafId = requestAnimationFrame(coast);
       }
-      return;
+      return; // ← swipe: never fires onTap
     }
+    // Only reach here if truly tapped (no scroll)
     if (onTap) onTap(e);
   }, {passive: false});
 }
@@ -1475,6 +1520,18 @@ window.addEventListener('load', () => {
     l.style.opacity = '0'; l.style.pointerEvents = 'none';
     setTimeout(() => l.remove(), 800);
   }, 1800);
+
+  // ── VIEWPORT LOCK — prevents mobile address bar collapsing from shifting layout ──
+  // Set --vh once and never update it. The nav is fixed so it never moves regardless.
+  // This stops any CSS that uses 100vh from jumping when the browser chrome resizes.
+  const setVH = () => {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  };
+  setVH();
+  // Do NOT re-run on resize — that's what causes the jump. The layout uses dvh/fixed pos.
+  // Only re-run on orientationchange (rotating device is a genuine layout change).
+  window.addEventListener('orientationchange', () => setTimeout(setVH, 300));
 });
 
 // ── PACKAGES — MAPTILER + FULL FLIGHT SEQUENCE ───────────────────────────

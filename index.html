@@ -43,8 +43,7 @@ body{
 nav{
   position:fixed;
   top:0;left:0;right:0;
-  /* Anchor to layout viewport — never moves when keyboard opens/closes */
-  z-index:9000;
+  z-index:9000;           /* well above everything */
   height:62px;
   display:flex;
   align-items:center;
@@ -55,10 +54,10 @@ nav{
   -webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);
   box-shadow:var(--shadow-sm);
-  transform:translate3d(0,0,0);
-  -webkit-transform:translate3d(0,0,0);
+  /* GPU layer so it never repaints with page content */
+  transform:translateZ(0);
+  -webkit-transform:translateZ(0);
   will-change:transform;
-  touch-action:none;
 }
 .nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--black);display:flex;align-items:center;gap:2px;letter-spacing:-0.5px;cursor:pointer}
 .nav-logo span{color:var(--red)}
@@ -442,14 +441,11 @@ nav{
 
 /* ── PACKAGES PAGE RESPONSIVE ── */
 
-/* page-tickets: fixed to fill all space below nav — no white border ever */
+/* page-tickets always fills the viewport below nav */
 #page-tickets{
-  position:fixed !important;
-  top:62px !important;
-  left:0 !important; right:0 !important; bottom:0 !important;
-  height:auto !important;
-  min-height:0 !important;
-  max-height:none !important;
+  height:calc(100vh - 62px) !important;
+  min-height:calc(100vh - 62px) !important;
+  max-height:calc(100vh - 62px) !important;
   overflow:hidden !important;
 }
 #pkgMap{
@@ -457,6 +453,20 @@ nav{
   inset:0 !important;
   width:100% !important;
   height:100% !important;
+  transform:translateZ(0);
+  -webkit-transform:translateZ(0);
+  will-change:transform;
+  /* Prevent browser from interfering with map touch events */
+  touch-action:pan-x pan-y;
+  overscroll-behavior:none;
+  -webkit-overflow-scrolling:auto;
+}
+/* Map canvas itself */
+#pkgMap canvas {
+  display:block !important;
+  transform:translateZ(0) !important;
+  -webkit-transform:translateZ(0) !important;
+  image-rendering:auto;
 }
 #pkgFlightSVG{
   position:absolute !important;
@@ -469,14 +479,16 @@ nav{
   nav{padding:0 16px;height:56px}
   .page{padding-top:56px}
   #page-tickets{
-    top:56px !important;
+    height:calc(100vh - 56px) !important;
+    min-height:calc(100vh - 56px) !important;
+    max-height:calc(100vh - 56px) !important;
   }
 
-  /* Search bar — full width, matches visitor page search-panel mobile style */
+  /* Search bar — full width, below the HUD gradient */
   #pkgSearchWrap{
+    top:58px !important;
     left:12px !important;
     right:12px !important;
-    top:12px !important;
     width:auto !important;
     transform:none !important;
     z-index:200 !important;
@@ -554,10 +566,12 @@ nav{
   .mobile-menu{top:52px;max-height:calc(100vh - 52px)}
   .page{padding-top:52px}
   #page-tickets{
-    top:52px !important;
+    height:calc(100vh - 52px) !important;
+    min-height:calc(100vh - 52px) !important;
+    max-height:calc(100vh - 52px) !important;
   }
   #pkgSearchWrap{
-    top:8px !important;
+    top:50px !important;
     left:8px !important;
     right:8px !important;
   }
@@ -573,6 +587,47 @@ nav{
   #pkgSearchWrap{width:min(420px,88vw) !important}
   #pkgPanel>div{padding:16px 18px 20px !important}
   .pkg-card2{width:180px !important}
+}
+
+/* ── PACKAGES PAGE MOBILE SMOOTHNESS ── */
+/* SVG overlay: pointer-events:none so it never blocks map touches */
+#pkgFlightSVG {
+  pointer-events: none !important;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+/* HUD bars: GPU layer, no layout thrash on scroll */
+#pkgHUD {
+  -webkit-transform: translate3d(0,0,0);
+  transform: translate3d(0,0,0);
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+}
+/* Search wrap: GPU layer */
+#pkgSearchWrap {
+  -webkit-transform: translate3d(-50%,0,0);
+  transform: translate3d(-50%,0,0);
+  will-change: transform;
+}
+@media (max-width:768px) {
+  #pkgSearchWrap {
+    transform: none !important;
+    -webkit-transform: none !important;
+  }
+}
+/* Package cards scroll: momentum scrolling on iOS */
+#pkgCards {
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  overscroll-behavior-x: contain;
+}
+.pkg-card2 {
+  scroll-snap-align: start;
+  -webkit-backface-visibility: hidden;
+}
+/* Vignette overlay: remove pointer-events so it never blocks touches */
+#page-tickets > div[style*="radial-gradient"] {
+  pointer-events: none !important;
 }
 </style>
 </head>
@@ -681,7 +736,7 @@ nav{
 
 <div class="page minimal-page" id="page-student"><div><div class="page-badge">Student Visa</div><h2>Study <span>Abroad</span></h2><p>Your gateway to world-class education. We handle the paperwork — you focus on your future.</p></div></div>
 <div class="page minimal-page" id="page-work"><div><div class="page-badge">Work Visa</div><h2>Work <span>Global</span></h2><p>Employment and skilled worker visas for professionals ready to go worldwide.</p></div></div>
-<div class="page" id="page-tickets" style="flex-direction:column;overflow:hidden;background:#060e1a">
+<div class="page" id="page-tickets" style="flex-direction:column;overflow:hidden;background:#060e1a;position:relative">
 
   <!-- Mapbox container -->
   <div id="pkgMap" style="position:absolute;inset:0;width:100%;height:100%"></div>
@@ -714,26 +769,26 @@ nav{
     </div>
   </div>
 
-  <!-- Search bar — identical style to visitor page -->
-  <div class="search-panel" id="pkgSearchWrap" style="top:20px">
-    <!-- Trigger bar -->
-    <div class="search-box" id="pkgSearchTrigger" onclick="togglePkgDropdown()" style="cursor:pointer">
-      <span class="search-icon">✈️</span>
-      <div class="search-input" style="display:flex;align-items:center">
-        <span id="pkgSearchDisplay" style="color:#999;font-size:13.5px;font-family:'Outfit',sans-serif;font-weight:500">Select a destination country…</span>
-      </div>
-      <span class="search-chevron" id="pkgChevron">▼</span>
+  <!-- Search bar with dropdown -->
+  <div id="pkgSearchWrap" style="position:absolute;top:72px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
+    <div style="position:relative">
+      <div style="position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:15px;z-index:1;pointer-events:none">✈️</div>
+      <input id="pkgSearch" type="text" placeholder="Select a destination country…" autocomplete="off" spellcheck="false" readonly
+        style="width:100%;padding:15px 52px 15px 48px;font-size:13.5px;font-family:'Outfit',sans-serif;font-weight:500;color:#1a1a1a;background:rgba(255,255,255,0.97);border:2px solid transparent;border-radius:16px;outline:none;box-shadow:0 12px 50px rgba(0,0,0,0.5),0 2px 8px rgba(0,0,0,0.2);transition:border-color .3s,box-shadow .3s;backdrop-filter:blur(20px);cursor:pointer"
+        onclick="togglePkgDropdown()" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='transparent'">
+      <!-- Chevron -->
+      <div id="pkgChevron" onclick="togglePkgDropdown()" style="position:absolute;right:18px;top:50%;transform:translateY(-50%);pointer-events:auto;cursor:pointer;transition:transform .25s;color:#888;font-size:13px;user-select:none">▼</div>
     </div>
-    <!-- Dropdown list — same class as visitor page dropdown -->
-    <div class="search-dropdown" id="pkgDropdown">
-      <div class="search-filter-wrap">
-        <input id="pkgDropFilter" type="text" placeholder="🔍  Type a country name…" autocomplete="off" spellcheck="false"
-          class="search-filter-input"
-          oninput="filterPkgDropdown(this.value)"
-          onfocus="this.style.borderColor='#C8102E';if(isMobileOrTablet()){setTimeout(positionPkgDropdownFixed,350)}"
-          onblur="this.style.borderColor='rgba(0,0,0,0.1)'">
+
+    <!-- Dropdown list -->
+    <div id="pkgDropdown" style="margin-top:6px;background:rgba(255,255,255,0.98);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:16px;box-shadow:0 16px 60px rgba(0,0,0,0.4);overflow:hidden;max-height:0;opacity:0;transform:translateY(-8px);transition:max-height .35s cubic-bezier(0.4,0,0.2,1),opacity .25s,transform .25s;pointer-events:none">
+      <!-- Search filter inside dropdown -->
+      <div style="padding:10px 12px 6px;border-bottom:1px solid rgba(0,0,0,0.06)">
+        <input id="pkgDropFilter" type="text" placeholder="🔍  Filter countries…" autocomplete="off" spellcheck="false"
+          style="width:100%;padding:8px 14px;font-size:13px;font-family:'Outfit',sans-serif;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;outline:none;background:#f8f6f3;color:#1a1a1a;transition:border-color .2s"
+          oninput="filterPkgDropdown(this.value)" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='rgba(0,0,0,0.1)'">
       </div>
-      <div id="pkgDropList" class="search-results" style="max-height:280px"></div>
+      <div id="pkgDropList" style="overflow-y:auto;max-height:280px;padding:6px 0"></div>
     </div>
   </div>
 
@@ -746,7 +801,7 @@ nav{
   </div>
 
   <!-- Packages panel (slides up) -->
-  <div id="pkgPanel" style="position:absolute;bottom:0;left:0;right:0;z-index:30;transform:translateY(105%);transition:transform .7s cubic-bezier(0.22,1,0.36,1)">
+  <div id="pkgPanel" style="position:absolute;bottom:0;left:0;right:0;z-index:30;transform:translateY(105%);transition:transform .65s cubic-bezier(0.22,1,0.36,1);will-change:transform;-webkit-backface-visibility:hidden">
     <div style="background:rgba(6,14,26,0.35);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.1);padding:18px 22px 22px">
       <!-- Panel header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
@@ -1745,11 +1800,23 @@ let pendingFly = null;
     @keyframes pkgPulse { 0%,100%{transform:scale(1);opacity:0.8} 50%{transform:scale(1.6);opacity:0.15} }
     @keyframes pkgCityPop { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.3)} 100%{transform:scale(1);opacity:1} }
     @keyframes pkgRingExpand { 0%{r:8;opacity:0.8} 100%{r:55;opacity:0} }
-    .pkg-city-marker { transition: transform .3s, box-shadow .3s; }
+    .pkg-city-marker {
+      transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), background 0.18s ease, box-shadow 0.18s ease !important;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
     .pkg-city-marker:hover { transform: scale(1.8) !important; }
+    .pkg-city-marker:active { transform: scale(1.4) !important; }
+    /* Smooth map tiles */
+    .maplibregl-map, .maptilergl-map { image-rendering: auto; }
+    /* Hide all MapTiler attribution chrome */
     .maptilergl-popup-content { background:transparent!important; padding:0!important; box-shadow:none!important; border:none!important; }
     .maptilergl-popup-tip { display:none!important; }
     .maptilergl-ctrl-bottom-left, .maptilergl-ctrl-bottom-right, .maptilergl-ctrl-top-right { display:none!important; }
+    /* Touch-optimised scrolling for package cards */
+    #pkgCards { -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+    /* Package panel slide animation */
+    #pkgPanel { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
   `;
   document.head.appendChild(s);
 })();
@@ -1778,20 +1845,37 @@ function setupMap() {
 
   maptilersdk.config.apiKey = MAPTILER_KEY;
 
+  const isMob = window.innerWidth <= 768;
+
   map = new maptilersdk.Map({
     container: 'pkgMap',
     style: maptilersdk.MapStyle.SATELLITE,
     center: [INDIA_LNG, INDIA_LAT],
-    zoom: 2.8,
+    zoom: isMob ? 2.2 : 2.8,
     pitch: 0,
     bearing: 0,
-    antialias: true,
+    antialias: !isMob,          // antialias is expensive on mobile GPU
     interactive: true,
+    // Smoother panning on mobile
+    touchZoomRotate: true,
+    touchPitch: false,          // disable pitch-on-touch to avoid accidental tilt
+    dragRotate: false,          // keep map flat, no rotation confusion
+    // Performance: reduce overdraw on mobile
+    fadeDuration: 200,
+    maxTileCacheSize: isMob ? 40 : 100,
   });
+
+  // GPU compositing layer for the map canvas — avoids janky repaints
+  const mapCanvas = document.getElementById('pkgMap');
+  if (mapCanvas) {
+    mapCanvas.style.transform = 'translateZ(0)';
+    mapCanvas.style.webkitTransform = 'translateZ(0)';
+    mapCanvas.style.willChange = 'transform';
+  }
 
   map.on('load', () => {
     mapReady = true;
-    map.resize(); // ensure canvas fills container on any screen size
+    map.resize();
     addOriginMarker();
     addCityDots();
     startIdleRotation();
@@ -1811,6 +1895,15 @@ function setupMap() {
       });
       drawRelatedRoutes(pkg);
     });
+
+    // Passive touch listeners on the map canvas — lets the browser
+    // handle scrolling without blocking on JS, giving native-speed panning
+    const mc = map.getCanvas();
+    if (mc) {
+      mc.addEventListener('touchstart',  () => {}, { passive: true });
+      mc.addEventListener('touchmove',   () => {}, { passive: true });
+      mc.addEventListener('touchend',    () => {}, { passive: true });
+    }
 
     // If a search was triggered before map was ready
     if (pendingFly) { const p = pendingFly; pendingFly = null; doFlight(p); }
@@ -1853,13 +1946,27 @@ function addCityDots() {
       cursor:${hasPackage ? 'pointer' : 'default'};
       animation: pkgCityPop 0.5s ease-out ${i * 40}ms both;
       position:relative;z-index:1;
+      transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), background 0.18s ease, box-shadow 0.18s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      will-change: transform;
     `;
 
     if (hasPackage) {
-      el.addEventListener('click', (e) => {
+      // Unified handler: works for both mouse click and touch tap
+      function onCityTap(e) {
         e.stopPropagation();
+        // Haptic feedback on supported mobile devices
+        if (navigator.vibrate) navigator.vibrate(18);
         window.selectPkgCountry(city.key);
-      });
+      }
+      el.addEventListener('click', onCityTap);
+      el.addEventListener('touchend', (e) => {
+        e.preventDefault(); // stop ghost click delay (300ms)
+        onCityTap(e);
+      }, { passive: false });
+
+      // Hover / press visual states
       el.addEventListener('mouseenter', () => {
         el.style.background = '#e8c06a';
         el.style.transform = 'scale(1.6)';
@@ -1875,6 +1982,12 @@ function addCityDots() {
         el.style.zIndex = '1';
         hideCityTooltip();
       });
+      // Touch press highlight (no hover on mobile)
+      el.addEventListener('touchstart', () => {
+        el.style.background = '#e8c06a';
+        el.style.transform = 'scale(1.5)';
+        el.style.boxShadow = '0 0 18px rgba(232,192,106,0.9)';
+      }, { passive: true });
     }
 
     const marker = new maptilersdk.Marker({ element: el, anchor: 'center' }).setLngLat([city.lng, city.lat]).addTo(map);
@@ -1928,6 +2041,8 @@ function highlightCityDot(key) {
   cityMarkers.forEach(({ el, city }) => {
     const isTarget = pkg && (city.key === key || city.name === pkg.city);
     const hasPackage = !!city.key;
+    // Ensure smooth transition is set (may have been removed by animation)
+    el.style.transition = 'transform 0.28s cubic-bezier(0.34,1.56,0.64,1), background 0.2s ease, box-shadow 0.2s ease, width 0.2s ease, height 0.2s ease';
     if (isTarget) {
       el.style.background = '#C8102E';
       el.style.width = '16px'; el.style.height = '16px';
@@ -2090,16 +2205,18 @@ function doFlight(pkg) {
   map.jumpTo({ center: [INDIA_LNG, INDIA_LAT], zoom: 3.2, pitch: 0, bearing: 0 });
 
   // Phase 1: smoothly zoom out to show both origin and destination
+  const flyDur1 = window.innerWidth <= 768 ? 1200 : 900;
   setTimeout(() => {
     map.flyTo({
       center: [midLng, midLat],
       zoom: zoomOut,
       pitch: 0,
       bearing: 0,
-      duration: 900,
+      duration: flyDur1,
       essential: true,
+      easing: t => t < 0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2,  // ease-in-out
     });
-  }, 200); // small delay so jumpTo settles before flyTo begins
+  }, 200);
 
   // Phase 2: draw path AFTER map finishes flying (moveend = accurate coordinates)
   let phase2Done = false;
@@ -2176,7 +2293,7 @@ function doFlight(pkg) {
     // Force layout so getTotalLength works
     planePath.getTotalLength();
 
-    const flightDur = 2500;
+    const flightDur = window.innerWidth <= 768 ? 3000 : 2500;
     const startTime = Date.now();
 
     function animFlight() {
@@ -2267,8 +2384,9 @@ function doFlight(pkg) {
       zoom: pkg.zoom,
       pitch: 0,
       bearing: 0,
-      duration: 1400,
+      duration: window.innerWidth <= 768 ? 1800 : 1400,
       essential: true,
+      easing: t => 1 - Math.pow(1 - t, 3),  // ease-out-cubic: starts fast, glides in
     });
   }, 3600);
 
@@ -2374,11 +2492,8 @@ window.pkgQuick = function(key) {
   activePkg = key;
 
   // Only update search label if dropdown hasn't already set it
-  const _dispEl = document.getElementById('pkgSearchDisplay');
-  if (_dispEl && !_dispEl.textContent.includes(pkg.flag)) {
-    _dispEl.textContent = pkg.flag + '  ' + (Object.keys(PKG_DATA).find(k=>PKG_DATA[k]===pkg) || pkg.city);
-    _dispEl.style.color = '#1a1a1a';
-  }
+  const _sv = document.getElementById('pkgSearch');
+  if (_sv && !_sv.value.includes(pkg.flag)) _sv.value = pkg.flag + '  ' + (Object.keys(PKG_DATA).find(k=>PKG_DATA[k]===pkg) || pkg.city);
 
   if (!mapInited) {
     initMap();
@@ -2471,7 +2586,6 @@ function resetPkgDropdownPosition() {
   dd.style.left = '';
   dd.style.width = '';
   dd.style.marginTop = '';
-  dd.style.maxHeight = '';  // let CSS class control this
   if (list) list.style.maxHeight = '';
 }
 
@@ -2491,23 +2605,29 @@ if (window.visualViewport) {
 
 window.togglePkgDropdown = function() {
   const dd = document.getElementById('pkgDropdown');
-  const wrap = document.getElementById('pkgSearchWrap');
   const chevron = document.getElementById('pkgChevron');
   const filterInput = document.getElementById('pkgDropFilter');
   pkgDropOpen = !pkgDropOpen;
   if (pkgDropOpen) {
     buildPkgDropdown();
-    dd.classList.add('open');
-    if (wrap) wrap.classList.add('open');
-    if (chevron) { chevron.style.transform='translateY(-50%) rotate(180deg)'; chevron.style.color='#C8102E'; }
+    dd.style.maxHeight = '360px';
+    dd.style.opacity = '1';
+    dd.style.transform = 'translateY(0)';
+    dd.style.pointerEvents = 'auto';
+    chevron.style.transform = 'translateY(-50%) rotate(180deg)';
+    chevron.style.color = '#C8102E';
     if (filterInput) {
       filterInput.value = '';
-      // Don't auto-focus on mobile — keyboard only opens when user taps filter field
-      if (!isMobileOrTablet()) {
-        setTimeout(() => filterInput.focus(), 50);
-      }
+      setTimeout(() => {
+        filterInput.focus();
+        // After keyboard appears, reposition dropdown above it
+        if (isMobileOrTablet()) {
+          setTimeout(positionPkgDropdownFixed, 350);
+        }
+      }, 50);
     }
     if (isMobileOrTablet()) {
+      // Initial position before keyboard opens
       setTimeout(positionPkgDropdownFixed, 10);
     }
   } else {
@@ -2517,13 +2637,15 @@ window.togglePkgDropdown = function() {
 
 function closePkgDropdown() {
   const dd = document.getElementById('pkgDropdown');
-  const wrap = document.getElementById('pkgSearchWrap');
   const chevron = document.getElementById('pkgChevron');
   if (!dd) return;
   pkgDropOpen = false;
-  dd.classList.remove('open');
-  if (wrap) wrap.classList.remove('open');
-  if (chevron) { chevron.style.transform='translateY(-50%) rotate(0deg)'; chevron.style.color='#aaa'; }
+  dd.style.maxHeight = '0';
+  dd.style.opacity = '0';
+  dd.style.transform = 'translateY(-8px)';
+  dd.style.pointerEvents = 'none';
+  chevron.style.transform = 'translateY(-50%) rotate(0deg)';
+  chevron.style.color = '#888';
   resetPkgDropdownPosition();
 }
 
@@ -2541,9 +2663,9 @@ window.filterPkgDropdown = function(q) {
 window.selectPkgCountry = function(key) {
   const p = PKG_DATA[key];
   if (!p) return;
-  // Update dropdown display label (span, not input)
-  const displayEl = document.getElementById('pkgSearchDisplay');
-  if (displayEl) { displayEl.textContent = p.flag + '  ' + key; displayEl.style.color = '#1a1a1a'; }
+  // Update dropdown display label
+  const searchEl = document.getElementById('pkgSearch');
+  if (searchEl) searchEl.value = p.flag + '  ' + key;
   // Highlight active row in open dropdown (if open)
   document.querySelectorAll('.pkg-drop-item').forEach(el => el.classList.remove('active'));
   const activeEl = document.querySelector(`.pkg-drop-item[data-key="${key}"]`);
@@ -2579,9 +2701,6 @@ window.closePkgPanel = function() {
   document.getElementById('pkgFlightInfo').style.opacity = '0';
   document.getElementById('pkgAltimeter').style.opacity = '0';
   highlightCityDot(null);
-  // Reset search display
-  const _dispEl = document.getElementById('pkgSearchDisplay');
-  if (_dispEl) { _dispEl.textContent = 'Select a destination country…'; _dispEl.style.color = '#999'; }
   if (map && mapReady) {
     map.flyTo({ center: [INDIA_LNG, INDIA_LAT], zoom: 2.8, pitch: 0, bearing: 0, duration: 1400, essential: true });
   }
@@ -2625,24 +2744,21 @@ window.goPage = function(name, el) {
       } else {
         if (map && mapReady) {
           map.resize(); // critical: forces map to recalculate its canvas size
-          map.triggerRepaint();
           updateSVGSize();
           if (!activePkg) startIdleRotation();
-        } else if (map) {
-          // Map loaded but not ready yet — wait a bit and retry
-          setTimeout(() => { if (map) { map.resize(); map.triggerRepaint(); } }, 400);
         }
       }
-    }, 80);
+    }, 100);
   } else {
     stopIdleRotation();
   }
 };
 
 window.addEventListener('load', () => {
-  // Always pre-init the map in background so it's ready when user navigates to Packages
-  // Short delay so the rest of the page renders first
-  setTimeout(initMap, 800);
+  const ticketsPage = document.getElementById('page-tickets');
+  if (ticketsPage && ticketsPage.classList.contains('active')) {
+    setTimeout(initMap, 100);
+  }
 });
 
 window.addEventListener('resize', () => {

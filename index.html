@@ -731,7 +731,7 @@ nav{
       <div style="padding:10px 12px 6px;border-bottom:1px solid rgba(0,0,0,0.06)">
         <input id="pkgDropFilter" type="text" placeholder="🔍  Filter countries…" autocomplete="off" spellcheck="false"
           style="width:100%;padding:8px 14px;font-size:13px;font-family:'Outfit',sans-serif;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;outline:none;background:#f8f6f3;color:#1a1a1a;transition:border-color .2s"
-          oninput="filterPkgDropdown(this.value)" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='rgba(0,0,0,0.1)'">
+          oninput="filterPkgDropdown(this.value)" onfocus="this.style.borderColor='#C8102E';if(isMobileOrTablet()){setTimeout(positionPkgDropdownFixed,350)}" onblur="this.style.borderColor='rgba(0,0,0,0.1)'">
       </div>
       <div id="pkgDropList" style="overflow-y:auto;max-height:280px;padding:6px 0"></div>
     </div>
@@ -2500,16 +2500,13 @@ window.togglePkgDropdown = function() {
     chevron.style.color = '#C8102E';
     if (filterInput) {
       filterInput.value = '';
-      setTimeout(() => {
-        filterInput.focus();
-        // After keyboard appears, reposition dropdown above it
-        if (isMobileOrTablet()) {
-          setTimeout(positionPkgDropdownFixed, 350);
-        }
-      }, 50);
+      // Do NOT auto-focus on mobile — only focus when user taps the search field
+      if (!isMobileOrTablet()) {
+        setTimeout(() => { filterInput.focus(); }, 50);
+      }
     }
     if (isMobileOrTablet()) {
-      // Initial position before keyboard opens
+      // Position dropdown without keyboard interference
       setTimeout(positionPkgDropdownFixed, 10);
     }
   } else {

@@ -19,7 +19,7 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(248,246,243,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm);transition:transform .3s ease,box-shadow .3s}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(248,246,243,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm)}
 .nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--black);display:flex;align-items:center;gap:2px;letter-spacing:-0.5px;cursor:pointer}
 .nav-logo span{color:var(--red)}
 .nav-dot{width:7px;height:7px;background:var(--red);border-radius:50%;margin-left:3px}
@@ -59,8 +59,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .search-input:focus{border-color:var(--red);box-shadow:0 4px 24px rgba(0,0,0,0.18),0 0 0 3px var(--red-glow)}
 .search-input:focus ~ .search-icon, .search-box:focus-within .search-icon{color:var(--red)}
 #searchTriggerBar:hover .search-input{border-color:rgba(200,16,46,0.35);box-shadow:0 4px 24px rgba(0,0,0,0.18),0 0 0 2px rgba(200,16,46,0.12)}
-;width:22px;height:22px;border-radius:50%;background:var(--bg2);border:none;cursor:pointer;font-size:12px;color:var(--text-3);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:all .2s}
-.search-clear.visible{opacity:1;pointer-events:auto}
+.search-clear{position:absolute;right:12px;width:22px;height:22px;border-radius:50%;background:var(--bg2);border:none;cursor:pointer;font-size:12px;color:var(--text-3);display:none;align-items:center;justify-content:center;transition:all .2s}
 .search-clear:hover{background:var(--red-light);color:var(--red)}
 
 .search-dropdown{margin-top:8px;background:rgba(255,255,255,0.98);border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,0.22);overflow:hidden;max-height:0;opacity:0;transform:translateY(-6px);transition:max-height .3s cubic-bezier(0.4,0,0.2,1), opacity .2s, transform .25s;pointer-events:none;backdrop-filter:blur(20px);position:relative;z-index:200}
@@ -263,51 +262,144 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 #pkgCards::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:3px}
 
 /* ── PACKAGES PAGE RESPONSIVE ── */
+
+/* page-tickets always fills the viewport below nav */
+#page-tickets{
+  height:calc(100vh - 62px) !important;
+  min-height:calc(100vh - 62px) !important;
+  max-height:calc(100vh - 62px) !important;
+  overflow:hidden !important;
+}
+#pkgMap{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+}
+#pkgFlightSVG{
+  position:absolute !important;
+  top:0 !important; left:0 !important;
+  width:100% !important;
+  height:100% !important;
+}
+
 @media (max-width:768px){
-  /* Search bar */
-  #pkgSearchWrap{top:60px!important;width:calc(100% - 24px)!important;left:12px!important;transform:none!important}
-  /* HUD bar */
-  #pkgHUD{padding:10px 14px!important;flex-wrap:wrap;gap:6px}
-  #pkgHUD>div:first-child{flex:1;min-width:0}
-  #pkgHUD>div:first-child>div:first-child>div:first-child{font-size:8px!important;letter-spacing:1.5px!important}
-  #pkgHUD>div:first-child>div:first-child>div:last-child{font-size:14px!important}
-  #pkgHUD>div:last-child{gap:6px}
-  /* Progress HUD */
-  #pkgProgressHUD{bottom:200px!important;width:calc(100% - 32px)!important;left:16px!important;transform:none!important;white-space:normal!important}
-  #pkgProgressHUD>div{flex-wrap:wrap;gap:10px;padding:10px 16px!important;border-radius:12px!important}
-  /* Panel */
-  #pkgPanel>div{padding:14px 14px 18px!important;border-radius:20px 20px 0 0}
-  #pkgPanelTitle{font-size:15px!important}
-  #pkgPanelSub{font-size:10px!important}
-  #pkgCards{gap:10px!important}
-  .pkg-card2{width:160px!important}
-  .pkg-card2-img{height:90px!important}
-  .pkg-card2-body{padding:10px 10px 12px!important}
-  .pkg-card2-dest{font-size:12px!important}
-  .pkg-card2-price{font-size:14px!important}
+  nav{padding:0 16px;height:56px}
+  .page{padding-top:56px}
+  #page-tickets{
+    height:calc(100vh - 56px) !important;
+    min-height:calc(100vh - 56px) !important;
+    max-height:calc(100vh - 56px) !important;
+  }
+
+  /* Search bar — full width, below the HUD gradient */
+  #pkgSearchWrap{
+    top:auto !important;
+    bottom:auto !important;
+    left:12px !important;
+    right:12px !important;
+    width:auto !important;
+    transform:none !important;
+    /* place below HUD bar */
+    top:58px !important;
+    z-index:200 !important;
+  }
+
+  /* HUD bar — compact, single row */
+  #pkgHUD{
+    padding:8px 12px !important;
+    flex-wrap:nowrap !important;
+    align-items:center !important;
+    gap:0 !important;
+  }
+  #pkgHUD>div:first-child{flex:1;min-width:0;overflow:hidden}
+  #pkgHUD>div:first-child>div:first-child>div:first-child{
+    font-size:7px !important;
+    letter-spacing:1px !important;
+    display:none !important;
+  }
+  #pkgHUD>div:first-child>div:first-child>div:last-child{
+    font-size:13px !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+  /* Hide separator line and flight info in HUD on mobile */
+  #pkgHUD>div:first-child>div:nth-child(2){display:none !important}
+  #pkgFlightInfo{display:none !important}
+  #pkgAltimeter{display:none !important}
+  #pkgHUD>div:last-child{flex-shrink:0}
+
+  /* Progress HUD — full width, sits above panel */
+  #pkgProgressHUD{
+    bottom:auto !important;
+    top:130px !important;
+    left:12px !important;
+    right:12px !important;
+    width:auto !important;
+    transform:none !important;
+    white-space:normal !important;
+  }
+  #pkgProgressHUD>div{
+    flex-wrap:wrap !important;
+    gap:8px !important;
+    padding:10px 14px !important;
+    border-radius:12px !important;
+    justify-content:space-between !important;
+  }
+
+  /* Packages panel — nice glassmorphism, rounded top corners */
+  #pkgPanel>div{
+    padding:12px 12px 16px !important;
+    border-radius:20px 20px 0 0 !important;
+  }
+  #pkgPanelTitle{font-size:15px !important}
+  #pkgPanelSub{font-size:10px !important}
+  #pkgCards{gap:10px !important}
+  .pkg-card2{width:155px !important}
+  .pkg-card2-img{height:88px !important}
+  .pkg-card2-body{padding:9px 10px 11px !important}
+  .pkg-card2-dest{font-size:12px !important}
+
   /* Dropdown */
-  #pkgDropdown{border-radius:12px!important}
-  #pkgDropList{max-height:220px!important}
+  #pkgDropdown{border-radius:12px !important}
+  #pkgDropList{max-height:200px !important}
+
   /* Filter chips */
-  .pvchip{font-size:10.5px!important;padding:4px 11px!important}
+  .pvchip{font-size:10px !important;padding:4px 10px !important}
+
+  /* Force map resize on mobile */
+  .maplibregl-map,.maptiler-map{width:100% !important;height:100% !important}
 }
 
 @media (max-width:480px){
-  #pkgSearchWrap{top:54px!important;width:calc(100% - 16px)!important;left:8px!important}
-  #pkgProgressHUD{bottom:190px!important}
-  #pkgPanel>div{padding:12px 10px 16px!important}
-  .pkg-card2{width:140px!important}
-  .pkg-card2-img{height:78px!important}
-  #pkgDropList{max-height:180px!important}
-  #pkgAltimeter{display:none!important}
+  nav{height:52px}
+  .mobile-menu{top:52px;max-height:calc(100vh - 52px)}
+  .page{padding-top:52px}
+  #page-tickets{
+    height:calc(100vh - 52px) !important;
+    min-height:calc(100vh - 52px) !important;
+    max-height:calc(100vh - 52px) !important;
+  }
+  #pkgSearchWrap{
+    top:52px !important;
+    left:8px !important;
+    right:8px !important;
+  }
+  #pkgProgressHUD{top:120px !important}
+  #pkgPanel>div{padding:10px 8px 14px !important}
+  .pkg-card2{width:138px !important}
+  .pkg-card2-img{height:76px !important}
+  #pkgDropList{max-height:170px !important}
 }
 
 /* Tablet landscape */
 @media (min-width:769px) and (max-width:1024px){
-  #pkgSearchWrap{width:min(420px,88vw)!important}
-  #pkgPanel>div{padding:16px 18px 20px!important}
-  .pkg-card2{width:180px!important}
+  #pkgSearchWrap{width:min(420px,88vw) !important}
+  #pkgPanel>div{padding:16px 18px 20px !important}
+  .pkg-card2{width:180px !important}
 }
+
 
 
 </style>
@@ -764,44 +856,6 @@ function clearSearch() {
 }
 
 // Navigation
-// ── NAV HIDE ON SCROLL ──────────────────────────────────────────────────────
-(function() {
-  const nav = document.querySelector('nav');
-  let lastY = 0, ticking = false;
-  function onScroll(el) {
-    const y = el.scrollTop !== undefined ? el.scrollTop : window.scrollY;
-    if (!ticking) {
-      requestAnimationFrame(() => {
-        const navH = nav.offsetHeight;
-        if (y > lastY && y > navH) {
-          // scrolling down — hide nav
-          nav.style.transform = `translateY(-${navH}px)`;
-          nav.style.transition = 'transform .3s ease';
-          // also hide mobile menu
-          document.getElementById('mobileMenu').classList.remove('open');
-          document.getElementById('navHamburger').classList.remove('open');
-        } else {
-          // scrolling up — show nav
-          nav.style.transform = 'translateY(0)';
-          nav.style.transition = 'transform .3s ease';
-        }
-        lastY = y < 0 ? 0 : y;
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }
-  // Home page is scrollable
-  const homeDiv = document.querySelector('#page-home > div');
-  if (homeDiv) homeDiv.addEventListener('scroll', () => onScroll(homeDiv), {passive: true});
-  // Window scroll fallback
-  window.addEventListener('scroll', () => onScroll(window), {passive: true});
-  // Expose so page transitions reset the nav
-  window._resetNavScroll = function() {
-    lastY = 0;
-    nav.style.transform = 'translateY(0)';
-  };
-})();
 let globeBuilt = false;
 function goPage(name, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -809,7 +863,6 @@ function goPage(name, el) {
   document.getElementById('page-' + name).classList.add('active');
   if (el) el.classList.add('active');
   if (name === 'visitor' && !globeBuilt) { globeBuilt = true; setTimeout(initGlobe, 80); }
-  if (window._resetNavScroll) window._resetNavScroll();
 }
 
 // ── MOBILE MENU ─────────────────────────────────────────────
@@ -1538,6 +1591,7 @@ function setupMap() {
 
   map.on('load', () => {
     mapReady = true;
+    map.resize(); // ensure canvas fills container on any screen size
     addOriginMarker();
     addCityDots();
     startIdleRotation();
@@ -2278,9 +2332,16 @@ window.goPage = function(name, el) {
   if (name === 'tickets') {
     setTimeout(() => {
       updateSVGSize();
-      if (!mapInited) initMap();
-      else if (map && mapReady && !activePkg) startIdleRotation();
-    }, 80);
+      if (!mapInited) {
+        initMap();
+      } else {
+        if (map && mapReady) {
+          map.resize(); // critical: forces map to recalculate its canvas size
+          updateSVGSize();
+          if (!activePkg) startIdleRotation();
+        }
+      }
+    }, 100);
   } else {
     stopIdleRotation();
   }

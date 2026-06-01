@@ -41,9 +41,9 @@ body{
 
 /* Nav: absolute wall — never moves, never hides */
 nav{
-  position:fixed !important;
-  top:0 !important;left:0;right:0;
-  z-index:9000;
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:9000;           /* well above everything */
   height:62px;
   display:flex;
   align-items:center;
@@ -54,11 +54,10 @@ nav{
   -webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);
   box-shadow:var(--shadow-sm);
-  transform:translate3d(0,0,0) !important;
-  -webkit-transform:translate3d(0,0,0) !important;
+  /* GPU layer so it never repaints with page content */
+  transform:translateZ(0);
+  -webkit-transform:translateZ(0);
   will-change:transform;
-  -webkit-backface-visibility:hidden;
-  backface-visibility:hidden;
 }
 .nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--black);display:flex;align-items:center;gap:2px;letter-spacing:-0.5px;cursor:pointer}
 .nav-logo span{color:var(--red)}
@@ -442,40 +441,18 @@ nav{
 
 /* ── PACKAGES PAGE RESPONSIVE ── */
 
-/* page-tickets: fixed to viewport, sits directly under the fixed nav — no strip */
+/* page-tickets always fills the viewport below nav */
 #page-tickets{
-  position:fixed !important;
-  top:62px !important;
-  left:0 !important;
-  right:0 !important;
-  bottom:0 !important;
-  width:100% !important;
-  height:auto !important;
-  min-height:0 !important;
-  max-height:none !important;
-  padding-top:0 !important;
+  height:calc(100vh - 62px) !important;
+  min-height:calc(100vh - 62px) !important;
+  max-height:calc(100vh - 62px) !important;
   overflow:hidden !important;
-  z-index:1;
 }
 #pkgMap{
   position:absolute !important;
   inset:0 !important;
   width:100% !important;
   height:100% !important;
-  transform:translateZ(0);
-  -webkit-transform:translateZ(0);
-  will-change:transform;
-  /* Prevent browser from interfering with map touch events */
-  touch-action:pan-x pan-y;
-  overscroll-behavior:none;
-  -webkit-overflow-scrolling:auto;
-}
-/* Map canvas itself */
-#pkgMap canvas {
-  display:block !important;
-  transform:translateZ(0) !important;
-  -webkit-transform:translateZ(0) !important;
-  image-rendering:auto;
 }
 #pkgFlightSVG{
   position:absolute !important;
@@ -488,12 +465,14 @@ nav{
   nav{padding:0 16px;height:56px}
   .page{padding-top:56px}
   #page-tickets{
-    top:56px !important;
+    height:calc(100vh - 56px) !important;
+    min-height:calc(100vh - 56px) !important;
+    max-height:calc(100vh - 56px) !important;
   }
 
-  /* Search bar — full width, near top on mobile */
+  /* Search bar — full width, below the HUD gradient */
   #pkgSearchWrap{
-    top:10px !important;
+    top:58px !important;
     left:12px !important;
     right:12px !important;
     width:auto !important;
@@ -529,7 +508,7 @@ nav{
   /* Progress HUD — full width, sits above panel */
   #pkgProgressHUD{
     bottom:auto !important;
-    top:80px !important;
+    top:130px !important;
     left:12px !important;
     right:12px !important;
     width:auto !important;
@@ -573,14 +552,16 @@ nav{
   .mobile-menu{top:52px;max-height:calc(100vh - 52px)}
   .page{padding-top:52px}
   #page-tickets{
-    top:52px !important;
+    height:calc(100vh - 52px) !important;
+    min-height:calc(100vh - 52px) !important;
+    max-height:calc(100vh - 52px) !important;
   }
   #pkgSearchWrap{
-    top:6px !important;
+    top:50px !important;
     left:8px !important;
     right:8px !important;
   }
-  #pkgProgressHUD{top:70px !important}
+  #pkgProgressHUD{top:118px !important}
   #pkgPanel>div{padding:10px 8px 14px !important}
   .pkg-card2{width:138px !important}
   .pkg-card2-img{height:76px !important}
@@ -589,51 +570,9 @@ nav{
 
 /* Tablet landscape */
 @media (min-width:769px) and (max-width:1024px){
-  /* #page-tickets top is already 62px from base style */
   #pkgSearchWrap{width:min(420px,88vw) !important}
   #pkgPanel>div{padding:16px 18px 20px !important}
   .pkg-card2{width:180px !important}
-}
-
-/* ── PACKAGES PAGE MOBILE SMOOTHNESS ── */
-/* SVG overlay: pointer-events:none so it never blocks map touches */
-#pkgFlightSVG {
-  pointer-events: none !important;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-/* HUD bars: GPU layer, no layout thrash on scroll */
-#pkgHUD {
-  -webkit-transform: translate3d(0,0,0);
-  transform: translate3d(0,0,0);
-  will-change: transform;
-  -webkit-backface-visibility: hidden;
-}
-/* Search wrap: GPU layer */
-#pkgSearchWrap {
-  -webkit-transform: translate3d(-50%,0,0);
-  transform: translate3d(-50%,0,0);
-  will-change: transform;
-}
-@media (max-width:768px) {
-  #pkgSearchWrap {
-    transform: none !important;
-    -webkit-transform: none !important;
-  }
-}
-/* Package cards scroll: momentum scrolling on iOS */
-#pkgCards {
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x proximity;
-  overscroll-behavior-x: contain;
-}
-.pkg-card2 {
-  scroll-snap-align: start;
-  -webkit-backface-visibility: hidden;
-}
-/* Vignette overlay: remove pointer-events so it never blocks touches */
-#page-tickets > div[style*="radial-gradient"] {
-  pointer-events: none !important;
 }
 </style>
 </head>
@@ -807,7 +746,7 @@ nav{
   </div>
 
   <!-- Packages panel (slides up) -->
-  <div id="pkgPanel" style="position:absolute;bottom:0;left:0;right:0;z-index:30;transform:translateY(105%);transition:transform .65s cubic-bezier(0.22,1,0.36,1);will-change:transform;-webkit-backface-visibility:hidden">
+  <div id="pkgPanel" style="position:absolute;bottom:0;left:0;right:0;z-index:30;transform:translateY(105%);transition:transform .7s cubic-bezier(0.22,1,0.36,1)">
     <div style="background:rgba(6,14,26,0.35);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.1);padding:18px 22px 22px">
       <!-- Panel header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
@@ -1806,23 +1745,11 @@ let pendingFly = null;
     @keyframes pkgPulse { 0%,100%{transform:scale(1);opacity:0.8} 50%{transform:scale(1.6);opacity:0.15} }
     @keyframes pkgCityPop { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.3)} 100%{transform:scale(1);opacity:1} }
     @keyframes pkgRingExpand { 0%{r:8;opacity:0.8} 100%{r:55;opacity:0} }
-    .pkg-city-marker {
-      transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), background 0.18s ease, box-shadow 0.18s ease !important;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-    }
+    .pkg-city-marker { transition: transform .3s, box-shadow .3s; }
     .pkg-city-marker:hover { transform: scale(1.8) !important; }
-    .pkg-city-marker:active { transform: scale(1.4) !important; }
-    /* Smooth map tiles */
-    .maplibregl-map, .maptilergl-map { image-rendering: auto; }
-    /* Hide all MapTiler attribution chrome */
     .maptilergl-popup-content { background:transparent!important; padding:0!important; box-shadow:none!important; border:none!important; }
     .maptilergl-popup-tip { display:none!important; }
     .maptilergl-ctrl-bottom-left, .maptilergl-ctrl-bottom-right, .maptilergl-ctrl-top-right { display:none!important; }
-    /* Touch-optimised scrolling for package cards */
-    #pkgCards { -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
-    /* Package panel slide animation */
-    #pkgPanel { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
   `;
   document.head.appendChild(s);
 })();
@@ -1851,38 +1778,20 @@ function setupMap() {
 
   maptilersdk.config.apiKey = MAPTILER_KEY;
 
-  const isMob = window.innerWidth <= 768;
-
   map = new maptilersdk.Map({
     container: 'pkgMap',
     style: maptilersdk.MapStyle.SATELLITE,
     center: [INDIA_LNG, INDIA_LAT],
-    zoom: isMob ? 2.2 : 2.8,
+    zoom: 2.8,
     pitch: 0,
     bearing: 0,
-    antialias: false,             // disable for performance on all devices
+    antialias: true,
     interactive: true,
-    // Smoother panning on mobile
-    touchZoomRotate: true,
-    touchPitch: false,            // disable pitch-on-touch to avoid accidental tilt
-    dragRotate: false,            // keep map flat, no rotation confusion
-    // Performance: reduce overdraw on mobile
-    fadeDuration: isMob ? 100 : 200,
-    maxTileCacheSize: isMob ? 30 : 80,
-    refreshExpiredTiles: false,   // skip background tile refresh for performance
   });
-
-  // GPU compositing layer for the map canvas — avoids janky repaints
-  const mapCanvas = document.getElementById('pkgMap');
-  if (mapCanvas) {
-    mapCanvas.style.transform = 'translateZ(0)';
-    mapCanvas.style.webkitTransform = 'translateZ(0)';
-    mapCanvas.style.willChange = 'transform';
-  }
 
   map.on('load', () => {
     mapReady = true;
-    map.resize();
+    map.resize(); // ensure canvas fills container on any screen size
     addOriginMarker();
     addCityDots();
     startIdleRotation();
@@ -1903,97 +1812,6 @@ function setupMap() {
       drawRelatedRoutes(pkg);
     });
 
-    // Passive touch listeners on the map canvas — lets the browser
-    // handle scrolling without blocking on JS, giving native-speed panning
-    const mc = map.getCanvas();
-    if (mc) {
-      mc.addEventListener('touchstart',  () => {}, { passive: true });
-      mc.addEventListener('touchmove',   () => {}, { passive: true });
-      mc.addEventListener('touchend',    () => {}, { passive: true });
-    }
-
-    // ── COUNTRY MAP CLICK — make every country name clickable ──────────────
-    // On both click and touchend, check if the tap lands on a country feature
-    // (place label or country boundary). If that country has a package, trigger it.
-    function handleMapTap(e) {
-      if (!mapReady) return;
-      // Query rendered features at the tap point — look for country/place labels
-      const features = map.queryRenderedFeatures(e.point, {
-        layers: [] // empty = all layers; we filter by properties below
-      });
-      if (!features || !features.length) return;
-      // Find the first feature that looks like a country
-      for (const f of features) {
-        const props = f.properties || {};
-        // MapTiler satellite uses various name props
-        const rawName = props.name_en || props.name || props['name:en'] || props.country_name || '';
-        if (!rawName) continue;
-        const name = rawName.toString().trim();
-        if (!name) continue;
-        // Check direct match in PKG_DATA
-        if (PKG_DATA[name]) {
-          window.selectPkgCountry(name);
-          return;
-        }
-        // Fuzzy match — check if any PKG_DATA key is contained in the feature name or vice versa
-        const lname = name.toLowerCase();
-        const matchedKey = Object.keys(PKG_DATA).find(k => {
-          const lk = k.toLowerCase();
-          return lname === lk || lname.includes(lk) || lk.includes(lname);
-        });
-        if (matchedKey) {
-          window.selectPkgCountry(matchedKey);
-          return;
-        }
-      }
-    }
-
-    map.on('click', handleMapTap);
-    // Also handle touchend for fast tap response on mobile
-    if (mc) {
-      mc.addEventListener('touchend', (e) => {
-        if (e.changedTouches && e.changedTouches.length === 1) {
-          const touch = e.changedTouches[0];
-          const rect = mc.getBoundingClientRect();
-          const point = {
-            x: touch.clientX - rect.left,
-            y: touch.clientY - rect.top
-          };
-          if (mapReady) {
-            const features = map.queryRenderedFeatures(point);
-            if (features && features.length) {
-              for (const f of features) {
-                const props = f.properties || {};
-                const rawName = props.name_en || props.name || props['name:en'] || props.country_name || '';
-                if (!rawName) continue;
-                const name = rawName.toString().trim();
-                const matchedKey = Object.keys(PKG_DATA).find(k => {
-                  const lk = k.toLowerCase(), ln = name.toLowerCase();
-                  return ln === lk || ln.includes(lk) || lk.includes(ln);
-                });
-                if (matchedKey) { window.selectPkgCountry(matchedKey); return; }
-              }
-            }
-          }
-        }
-      }, { passive: true });
-    }
-    // Change cursor to pointer when hovering a country that has a package
-    map.on('mousemove', (e) => {
-      const features = map.queryRenderedFeatures(e.point);
-      const hasMatch = features && features.some(f => {
-        const props = f.properties || {};
-        const rawName = props.name_en || props.name || props['name:en'] || '';
-        if (!rawName) return false;
-        const lname = rawName.toString().toLowerCase();
-        return Object.keys(PKG_DATA).some(k => {
-          const lk = k.toLowerCase();
-          return lname === lk || lname.includes(lk) || lk.includes(lname);
-        });
-      });
-      map.getCanvas().style.cursor = hasMatch ? 'pointer' : '';
-    });
-
     // If a search was triggered before map was ready
     if (pendingFly) { const p = pendingFly; pendingFly = null; doFlight(p); }
   });
@@ -2004,8 +1822,10 @@ function setupMap() {
 // ── ORIGIN MARKER (India) ──────────────────────────────────────────────────
 function addOriginMarker() {
   const el = document.createElement('div');
-  el.style.cssText = 'width:20px;height:20px;position:relative;display:flex;align-items:center;justify-content:center;';
+  el.style.cssText = 'width:52px;height:52px;position:relative;display:flex;align-items:center;justify-content:center;';
   el.innerHTML = `
+    <div style="position:absolute;width:52px;height:52px;border-radius:50%;background:rgba(232,192,106,0.12);animation:pkgPulse 2s ease-in-out infinite"></div>
+    <div style="position:absolute;width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(232,192,106,0.5);animation:pkgPulse 2.2s ease-in-out infinite .3s"></div>
     <div style="width:13px;height:13px;border-radius:50%;background:#e8c06a;border:2.5px solid #fff;box-shadow:0 0 16px rgba(232,192,106,0.9);z-index:2"></div>
   `;
   new maptilersdk.Marker({ element: el, anchor: 'center' }).setLngLat([INDIA_LNG, INDIA_LAT]).addTo(map);
@@ -2033,27 +1853,13 @@ function addCityDots() {
       cursor:${hasPackage ? 'pointer' : 'default'};
       animation: pkgCityPop 0.5s ease-out ${i * 40}ms both;
       position:relative;z-index:1;
-      transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), background 0.18s ease, box-shadow 0.18s ease;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-      will-change: transform;
     `;
 
     if (hasPackage) {
-      // Unified handler: works for both mouse click and touch tap
-      function onCityTap(e) {
+      el.addEventListener('click', (e) => {
         e.stopPropagation();
-        // Haptic feedback on supported mobile devices
-        if (navigator.vibrate) navigator.vibrate(18);
         window.selectPkgCountry(city.key);
-      }
-      el.addEventListener('click', onCityTap);
-      el.addEventListener('touchend', (e) => {
-        e.preventDefault(); // stop ghost click delay (300ms)
-        onCityTap(e);
-      }, { passive: false });
-
-      // Hover / press visual states
+      });
       el.addEventListener('mouseenter', () => {
         el.style.background = '#e8c06a';
         el.style.transform = 'scale(1.6)';
@@ -2069,12 +1875,6 @@ function addCityDots() {
         el.style.zIndex = '1';
         hideCityTooltip();
       });
-      // Touch press highlight (no hover on mobile)
-      el.addEventListener('touchstart', () => {
-        el.style.background = '#e8c06a';
-        el.style.transform = 'scale(1.5)';
-        el.style.boxShadow = '0 0 18px rgba(232,192,106,0.9)';
-      }, { passive: true });
     }
 
     const marker = new maptilersdk.Marker({ element: el, anchor: 'center' }).setLngLat([city.lng, city.lat]).addTo(map);
@@ -2128,8 +1928,6 @@ function highlightCityDot(key) {
   cityMarkers.forEach(({ el, city }) => {
     const isTarget = pkg && (city.key === key || city.name === pkg.city);
     const hasPackage = !!city.key;
-    // Ensure smooth transition is set (may have been removed by animation)
-    el.style.transition = 'transform 0.28s cubic-bezier(0.34,1.56,0.64,1), background 0.2s ease, box-shadow 0.2s ease, width 0.2s ease, height 0.2s ease';
     if (isTarget) {
       el.style.background = '#C8102E';
       el.style.width = '16px'; el.style.height = '16px';
@@ -2158,24 +1956,20 @@ function stopIdleRotation() {
 function updateSVGSize() {
   const svg = document.getElementById('pkgFlightSVG');
   const mapDiv = document.getElementById('pkgMap');
-  if (!svg || !mapDiv) return;
-  // Use getBoundingClientRect for accurate pixel dimensions on all screens/orientations
-  const rect = mapDiv.getBoundingClientRect();
-  const W = rect.width  || mapDiv.offsetWidth  || window.innerWidth;
-  const H = rect.height || mapDiv.offsetHeight || window.innerHeight;
-  svg.setAttribute('width',   W);
-  svg.setAttribute('height',  H);
-  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  // Force map to recalculate its internal canvas to match the container
-  if (map && mapReady) map.resize();
+  if (svg && mapDiv) {
+    const W = mapDiv.offsetWidth || window.innerWidth;
+    const H = mapDiv.offsetHeight || window.innerHeight;
+    svg.setAttribute('width', W);
+    svg.setAttribute('height', H);
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  }
 }
 
 function lngLatToXY(lngLat) {
   if (!map) return { x: 0, y: 0 };
-  // map.project returns pixel coords relative to the map canvas origin.
-  // The SVG overlay and #pkgMap share inset:0 in the same parent, so origins match.
+  // map.project returns pixel coords relative to map canvas origin
   const pt = map.project(lngLat);
-  return { x: Math.round(isFinite(pt.x) ? pt.x : 0), y: Math.round(isFinite(pt.y) ? pt.y : 0) };
+  return { x: Math.round(pt.x), y: Math.round(pt.y) };
 }
 
 function bezierPath(src, dst) {
@@ -2296,18 +2090,16 @@ function doFlight(pkg) {
   map.jumpTo({ center: [INDIA_LNG, INDIA_LAT], zoom: 3.2, pitch: 0, bearing: 0 });
 
   // Phase 1: smoothly zoom out to show both origin and destination
-  const flyDur1 = window.innerWidth <= 768 ? 1200 : 900;
   setTimeout(() => {
     map.flyTo({
       center: [midLng, midLat],
       zoom: zoomOut,
       pitch: 0,
       bearing: 0,
-      duration: flyDur1,
+      duration: 900,
       essential: true,
-      easing: t => t < 0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2,  // ease-in-out
     });
-  }, 200);
+  }, 200); // small delay so jumpTo settles before flyTo begins
 
   // Phase 2: draw path AFTER map finishes flying (moveend = accurate coordinates)
   let phase2Done = false;
@@ -2384,7 +2176,7 @@ function doFlight(pkg) {
     // Force layout so getTotalLength works
     planePath.getTotalLength();
 
-    const flightDur = window.innerWidth <= 768 ? 3000 : 2500;
+    const flightDur = 2500;
     const startTime = Date.now();
 
     function animFlight() {
@@ -2475,9 +2267,8 @@ function doFlight(pkg) {
       zoom: pkg.zoom,
       pitch: 0,
       bearing: 0,
-      duration: window.innerWidth <= 768 ? 1800 : 1400,
+      duration: 1400,
       essential: true,
-      easing: t => 1 - Math.pow(1 - t, 3),  // ease-out-cubic: starts fast, glides in
     });
   }, 3600);
 
@@ -2849,12 +2640,6 @@ window.addEventListener('load', () => {
   const ticketsPage = document.getElementById('page-tickets');
   if (ticketsPage && ticketsPage.classList.contains('active')) {
     setTimeout(initMap, 100);
-  } else if (window.innerWidth <= 1024) {
-    // On mobile/tablet, preload the map SDK in background so it's ready instantly
-    // when user navigates to Packages — use a short delay to not block initial render
-    setTimeout(() => {
-      if (!mapInited) initMap();
-    }, 1500);
   }
 });
 

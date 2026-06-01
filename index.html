@@ -442,13 +442,20 @@ nav{
 
 /* ── PACKAGES PAGE RESPONSIVE ── */
 
-/* page-tickets always fills the viewport below nav */
+/* page-tickets: fixed to viewport, sits directly under the fixed nav — no strip */
 #page-tickets{
-  height:calc(100dvh - 62px) !important;
-  min-height:calc(100dvh - 62px) !important;
-  max-height:calc(100dvh - 62px) !important;
-  overflow:hidden !important;
+  position:fixed !important;
+  top:62px !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  width:100% !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
   padding-top:0 !important;
+  overflow:hidden !important;
+  z-index:1;
 }
 #pkgMap{
   position:absolute !important;
@@ -481,10 +488,7 @@ nav{
   nav{padding:0 16px;height:56px}
   .page{padding-top:56px}
   #page-tickets{
-    height:calc(100dvh - 56px) !important;
-    min-height:calc(100dvh - 56px) !important;
-    max-height:calc(100dvh - 56px) !important;
-    padding-top:0 !important;
+    top:56px !important;
   }
 
   /* Search bar — full width, below the HUD gradient */
@@ -569,10 +573,7 @@ nav{
   .mobile-menu{top:52px;max-height:calc(100vh - 52px)}
   .page{padding-top:52px}
   #page-tickets{
-    height:calc(100dvh - 52px) !important;
-    min-height:calc(100dvh - 52px) !important;
-    max-height:calc(100dvh - 52px) !important;
-    padding-top:0 !important;
+    top:52px !important;
   }
   #pkgSearchWrap{
     top:50px !important;
@@ -588,12 +589,7 @@ nav{
 
 /* Tablet landscape */
 @media (min-width:769px) and (max-width:1024px){
-  #page-tickets{
-    height:calc(100dvh - 62px) !important;
-    min-height:calc(100dvh - 62px) !important;
-    max-height:calc(100dvh - 62px) !important;
-    padding-top:0 !important;
-  }
+  /* #page-tickets top is already 62px from base style */
   #pkgSearchWrap{width:min(420px,88vw) !important}
   #pkgPanel>div{padding:16px 18px 20px !important}
   .pkg-card2{width:180px !important}

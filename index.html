@@ -50,25 +50,97 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 
 #page-visitor{overflow:hidden;background:#07111f}
 
-/* ── SEARCH PANEL ── */
-.search-panel{position:absolute;top:20px;left:20px;z-index:100;width:300px}
+/* ── SEARCH PANEL — packages-inspired design ── */
+.search-panel{
+  position:absolute;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:100;
+  width:min(460px,calc(100vw - 32px));
+}
 .search-box{position:relative;display:flex;align-items:center}
-.search-icon{position:absolute;left:14px;font-size:15px;color:var(--text-3);pointer-events:none;transition:color .2s;z-index:1}
-.search-input{width:100%;padding:13px 42px 13px 40px;font-size:14px;font-family:'Outfit',sans-serif;font-weight:500;color:var(--text);background:rgba(255,255,255,0.97);border:1.5px solid transparent;border-radius:14px;outline:none;box-shadow:0 4px 24px rgba(0,0,0,0.18),0 1px 4px rgba(0,0,0,0.1);transition:all .25s;backdrop-filter:blur(20px);min-height:48px;display:flex;align-items:center}
+.search-icon{position:absolute;left:18px;font-size:15px;pointer-events:none;transition:color .2s;z-index:1}
+.search-input{
+  width:100%;
+  padding:15px 52px 15px 48px;
+  font-size:13.5px;
+  font-family:'Outfit',sans-serif;
+  font-weight:500;
+  color:var(--text);
+  background:rgba(255,255,255,0.97);
+  border:2px solid transparent;
+  border-radius:16px;
+  outline:none;
+  box-shadow:0 12px 50px rgba(0,0,0,0.5),0 2px 8px rgba(0,0,0,0.2);
+  transition:border-color .3s,box-shadow .3s;
+  backdrop-filter:blur(20px);
+  min-height:52px;
+  display:flex;
+  align-items:center;
+  cursor:pointer;
+  user-select:none;
+}
 .search-input::placeholder{color:var(--text-3)}
-.search-input:focus{border-color:var(--red);box-shadow:0 4px 24px rgba(0,0,0,0.18),0 0 0 3px var(--red-glow)}
-.search-input:focus ~ .search-icon, .search-box:focus-within .search-icon{color:var(--red)}
-#searchTriggerBar:hover .search-input{border-color:rgba(200,16,46,0.35);box-shadow:0 4px 24px rgba(0,0,0,0.18),0 0 0 2px rgba(200,16,46,0.12)}
-.search-clear{position:absolute;right:12px;width:22px;height:22px;border-radius:50%;background:var(--bg2);border:none;cursor:pointer;font-size:12px;color:var(--text-3);display:none;align-items:center;justify-content:center;transition:all .2s}
+.search-input:focus{border-color:var(--red)}
+#searchTriggerBar:hover .search-input{border-color:rgba(200,16,46,0.4);box-shadow:0 12px 50px rgba(0,0,0,0.5),0 0 0 3px rgba(200,16,46,0.12)}
+
+/* Chevron indicator like packages search */
+.search-chevron{
+  position:absolute;
+  right:16px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#aaa;
+  font-size:12px;
+  pointer-events:none;
+  transition:transform .25s,color .2s;
+}
+.search-panel.open .search-chevron{transform:translateY(-50%) rotate(180deg);color:var(--red)}
+
+.search-clear{position:absolute;right:40px;width:24px;height:24px;border-radius:50%;background:var(--bg2);border:none;cursor:pointer;font-size:12px;color:var(--text-3);display:none;align-items:center;justify-content:center;transition:all .2s;z-index:2}
 .search-clear:hover{background:var(--red-light);color:var(--red)}
 
-.search-dropdown{margin-top:8px;background:rgba(255,255,255,0.98);border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,0.22);overflow:hidden;max-height:0;opacity:0;transform:translateY(-6px);transition:max-height .3s cubic-bezier(0.4,0,0.2,1), opacity .2s, transform .25s;pointer-events:none;backdrop-filter:blur(20px);position:relative;z-index:200}
-.search-dropdown.open{max-height:340px;opacity:1;transform:translateY(0);pointer-events:auto}
-.search-results{overflow-y:auto;max-height:340px;-webkit-overflow-scrolling:touch}
+/* Dropdown */
+.search-dropdown{
+  margin-top:6px;
+  background:rgba(255,255,255,0.98);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-radius:16px;
+  box-shadow:0 16px 60px rgba(0,0,0,0.4);
+  overflow:hidden;
+  max-height:0;
+  opacity:0;
+  transform:translateY(-8px);
+  transition:max-height .35s cubic-bezier(0.4,0,0.2,1), opacity .25s, transform .25s;
+  pointer-events:none;
+  position:relative;
+  z-index:200;
+}
+.search-dropdown.open{max-height:360px;opacity:1;transform:translateY(0);pointer-events:auto}
+
+/* Internal filter input inside dropdown */
+.search-filter-wrap{padding:10px 12px 6px;border-bottom:1px solid rgba(0,0,0,0.07)}
+.search-filter-input{
+  width:100%;
+  padding:9px 14px;
+  font-size:13px;
+  font-family:'Outfit',sans-serif;
+  border:1.5px solid rgba(0,0,0,0.1);
+  border-radius:10px;
+  outline:none;
+  background:#f8f6f3;
+  color:#1a1a1a;
+  transition:border-color .2s;
+}
+.search-filter-input:focus{border-color:var(--red)}
+
+.search-results{overflow-y:auto;max-height:300px;-webkit-overflow-scrolling:touch;padding:6px 0}
 .search-results::-webkit-scrollbar{width:3px}
 .search-results::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px}
 .search-section-label{padding:8px 14px 4px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-3)}
-.search-item{display:flex;align-items:center;gap:11px;padding:9px 14px;cursor:pointer;transition:background .15s;border-left:3px solid transparent}
+.search-item{display:flex;align-items:center;gap:11px;padding:10px 14px;cursor:pointer;transition:background .15s;border-left:3px solid transparent}
 .search-item:hover{background:var(--bg)}
 .search-item.available:hover{border-left-color:rgba(200,16,46,0.35)}
 .search-item.active{background:var(--red-light);border-left-color:var(--red)}
@@ -78,11 +150,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .si-info{flex:1;min-width:0}
 .si-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .si-sub{font-size:10.5px;color:var(--text-3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.si-badge{font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 7px;border-radius:20px;flex-shrink:0}
+.si-badge{font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:20px;flex-shrink:0}
 .si-badge.avail{background:var(--red-light);color:var(--red)}
 .si-badge.unavail{background:var(--bg2);color:var(--text-3)}
-.search-empty{padding:22px;text-align:center;color:var(--text-3);font-size:13px}
-.search-empty span{display:block;font-size:22px;margin-bottom:6px}
+.search-empty{padding:26px;text-align:center;color:var(--text-3);font-size:13px}
+.search-empty span{display:block;font-size:24px;margin-bottom:8px}
 
 .search-hint{margin-top:10px;display:flex;align-items:center;gap:7px;background:rgba(0,0,0,0.45);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:7px 13px;opacity:1;transition:opacity .3s}
 .search-hint.hidden{opacity:0;pointer-events:none}
@@ -178,11 +250,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
   .home-btns{flex-direction:column;align-items:stretch;gap:10px;margin-top:28px}
   .btn-primary,.btn-ghost{width:100%;text-align:center;padding:14px 20px}
 
-  /* Globe / Visitor page */
-  .search-panel{left:10px;right:10px;width:auto;top:10px;z-index:150}
-  .search-input{font-size:16px;padding:11px 38px 11px 36px}
-  .search-dropdown.open{max-height:55vh}
-  .search-results{max-height:55vh}
+  /* Globe / Visitor page — search centered at top */
+  .search-panel{
+    left:12px !important;
+    right:12px !important;
+    top:12px !important;
+    width:auto !important;
+    transform:none !important;
+  }
+  .search-input{font-size:16px;padding:13px 48px 13px 46px;min-height:50px}
+  .search-dropdown.open{max-height:52vh}
+  .search-results{max-height:calc(52vh - 60px)}
   #page-visitor{overflow:visible}
   .globe-area{height:calc(100vh - 56px);min-height:calc(100vh - 56px);overflow:visible}
   .visa-marquee-wrap{position:fixed;bottom:0;left:0;right:0;z-index:200}
@@ -214,7 +292,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
   .mobile-menu{top:52px;max-height:calc(100vh - 52px)}
   .page{padding-top:52px}
 
-  .search-panel{left:8px;right:8px;top:8px}
+  .search-panel{
+    left:8px !important;
+    right:8px !important;
+    top:8px !important;
+    width:auto !important;
+    transform:none !important;
+  }
+  .search-input{font-size:16px;padding:12px 44px 12px 44px;min-height:48px}
   .globe-area{height:calc(100vh - 52px);min-height:calc(100vh - 52px)}
   #cesiumContainer{height:calc(100vh - 52px - 62px)}
   .visa-marquee-wrap{position:fixed;bottom:0;left:0;right:0}
@@ -232,7 +317,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
   .minimal-page h2{font-size:28px}
 }
 
-.loader{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;z-index:999;transition:opacity .8s}
+/* Tablet portrait */
+@media (min-width:481px) and (max-width:768px){
+  .search-panel{width:auto !important}
+  .search-dropdown.open{max-height:55vh}
+}.loader{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;z-index:999;transition:opacity .8s}
 .loader-logo{font-family:'Playfair Display',serif;font-size:38px;font-weight:900;color:var(--black)}
 .loader-logo span{color:var(--red)}
 .loader-bar{width:200px;height:3px;background:var(--bg2);border-radius:3px;overflow:hidden}
@@ -294,14 +383,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 
   /* Search bar — full width, below the HUD gradient */
   #pkgSearchWrap{
-    top:auto !important;
-    bottom:auto !important;
+    top:58px !important;
     left:12px !important;
     right:12px !important;
     width:auto !important;
     transform:none !important;
-    /* place below HUD bar */
-    top:58px !important;
     z-index:200 !important;
   }
 
@@ -348,7 +434,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
     justify-content:space-between !important;
   }
 
-  /* Packages panel — nice glassmorphism, rounded top corners */
+  /* Packages panel — glassmorphism, rounded top corners */
   #pkgPanel>div{
     padding:12px 12px 16px !important;
     border-radius:20px 20px 0 0 !important;
@@ -382,11 +468,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
     max-height:calc(100vh - 52px) !important;
   }
   #pkgSearchWrap{
-    top:52px !important;
+    top:50px !important;
     left:8px !important;
     right:8px !important;
   }
-  #pkgProgressHUD{top:120px !important}
+  #pkgProgressHUD{top:118px !important}
   #pkgPanel>div{padding:10px 8px 14px !important}
   .pkg-card2{width:138px !important}
   .pkg-card2-img{height:76px !important}
@@ -399,9 +485,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
   #pkgPanel>div{padding:16px 18px 20px !important}
   .pkg-card2{width:180px !important}
 }
-
-
-
 </style>
 </head>
 <body>
@@ -457,20 +540,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 
 <div class="page" id="page-visitor">
   <div class="globe-area" style="position:relative;flex:1">
-    <div class="search-panel">
-      <!-- Trigger bar — readonly, never opens keyboard -->
+    <div class="search-panel" id="visitorSearchPanel">
+      <!-- Trigger bar — styled like packages search -->
       <div class="search-box" id="searchTriggerBar" onclick="openVisitorSearch()" style="cursor:pointer">
-        <span class="search-icon">🔍</span>
-        <div class="search-input" id="searchDisplay" style="display:flex;align-items:center;user-select:none;cursor:pointer">
-          <span id="searchDisplayText" style="color:#999;font-size:14px;font-family:'Outfit',sans-serif;font-weight:500">Search any country…</span>
+        <span class="search-icon">✈️</span>
+        <div class="search-input" id="searchDisplay" style="display:flex;align-items:center">
+          <span id="searchDisplayText" style="color:#999;font-size:13.5px;font-family:'Outfit',sans-serif;font-weight:500">Select a destination country…</span>
         </div>
-        <button class="search-clear" id="searchClear" onclick="event.stopPropagation();clearSearch()" style="display:none">✕</button>
+        <button class="search-clear" id="searchClear" onclick="event.stopPropagation();clearSearch()">✕</button>
+        <span class="search-chevron" id="visitorChevron">▼</span>
       </div>
       <!-- Dropdown with internal keyboard-friendly search -->
       <div class="search-dropdown" id="searchDropdown">
-        <div style="padding:8px 10px 6px;border-bottom:1px solid rgba(0,0,0,0.07)">
+        <div class="search-filter-wrap">
           <input id="searchInput" type="text" placeholder="🔍  Type a country name…" autocomplete="off" spellcheck="false"
-            style="width:100%;padding:8px 12px;font-size:13.5px;font-family:'Outfit',sans-serif;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;outline:none;background:#f8f6f3;color:#1a1a1a;transition:border-color .2s"
+            class="search-filter-input"
             oninput="handleVisitorSearch(this.value)"
             onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='rgba(0,0,0,0.1)'">
         </div>
@@ -793,8 +877,12 @@ function renderResults(query) {
 
 // ── VISITOR SEARCH: trigger bar opens dropdown; internal input has keyboard ──
 window.openVisitorSearch = function() {
+  const panel = document.getElementById('visitorSearchPanel');
+  const chevron = document.getElementById('visitorChevron');
   renderResults(searchInput ? searchInput.value : '');
   searchDropdown.classList.add('open');
+  if (panel) panel.classList.add('open');
+  if (chevron) { chevron.style.transform='translateY(-50%) rotate(180deg)'; chevron.style.color='#C8102E'; }
   document.getElementById('searchHint').classList.add('hidden');
   setTimeout(() => { if (searchInput) searchInput.focus(); }, 80);
 };
@@ -823,7 +911,11 @@ searchResults.addEventListener('touchend', e => {
 }, {passive: false});
 
 function selectVisitorCountry(country) {
+  const panel = document.getElementById('visitorSearchPanel');
+  const chevron = document.getElementById('visitorChevron');
   searchDropdown.classList.remove('open');
+  if (panel) panel.classList.remove('open');
+  if (chevron) { chevron.style.transform='translateY(-50%) rotate(0deg)'; chevron.style.color='#aaa'; }
   if (searchDisplayText) {
     searchDisplayText.textContent = country.flag + '  ' + country.name;
     searchDisplayText.style.color = '#1a1a1a';
@@ -833,13 +925,18 @@ function selectVisitorCountry(country) {
 }
 
 // Stop search panel touches from bubbling to Cesium/nav
-document.querySelector('.search-panel').addEventListener('touchstart', e => {
+const _searchPanelEl = document.getElementById('visitorSearchPanel') || document.querySelector('.search-panel');
+if (_searchPanelEl) _searchPanelEl.addEventListener('touchstart', e => {
   e.stopPropagation();
 }, {passive: false});
 
 document.addEventListener('click', e => {
-  if (!e.target.closest('.search-panel')) {
+  if (!e.target.closest('.search-panel') && !e.target.closest('#visitorSearchPanel')) {
+    const panel = document.getElementById('visitorSearchPanel');
+    const chevron = document.getElementById('visitorChevron');
     searchDropdown.classList.remove('open');
+    if (panel) panel.classList.remove('open');
+    if (chevron) { chevron.style.transform='translateY(-50%) rotate(0deg)'; chevron.style.color='#aaa'; }
   }
   if (!e.target.closest('#navHamburger') && !e.target.closest('#mobileMenu')) {
     document.getElementById('navHamburger').classList.remove('open');
@@ -848,11 +945,15 @@ document.addEventListener('click', e => {
 });
 
 function clearSearch() {
+  const panel = document.getElementById('visitorSearchPanel');
+  const chevron = document.getElementById('visitorChevron');
   if (searchInput) searchInput.value = '';
   searchClear.style.display = 'none';
   searchDropdown.classList.remove('open');
+  if (panel) panel.classList.remove('open');
+  if (chevron) { chevron.style.transform='translateY(-50%) rotate(0deg)'; chevron.style.color='#aaa'; }
   if (searchResults) searchResults.innerHTML = '';
-  if (searchDisplayText) { searchDisplayText.textContent = 'Search any country…'; searchDisplayText.style.color = '#999'; }
+  if (searchDisplayText) { searchDisplayText.textContent = 'Select a destination country…'; searchDisplayText.style.color = '#999'; }
 }
 
 // Navigation
@@ -940,6 +1041,7 @@ function makeMomentumScroll(el, onTap) {
   }, {passive: false});
 }
 
+let _suppressReopen = false;
 // Search results: smooth scroll + tap-to-select
 makeMomentumScroll(document.getElementById('searchResults'), e => {
   const item = e.target.closest('.search-item.available');
@@ -950,8 +1052,7 @@ makeMomentumScroll(document.getElementById('searchResults'), e => {
   if (country) {
     _suppressReopen = true;
     searchInput.blur();
-    searchDropdown.classList.remove('open');
-    flyTo(country);
+    selectVisitorCountry(country);
   }
 });
 

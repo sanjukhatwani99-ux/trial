@@ -427,11 +427,11 @@ nav{
 /* ── PACKAGES PAGE v2 ── */
 .pvchip{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.82);font-family:'Outfit',sans-serif;font-size:11.5px;font-weight:600;padding:5px 13px;border-radius:20px;cursor:pointer;transition:all .22s;letter-spacing:.3px;backdrop-filter:blur(10px)}
 .pvchip:hover{background:rgba(200,16,46,0.28);border-color:rgba(200,16,46,0.6);color:#fff;transform:translateY(-1px);box-shadow:0 4px 16px rgba(200,16,46,0.25)}
-.pkg-card2{flex-shrink:0;width:200px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .28s;position:relative}
+.pkg-card2{flex-shrink:0;width:200px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .28s;position:relative;display:flex;flex-direction:column}
 .pkg-card2:hover{transform:translateY(-5px) scale(1.02);border-color:rgba(200,16,46,0.45);box-shadow:0 16px 48px rgba(200,16,46,0.2),0 0 0 1px rgba(200,16,46,0.2)}
 .pkg-card2-img{width:100%;height:105px;object-fit:cover;display:block;transition:transform .4s}
 .pkg-card2:hover .pkg-card2-img{transform:scale(1.06)}
-.pkg-card2-body{padding:12px 14px 14px}
+.pkg-card2-body{padding:12px 14px 14px;flex:1;display:flex;flex-direction:column;justify-content:space-between}
 .pkg-card2-dest{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:#fff;margin-bottom:2px}
 .pkg-card2-days{font-size:10.5px;color:rgba(255,255,255,0.42);margin-bottom:9px}
 .pkg-card2-price{font-size:16px;font-weight:700;color:#e8c06a;font-family:'Outfit',sans-serif}
@@ -493,7 +493,7 @@ nav{
 
   /* Search bar — full width, near top on mobile */
   #pkgSearchWrap{
-    top:10px !important;
+    top:14px !important;
     left:12px !important;
     right:12px !important;
     width:auto !important;
@@ -776,7 +776,7 @@ nav{
   </div>
 
   <!-- Search bar with dropdown -->
-  <div id="pkgSearchWrap" style="position:absolute;top:72px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
+  <div id="pkgSearchWrap" style="position:absolute;top:76px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
     <div style="position:relative">
       <div style="position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:15px;z-index:1;pointer-events:none">✈️</div>
       <input id="pkgSearch" type="text" placeholder="Select a destination country…" autocomplete="off" spellcheck="false" readonly
@@ -808,7 +808,7 @@ nav{
 
   <!-- Packages panel (slides up) -->
   <div id="pkgPanel" style="position:absolute;bottom:0;left:0;right:0;z-index:30;transform:translateY(105%);transition:transform .65s cubic-bezier(0.22,1,0.36,1);will-change:transform;-webkit-backface-visibility:hidden">
-    <div style="background:rgba(6,14,26,0.35);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.1);padding:18px 22px 22px">
+    <div style="background:rgba(6,14,26,0.75);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-top:1px solid rgba(255,255,255,0.12);padding:18px 22px 22px;border-radius:20px 20px 0 0">
       <!-- Panel header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
         <div style="display:flex;align-items:center;gap:12px">
@@ -818,7 +818,7 @@ nav{
             <div id="pkgPanelSub" style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px"></div>
           </div>
         </div>
-        <button onclick="closePkgPanel()" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s" onmouseover="this.style.background='rgba(200,16,46,0.3)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='rgba(255,255,255,0.5)'">✕</button>
+        <button onclick="closePkgPanel()" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;line-height:1" onmouseover="this.style.background='rgba(200,16,46,0.3)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='rgba(255,255,255,0.5)'">✕</button>
       </div>
       <!-- Cards row -->
       <div id="pkgCards" style="display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch"></div>
@@ -2082,7 +2082,8 @@ function addCityDots() {
     // City label — only for package cities
     if (hasPackage) {
       const lblEl = document.createElement('div');
-      lblEl.innerHTML = `<div style="font-family:Outfit,sans-serif;font-size:9.5px;font-weight:700;color:rgba(255,255,255,0.85);letter-spacing:.5px;white-space:nowrap;text-shadow:0 1px 4px rgba(0,0,0,0.9);margin-bottom:6px;pointer-events:none">${city.flag} ${city.name}</div>`;
+      lblEl.style.cssText = 'pointer-events:none;';
+      lblEl.innerHTML = `<div style="font-family:Outfit,sans-serif;font-size:9.5px;font-weight:700;color:rgba(255,255,255,0.85);letter-spacing:.5px;white-space:nowrap;text-shadow:0 1px 4px rgba(0,0,0,0.9);margin-bottom:14px;pointer-events:none;user-select:none">${city.flag} ${city.name}</div>`;
       const lblMarker = new maptilersdk.Marker({ element: lblEl, anchor: 'bottom' }).setLngLat([city.lng, city.lat]).addTo(map);
       cityMarkers.push({ marker, lblMarker, el, city });
     } else {
@@ -2100,11 +2101,23 @@ function showCityTooltip(anchorEl, city, hasPackage) {
   if (!pkg) return;
   const tip = document.createElement('div');
   tip.id = 'pkgCityTip';
+  // Position relative to map container, not the tiny dot
+  const mapDiv = document.getElementById('pkgMap');
+  const mapRect = mapDiv ? mapDiv.getBoundingClientRect() : null;
+  const dotRect = anchorEl.getBoundingClientRect();
+  let tipLeft = 0, tipTop = 0;
+  if (mapRect) {
+    // Center tooltip above the dot, clamped within map bounds
+    tipLeft = dotRect.left - mapRect.left + dotRect.width / 2;
+    tipTop  = dotRect.top  - mapRect.top  - 10;
+  }
   tip.style.cssText = `
-    position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);
+    position:absolute;
+    left:${tipLeft}px;top:${tipTop}px;
+    transform:translate(-50%,-100%);
     background:rgba(6,14,26,0.95);backdrop-filter:blur(16px);
     border:1px solid rgba(255,255,255,0.15);border-radius:12px;
-    padding:10px 14px;white-space:nowrap;pointer-events:none;z-index:99;
+    padding:10px 14px;white-space:nowrap;pointer-events:none;z-index:9999;
     box-shadow:0 8px 32px rgba(0,0,0,0.5);
     animation:pkgCityPop 0.2s ease-out both;
   `;
@@ -2114,8 +2127,9 @@ function showCityTooltip(anchorEl, city, hasPackage) {
     <div style="font-size:10px;color:rgba(255,255,255,0.5);font-family:Outfit,sans-serif;text-align:center;margin-top:2px">${pkg.price} · ${pkg.flight}</div>
     <div style="font-size:9px;color:#C8102E;font-weight:700;font-family:Outfit,sans-serif;text-align:center;margin-top:4px;letter-spacing:.5px">CLICK TO EXPLORE ✈️</div>
   `;
-  anchorEl.style.position = 'relative';
-  anchorEl.appendChild(tip);
+  // Append to pkgMap (position:absolute parent) so it's never clipped by the tiny dot
+  const container = mapDiv || document.body;
+  container.appendChild(tip);
   _tooltipEl = tip;
 }
 function hideCityTooltip() {
@@ -2562,7 +2576,7 @@ function showPkgPanel(pkg) {
         <div class="pkg-card2-days">${d.days} · ${pkg.flight} flight</div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
           <div class="pkg-card2-price">${d.price} <span>/ person</span></div>
-          <button onclick="event.stopPropagation();goPage('contact',document.querySelectorAll('.nav-links a')[6])" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:5px 12px;font-size:10.5px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.3px;white-space:nowrap">Book Now</button>
+          <button onclick="event.stopPropagation();goPage('contact',document.querySelectorAll('.nav-links a')[6])" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:6px 13px;font-size:10.5px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.3px;white-space:nowrap;position:relative;z-index:5;transition:background .2s" onmouseover="this.style.background='#9B0E24'" onmouseout="this.style.background='var(--red)'">Book Now</button>
         </div>
       </div>
     </div>`;

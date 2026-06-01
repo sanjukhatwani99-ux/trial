@@ -19,7 +19,7 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(248,246,243,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm)}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(248,246,243,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm);transition:transform .3s ease,box-shadow .3s}
 .nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--black);display:flex;align-items:center;gap:2px;letter-spacing:-0.5px;cursor:pointer}
 .nav-logo span{color:var(--red)}
 .nav-dot{width:7px;height:7px;background:var(--red);border-radius:50%;margin-left:3px}
@@ -764,6 +764,44 @@ function clearSearch() {
 }
 
 // Navigation
+// ── NAV HIDE ON SCROLL ──────────────────────────────────────────────────────
+(function() {
+  const nav = document.querySelector('nav');
+  let lastY = 0, ticking = false;
+  function onScroll(el) {
+    const y = el.scrollTop !== undefined ? el.scrollTop : window.scrollY;
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const navH = nav.offsetHeight;
+        if (y > lastY && y > navH) {
+          // scrolling down — hide nav
+          nav.style.transform = `translateY(-${navH}px)`;
+          nav.style.transition = 'transform .3s ease';
+          // also hide mobile menu
+          document.getElementById('mobileMenu').classList.remove('open');
+          document.getElementById('navHamburger').classList.remove('open');
+        } else {
+          // scrolling up — show nav
+          nav.style.transform = 'translateY(0)';
+          nav.style.transition = 'transform .3s ease';
+        }
+        lastY = y < 0 ? 0 : y;
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+  // Home page is scrollable
+  const homeDiv = document.querySelector('#page-home > div');
+  if (homeDiv) homeDiv.addEventListener('scroll', () => onScroll(homeDiv), {passive: true});
+  // Window scroll fallback
+  window.addEventListener('scroll', () => onScroll(window), {passive: true});
+  // Expose so page transitions reset the nav
+  window._resetNavScroll = function() {
+    lastY = 0;
+    nav.style.transform = 'translateY(0)';
+  };
+})();
 let globeBuilt = false;
 function goPage(name, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -771,6 +809,7 @@ function goPage(name, el) {
   document.getElementById('page-' + name).classList.add('active');
   if (el) el.classList.add('active');
   if (name === 'visitor' && !globeBuilt) { globeBuilt = true; setTimeout(initGlobe, 80); }
+  if (window._resetNavScroll) window._resetNavScroll();
 }
 
 // ── MOBILE MENU ─────────────────────────────────────────────
@@ -2110,8 +2149,7 @@ function buildPkgDropdown() {
         <div style="font-size:11px;color:#999;margin-top:1px;font-family:Outfit,sans-serif">${p.destinations ? p.destinations.map(d=>d.name).slice(0,3).join(' · ') : p.city}</div>
       </div>
       <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:12px;font-weight:700;color:#C8102E;font-family:Outfit,sans-serif">${p.price}</div>
-        <div style="font-size:10px;color:#bbb;font-family:Outfit,sans-serif;margin-top:1px">${p.flight}</div>
+        <div style="font-size:10px;color:#bbb;font-family:Outfit,sans-serif">${p.flight}</div>
       </div>
     </div>`;
   }).join('');

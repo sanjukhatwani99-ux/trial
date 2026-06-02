@@ -17,48 +17,9 @@
   --shadow-lg:0 12px 48px rgba(0,0,0,0.16);
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-/* Use dvh so mobile browser chrome collapse doesn't shift layout */
-html{
-  height:100%;
-  height:100dvh;
-  overflow:hidden;
-  /* Prevent elastic overscroll on iOS from pulling the nav off-screen */
-  overscroll-behavior:none;
-  -webkit-overflow-scrolling:auto;
-}
-body{
-  height:100%;
-  height:100dvh;
-  overflow:hidden;
-  overscroll-behavior:none;
-  background:var(--bg);
-  color:var(--text);
-  font-family:'Outfit',sans-serif;
-  /* GPU-promote body so sub-elements get their own compositing layer */
-  transform:translateZ(0);
-  -webkit-transform:translateZ(0);
-}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
 
-/* Nav: absolute wall — never moves, never hides */
-nav{
-  position:fixed;
-  top:0;left:0;right:0;
-  z-index:9000;           /* well above everything */
-  height:62px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 32px;
-  background:rgba(248,246,243,0.98);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-  box-shadow:var(--shadow-sm);
-  /* GPU layer so it never repaints with page content */
-  transform:translateZ(0);
-  -webkit-transform:translateZ(0);
-  will-change:transform;
-}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(248,246,243,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm)}
 .nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--black);display:flex;align-items:center;gap:2px;letter-spacing:-0.5px;cursor:pointer}
 .nav-logo span{color:var(--red)}
 .nav-dot{width:7px;height:7px;background:var(--red);border-radius:50%;margin-left:3px}
@@ -69,7 +30,7 @@ nav{
 .nav-cta{background:var(--red)!important;color:#fff!important;padding:8px 20px!important;border-radius:8px!important;font-weight:600!important;box-shadow:0 2px 12px var(--red-glow)}
 .nav-cta:hover{background:var(--red-dark)!important;transform:translateY(-1px)}
 
-.page{display:none;width:100%;height:100vh;height:100dvh;padding-top:62px}
+.page{display:none;width:100%;height:100vh;padding-top:62px}
 .page.active{display:flex}
 
 #page-home{flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse 70% 55% at 50% 38%,rgba(200,16,46,0.07) 0%,transparent 70%),var(--bg)}
@@ -89,121 +50,12 @@ nav{
 
 #page-visitor{overflow:hidden;background:#07111f}
 
-/* ── SEARCH PANEL — packages-inspired design ── */
-.search-panel{
-  position:absolute;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:100;
-  width:min(460px,calc(100vw - 32px));
-}
-.search-box{position:relative;display:flex;align-items:center}
-.search-icon{position:absolute;left:18px;font-size:15px;pointer-events:none;transition:color .2s;z-index:1}
-.search-input{
-  width:100%;
-  padding:15px 52px 15px 48px;
-  font-size:13.5px;
-  font-family:'Outfit',sans-serif;
-  font-weight:500;
-  color:var(--text);
-  background:rgba(255,255,255,0.97);
-  border:2px solid transparent;
-  border-radius:16px;
-  outline:none;
-  box-shadow:0 12px 50px rgba(0,0,0,0.5),0 2px 8px rgba(0,0,0,0.2);
-  transition:border-color .3s,box-shadow .3s;
-  backdrop-filter:blur(20px);
-  min-height:52px;
-  display:flex;
-  align-items:center;
-  cursor:pointer;
-  user-select:none;
-}
-.search-input::placeholder{color:var(--text-3)}
-.search-input:focus{border-color:var(--red)}
-#searchTriggerBar:hover .search-input{border-color:rgba(200,16,46,0.4);box-shadow:0 12px 50px rgba(0,0,0,0.5),0 0 0 3px rgba(200,16,46,0.12)}
 
-/* Chevron indicator like packages search */
-.search-chevron{
-  position:absolute;
-  right:16px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#aaa;
-  font-size:12px;
-  pointer-events:none;
-  transition:transform .25s,color .2s;
-}
-.search-panel.open .search-chevron{transform:translateY(-50%) rotate(180deg);color:var(--red)}
-
-.search-clear{position:absolute;right:40px;width:24px;height:24px;border-radius:50%;background:var(--bg2);border:none;cursor:pointer;font-size:12px;color:var(--text-3);display:none;align-items:center;justify-content:center;transition:all .2s;z-index:2}
-.search-clear:hover{background:var(--red-light);color:var(--red)}
-
-/* Dropdown */
-.search-dropdown{
-  margin-top:6px;
-  background:rgba(255,255,255,0.98);
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
-  border-radius:16px;
-  box-shadow:0 16px 60px rgba(0,0,0,0.4);
-  overflow:hidden;
-  max-height:0;
-  opacity:0;
-  transform:translateY(-8px);
-  transition:max-height .35s cubic-bezier(0.4,0,0.2,1), opacity .25s, transform .25s;
-  pointer-events:none;
-  position:relative;
-  z-index:200;
-}
-.search-dropdown.open{max-height:360px;opacity:1;transform:translateY(0);pointer-events:auto}
-
-/* Internal filter input inside dropdown */
-.search-filter-wrap{padding:10px 12px 6px;border-bottom:1px solid rgba(0,0,0,0.07)}
-.search-filter-input{
-  width:100%;
-  padding:9px 14px;
-  font-size:13px;
-  font-family:'Outfit',sans-serif;
-  border:1.5px solid rgba(0,0,0,0.1);
-  border-radius:10px;
-  outline:none;
-  background:#f8f6f3;
-  color:#1a1a1a;
-  transition:border-color .2s;
-}
-.search-filter-input:focus{border-color:var(--red)}
-
-.search-results{overflow-y:auto;max-height:300px;-webkit-overflow-scrolling:touch;padding:6px 0;overscroll-behavior:contain}
-.search-results::-webkit-scrollbar{width:3px}
-.search-results::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px}
-.search-section-label{padding:8px 14px 4px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-3)}
-.search-item{display:flex;align-items:center;gap:11px;padding:10px 14px;cursor:pointer;transition:background .15s;border-left:3px solid transparent}
-.search-item:hover{background:var(--bg)}
-.search-item.available:hover{border-left-color:rgba(200,16,46,0.35)}
-.search-item.active{background:var(--red-light);border-left-color:var(--red)}
-.search-item.unavailable{opacity:0.55;cursor:default}
-.search-item.unavailable:hover{background:transparent;border-left-color:transparent}
-.si-flag{font-size:20px;line-height:1;flex-shrink:0}
-.si-info{flex:1;min-width:0}
-.si-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.si-sub{font-size:10.5px;color:var(--text-3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.si-badge{font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:20px;flex-shrink:0}
-.si-badge.avail{background:var(--red-light);color:var(--red)}
-.si-badge.unavail{background:var(--bg2);color:var(--text-3)}
-.search-empty{padding:26px;text-align:center;color:var(--text-3);font-size:13px}
-.search-empty span{display:block;font-size:24px;margin-bottom:8px}
-
-.search-hint{margin-top:10px;display:flex;align-items:center;gap:7px;background:rgba(0,0,0,0.45);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:7px 13px;opacity:1;transition:opacity .3s}
-.search-hint.hidden{opacity:0;pointer-events:none}
-.search-hint-dot{width:6px;height:6px;background:var(--red);border-radius:50%;animation:pls 2s ease-in-out infinite;flex-shrink:0}
-.search-hint span{font-size:11.5px;color:rgba(255,255,255,0.85);font-weight:500}
-
+/* ── VISITOR GLOBE AREA ── */
 .globe-area{flex:1;position:relative;overflow:hidden}
-/* Cesium leaves space for the 80px marquee at the bottom */
-#cesiumContainer{width:100%;height:calc(100% - 80px)}
+#cesiumContainer{width:100%;height:100%}
 .cesium-widget,.cesium-widget canvas{width:100%!important;height:100%!important}
+
 
 /* Strip ALL Cesium default chrome */
 .cesium-widget-credits,.cesium-credit-logoContainer,.cesium-credit-textContainer,
@@ -243,7 +95,7 @@ nav{
 .nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
 .nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;background:rgba(248,246,243,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.1);z-index:8999;padding:12px 16px 16px;flex-direction:column;gap:4px;transform:translateY(-10px);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-height:calc(100dvh - 62px);overflow-y:scroll;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;background:rgba(248,246,243,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.1);z-index:600;padding:12px 16px 16px;flex-direction:column;gap:4px;transform:translateY(-10px);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-height:calc(100vh - 62px);overflow-y:scroll;-webkit-overflow-scrolling:touch}
 .mobile-menu.open{transform:translateY(0);opacity:1;pointer-events:auto}
 .mobile-menu a{display:block;color:var(--text-2);text-decoration:none;font-size:14px;font-weight:500;padding:10px 14px;border-radius:9px;transition:all .2s;cursor:pointer}
 .mobile-menu a:hover{color:var(--text);background:var(--bg2)}
@@ -267,150 +119,87 @@ nav{
 @keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* ── RESPONSIVE ── */
-@media (max-width:768px){
-  /* Nav */
-  nav{padding:0 16px;height:56px}
+@media (max-width:860px){
+  nav{padding:0 20px}
   .nav-links{display:none}
   .nav-hamburger{display:flex}
-  .mobile-menu{display:flex;top:56px;max-height:calc(100dvh - 56px)}
-  .page{padding-top:56px;height:100dvh}
+  .mobile-menu{display:flex;top:62px;max-height:calc(100vh - 62px)}
+}
+@media (max-width:768px){
+  nav{height:56px}
+  .mobile-menu{top:56px;max-height:calc(100vh - 56px)}
+  .page{padding-top:56px}
 
-  /* Home page */
+  /* Home */
   #page-home{overflow-y:auto}
-  #page-home>div{padding:32px 20px 40px;min-height:calc(100dvh - 56px)}
-  #page-home h1{font-size:clamp(26px,7vw,44px)}
-  #page-home>div>p{font-size:14px;margin-top:14px}
+  #page-home>div{padding:32px 20px 40px;min-height:calc(100vh - 56px)}
+  #page-home h1{font-size:clamp(28px,7vw,46px)}
+  #page-home>div>p{font-size:14.5px;margin-top:14px}
   .home-badge{font-size:10px;padding:5px 14px;margin-bottom:18px}
-  .home-stats{gap:0;flex-wrap:wrap;justify-content:center;margin-top:36px;padding-top:24px}
-  .home-stats>div{flex:0 0 50%;padding:14px 0;text-align:center}
+  .home-stats{gap:0;flex-wrap:wrap;justify-content:center;margin-top:32px;padding-top:20px}
+  .home-stats>div{flex:0 0 50%;padding:12px 0;text-align:center}
   .home-stats>div:nth-child(1),.home-stats>div:nth-child(2){border-bottom:1px solid var(--border)}
   .home-stats>div:nth-child(1),.home-stats>div:nth-child(3){border-right:1px solid var(--border)}
-  .stat-num{font-size:26px}
+  .stat-num{font-size:24px}
   .stat-lbl{font-size:11px}
-  .home-btns{flex-direction:column;align-items:stretch;gap:10px;margin-top:28px}
+  .home-btns{flex-direction:column;align-items:stretch;gap:10px;margin-top:24px}
   .btn-primary,.btn-ghost{width:100%;text-align:center;padding:14px 20px}
 
-  /* Globe / Visitor page — search centered at top */
-  .search-panel{
-    left:12px !important;
-    right:12px !important;
-    top:12px !important;
-    width:auto !important;
-    transform:none !important;
-  }
-  .search-input{font-size:16px;padding:13px 48px 13px 46px;min-height:50px}
-  .search-dropdown.open{max-height:52vh}
-  .search-results{max-height:calc(52vh - 60px)}
-  #page-visitor{overflow:hidden}
-  .globe-area{height:calc(100dvh - 56px);min-height:calc(100dvh - 56px);overflow:hidden}
-  .visa-marquee-wrap{position:fixed;bottom:0;left:0;right:0;z-index:200}
-  #cesiumContainer{width:100%;height:calc(100dvh - 56px - 68px) !important}
-
-  /* Marquee */
-  .visa-marquee-wrap{height:68px;z-index:200;border-top:1px solid rgba(255,255,255,0.08)}
-  .vm-chip{height:68px;padding:0 18px;gap:5px;border-right:1px solid rgba(255,255,255,0.06)}
-  .vm-flag-img{width:36px;height:24px;border-radius:3px}
+  /* Globe / Visitor */
+  #page-visitor{overflow:visible}
+  .globe-area{height:calc(100vh - 56px);min-height:calc(100vh - 56px)}
+  .visa-marquee-wrap{position:fixed;bottom:0;left:0;right:0;z-index:200;height:68px;border-top:1px solid rgba(255,255,255,0.08)}
+  #cesiumContainer{height:calc(100vh - 56px - 68px)}
+  .vm-chip{height:68px;padding:0 16px;gap:5px}
+  .vm-flag-img{width:34px;height:22px;border-radius:3px}
   .vm-name{font-size:9.5px;letter-spacing:.5px}
-
-  /* Country card — sits above marquee */
-  .country-card{bottom:84px;right:10px;left:10px;min-width:0;max-width:none;padding:18px 18px 16px;border-radius:16px}
-  .card-flag-big{font-size:36px}
-  .card-country-name{font-size:17px}
+  .country-card{bottom:84px;right:10px;left:10px;min-width:0;max-width:none;padding:16px 16px 14px;border-radius:16px}
+  .card-flag-big{width:46px!important;height:30px!important}
+  .card-country-name{font-size:16px}
   .card-apply-btn{padding:11px}
-
-  /* Coords */
   .globe-coords{left:10px;bottom:84px;font-size:10px;padding:4px 10px}
 
-  /* Other pages */
-  .minimal-page h2{font-size:34px}
-  .minimal-page>div>p{font-size:14px;padding:0 24px}
+  /* Visitor search */
+  #visitorSearchWrap{top:8px!important;width:calc(100% - 20px)!important;left:10px!important;right:10px!important;transform:none!important}
+  #visitorDropList{max-height:45vh!important}
+
+  /* Packages search */
+  #pkgSearchWrap{width:calc(100% - 20px)!important;left:10px!important;right:10px!important;transform:none!important}
+  #pkgDropList{max-height:45vh!important}
+  #pkgPanel{border-radius:20px 20px 0 0}
+
+  /* Minimal pages */
+  .minimal-page h2{font-size:36px}
+  .minimal-page>div>p{font-size:14px;padding:0 20px}
   .page-badge{font-size:9.5px}
 }
 
 @media (max-width:480px){
   nav{height:52px}
-  .mobile-menu{top:52px;max-height:calc(100dvh - 52px)}
-  .page{padding-top:52px;height:100dvh}
+  .mobile-menu{top:52px;max-height:calc(100vh - 52px)}
+  .page{padding-top:52px}
+  .nav-logo{font-size:19px}
 
-  .search-panel{
-    left:8px !important;
-    right:8px !important;
-    top:8px !important;
-    width:auto !important;
-    transform:none !important;
-  }
-  .search-input{font-size:16px;padding:12px 44px 12px 44px;min-height:48px}
-  .globe-area{height:calc(100dvh - 52px);min-height:calc(100dvh - 52px)}
-  #cesiumContainer{width:100%;height:calc(100dvh - 52px - 62px) !important}
-  .visa-marquee-wrap{position:fixed;bottom:0;left:0;right:0}
-
-  .visa-marquee-wrap{height:62px;z-index:200}
-  .vm-chip{height:62px;padding:0 14px;gap:4px}
-  .vm-flag-img{width:32px;height:21px}
+  .globe-area{height:calc(100vh - 52px)}
+  #cesiumContainer{height:calc(100vh - 52px - 62px)}
+  .visa-marquee-wrap{height:62px}
+  .vm-chip{height:62px;padding:0 12px;gap:4px}
+  .vm-flag-img{width:30px;height:20px}
   .vm-name{font-size:9px}
-
-  .country-card{bottom:78px;left:8px;right:8px;padding:14px 14px 12px}
+  .country-card{bottom:78px;left:8px;right:8px;padding:12px 12px 10px}
   .card-meta{flex-direction:column;gap:6px}
-  .card-flag-big{font-size:30px}
-  .card-country-name{font-size:15px}
   .globe-coords{bottom:78px;left:8px}
+
+  #visitorSearchWrap{top:6px!important;width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
+  #pkgSearchWrap{width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
+  #pkgDropList{max-height:38vh!important}
   .minimal-page h2{font-size:28px}
+  .pkg-card2{width:155px}
+  .pkg-card2-img{height:80px}
 }
 
-/* Tablet portrait */
-@media (min-width:481px) and (max-width:768px){
-  .search-panel{width:auto !important}
-  .search-dropdown.open{max-height:55vh}
-}
 
-/* ── TABLET LANDSCAPE (769–1024px) — marquee fix ── */
-@media (min-width:769px) and (max-width:1024px){
-  /* Nav stays at 62px — hamburger hidden, links visible */
-  .nav-hamburger{display:none}
-  .nav-links{display:flex}
-
-  /* Visitor page: globe-area must not hide marquee */
-  #page-visitor{overflow:hidden}
-  .globe-area{
-    position:relative;
-    height:calc(100dvh - 62px) !important;
-    min-height:calc(100dvh - 62px) !important;
-    overflow:hidden !important;
-    display:flex;
-    flex-direction:column;
-  }
-  /* Cesium fills globe-area MINUS the marquee height */
-  #cesiumContainer{
-    width:100% !important;
-    height:calc(100% - 72px) !important;
-    flex:1;
-  }
-  /* Marquee: stay at bottom of globe-area, never overflow */
-  .visa-marquee-wrap{
-    position:absolute !important;
-    bottom:0 !important;
-    left:0 !important;
-    right:0 !important;
-    height:72px !important;
-    z-index:25 !important;
-  }
-  .vm-chip{height:72px !important;padding:0 20px !important}
-  .vm-flag-img{width:38px !important;height:26px !important}
-  .vm-name{font-size:10px !important}
-
-  /* Country card above marquee */
-  .country-card{bottom:88px !important}
-  .globe-coords{bottom:88px !important}
-
-  /* Search panel — centered, reasonable width */
-  .search-panel{
-    left:50% !important;
-    right:auto !important;
-    transform:translateX(-50%) !important;
-    width:min(440px,calc(100vw - 48px)) !important;
-    top:20px !important;
-  }
-}.loader{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;z-index:999;transition:opacity .8s}
+.loader{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;z-index:999;transition:opacity .8s}
 .loader-logo{font-family:'Playfair Display',serif;font-size:38px;font-weight:900;color:var(--black)}
 .loader-logo span{color:var(--red)}
 .loader-bar{width:200px;height:3px;background:var(--bg2);border-radius:3px;overflow:hidden}
@@ -423,8 +212,23 @@ nav{
 .minimal-page>div>p{color:var(--text-2);font-size:16px;max-width:420px;margin-top:12px;line-height:1.7}
 .page-badge{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;color:var(--red);border:1px solid rgba(200,16,46,0.25);background:var(--red-light);padding:6px 16px;border-radius:20px;margin-bottom:20px;display:inline-block}
 
-/* ── PACKAGES PAGE v2 ── */
-.pvchip{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.82);font-family:'Outfit',sans-serif;font-size:11.5px;font-weight:600;padding:5px 13px;border-radius:20px;cursor:pointer;transition:all .22s;letter-spacing:.3px;backdrop-filter:blur(10px)}
+
+/* ── HAMBURGER + MOBILE MENU ── */
+.nav-hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:40px;height:40px;padding:9px;border-radius:8px;background:transparent;border:1.5px solid var(--border-2);cursor:pointer;transition:all .2s}
+.nav-hamburger:hover{border-color:var(--red);background:var(--red-light)}
+.nav-hamburger span{display:block;width:100%;height:2px;background:var(--text);border-radius:2px;transition:all .35s cubic-bezier(.77,0,.175,1);transform-origin:center}
+.nav-hamburger.open{background:var(--red-light);border-color:var(--red)}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;background:rgba(248,246,243,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:10px 0 16px;z-index:490;overflow-y:auto;max-height:calc(100vh - 62px);box-shadow:0 8px 32px rgba(0,0,0,0.12)}
+.mobile-menu.open{display:block}
+.mobile-menu a{display:block;padding:12px 24px;font-size:15px;font-weight:500;color:var(--text-2);cursor:pointer;transition:all .2s;border-left:3px solid transparent}
+.mobile-menu a:hover,.mobile-menu a.active{color:var(--red);background:var(--red-light);border-left-color:var(--red)}
+.mobile-menu .mob-cta{margin:10px 24px 0;background:var(--red);color:#fff!important;border-radius:10px;text-align:center;font-weight:600;border-left:none!important;display:block}
+
+/* ── PACKAGES PAGE v2 CARDS ── */
+background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.82);font-family:'Outfit',sans-serif;font-size:11.5px;font-weight:600;padding:5px 13px;border-radius:20px;cursor:pointer;transition:all .22s;letter-spacing:.3px;backdrop-filter:blur(10px)}
 .pvchip:hover{background:rgba(200,16,46,0.28);border-color:rgba(200,16,46,0.6);color:#fff;transform:translateY(-1px);box-shadow:0 4px 16px rgba(200,16,46,0.25)}
 .pkg-card2{flex-shrink:0;width:200px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .28s;position:relative}
 .pkg-card2:hover{transform:translateY(-5px) scale(1.02);border-color:rgba(200,16,46,0.45);box-shadow:0 16px 48px rgba(200,16,46,0.2),0 0 0 1px rgba(200,16,46,0.2)}
@@ -439,141 +243,6 @@ nav{
 #pkgCards::-webkit-scrollbar{height:3px}
 #pkgCards::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:3px}
 
-/* ── PACKAGES PAGE RESPONSIVE ── */
-
-/* page-tickets always fills the viewport below nav */
-#page-tickets{
-  height:calc(100vh - 62px) !important;
-  min-height:calc(100vh - 62px) !important;
-  max-height:calc(100vh - 62px) !important;
-  overflow:hidden !important;
-}
-#pkgMap{
-  position:absolute !important;
-  inset:0 !important;
-  width:100% !important;
-  height:100% !important;
-}
-#pkgFlightSVG{
-  position:absolute !important;
-  top:0 !important; left:0 !important;
-  width:100% !important;
-  height:100% !important;
-}
-
-@media (max-width:768px){
-  nav{padding:0 16px;height:56px}
-  .page{padding-top:56px}
-  #page-tickets{
-    height:calc(100vh - 56px) !important;
-    min-height:calc(100vh - 56px) !important;
-    max-height:calc(100vh - 56px) !important;
-  }
-
-  /* Search bar — full width, below the HUD gradient */
-  #pkgSearchWrap{
-    top:58px !important;
-    left:12px !important;
-    right:12px !important;
-    width:auto !important;
-    transform:none !important;
-    z-index:200 !important;
-  }
-
-  /* HUD bar — compact, single row */
-  #pkgHUD{
-    padding:8px 12px !important;
-    flex-wrap:nowrap !important;
-    align-items:center !important;
-    gap:0 !important;
-  }
-  #pkgHUD>div:first-child{flex:1;min-width:0;overflow:hidden}
-  #pkgHUD>div:first-child>div:first-child>div:first-child{
-    font-size:7px !important;
-    letter-spacing:1px !important;
-    display:none !important;
-  }
-  #pkgHUD>div:first-child>div:first-child>div:last-child{
-    font-size:13px !important;
-    white-space:nowrap !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
-  }
-  /* Hide separator line and flight info in HUD on mobile */
-  #pkgHUD>div:first-child>div:nth-child(2){display:none !important}
-  #pkgFlightInfo{display:none !important}
-  #pkgAltimeter{display:none !important}
-  #pkgHUD>div:last-child{flex-shrink:0}
-
-  /* Progress HUD — full width, sits above panel */
-  #pkgProgressHUD{
-    bottom:auto !important;
-    top:130px !important;
-    left:12px !important;
-    right:12px !important;
-    width:auto !important;
-    transform:none !important;
-    white-space:normal !important;
-  }
-  #pkgProgressHUD>div{
-    flex-wrap:wrap !important;
-    gap:8px !important;
-    padding:10px 14px !important;
-    border-radius:12px !important;
-    justify-content:space-between !important;
-  }
-
-  /* Packages panel — glassmorphism, rounded top corners */
-  #pkgPanel>div{
-    padding:12px 12px 16px !important;
-    border-radius:20px 20px 0 0 !important;
-  }
-  #pkgPanelTitle{font-size:15px !important}
-  #pkgPanelSub{font-size:10px !important}
-  #pkgCards{gap:10px !important}
-  .pkg-card2{width:155px !important}
-  .pkg-card2-img{height:88px !important}
-  .pkg-card2-body{padding:9px 10px 11px !important}
-  .pkg-card2-dest{font-size:12px !important}
-
-  /* Dropdown */
-  #pkgDropdown{border-radius:12px !important}
-  #pkgDropList{max-height:200px !important}
-
-  /* Filter chips */
-  .pvchip{font-size:10px !important;padding:4px 10px !important}
-
-  /* Force map resize on mobile */
-  .maplibregl-map,.maptiler-map{width:100% !important;height:100% !important}
-}
-
-@media (max-width:480px){
-  nav{height:52px}
-  .mobile-menu{top:52px;max-height:calc(100vh - 52px)}
-  .page{padding-top:52px}
-  #page-tickets{
-    height:calc(100vh - 52px) !important;
-    min-height:calc(100vh - 52px) !important;
-    max-height:calc(100vh - 52px) !important;
-  }
-  #pkgSearchWrap{
-    top:50px !important;
-    left:8px !important;
-    right:8px !important;
-  }
-  #pkgProgressHUD{top:118px !important}
-  #pkgPanel>div{padding:10px 8px 14px !important}
-  .pkg-card2{width:138px !important}
-  .pkg-card2-img{height:76px !important}
-  #pkgDropList{max-height:170px !important}
-}
-
-/* Tablet landscape */
-@media (min-width:769px) and (max-width:1024px){
-  #pkgSearchWrap{width:min(420px,88vw) !important}
-  #pkgPanel>div{padding:16px 18px 20px !important}
-  .pkg-card2{width:180px !important}
-}
 </style>
 </head>
 <body>
@@ -629,29 +298,28 @@ nav{
 
 <div class="page" id="page-visitor">
   <div class="globe-area" style="position:relative;flex:1">
-    <div class="search-panel" id="visitorSearchPanel">
-      <!-- Trigger bar — styled like packages search -->
-      <div class="search-box" id="searchTriggerBar" onclick="openVisitorSearch()" style="cursor:pointer">
-        <span class="search-icon">✈️</span>
-        <div class="search-input" id="searchDisplay" style="display:flex;align-items:center">
-          <span id="searchDisplayText" style="color:#999;font-size:13.5px;font-family:'Outfit',sans-serif;font-weight:500">Select a destination country…</span>
-        </div>
-        <button class="search-clear" id="searchClear" onclick="event.stopPropagation();clearSearch()">✕</button>
-        <span class="search-chevron" id="visitorChevron">▼</span>
+    <!-- UNIFIED SEARCH — same style as Packages page -->
+    <div id="visitorSearchWrap" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
+      <div style="position:relative">
+        <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;z-index:1">🔍</span>
+        <input id="searchInput" type="text" placeholder="Select a destination country…" autocomplete="off" spellcheck="false" readonly
+          style="width:100%;padding:14px 48px 14px 46px;font-size:14.5px;font-family:'Outfit',sans-serif;font-weight:500;color:#111;background:rgba(255,255,255,0.97);border:1.5px solid rgba(255,255,255,0.3);border-radius:16px;outline:none;box-shadow:0 6px 32px rgba(0,0,0,0.28),0 1px 4px rgba(0,0,0,0.12);cursor:pointer;transition:all .25s;backdrop-filter:blur(20px)"
+          onfocus="openVisitorDropdown()" onclick="openVisitorDropdown()">
+        <div id="visitorChevron" onclick="toggleVisitorDropdown()" style="position:absolute;right:18px;top:50%;transform:translateY(-50%);pointer-events:auto;cursor:pointer;transition:transform .25s;color:#888;font-size:13px;user-select:none">▼</div>
       </div>
-      <!-- Dropdown with internal keyboard-friendly search -->
-      <div class="search-dropdown" id="searchDropdown">
-        <div class="search-filter-wrap">
-          <input id="searchInput" type="text" placeholder="🔍  Type a country name…" autocomplete="off" spellcheck="false"
-            class="search-filter-input"
-            oninput="handleVisitorSearch(this.value)"
+      <div id="visitorDropdown" style="margin-top:6px;background:rgba(255,255,255,0.98);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:16px;box-shadow:0 16px 60px rgba(0,0,0,0.4);overflow:hidden;max-height:0;opacity:0;transform:translateY(-8px);transition:max-height .35s cubic-bezier(0.4,0,0.2,1),opacity .25s,transform .25s;pointer-events:none">
+        <div style="padding:10px 14px 8px;border-bottom:1px solid rgba(0,0,0,0.06)">
+          <input id="visitorDropFilter" type="text" placeholder="🔍  Filter countries…" autocomplete="off" spellcheck="false"
+            oninput="filterVisitorDropdown(this.value)"
+            style="width:100%;padding:9px 14px;font-size:13.5px;font-family:'Outfit',sans-serif;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;outline:none;background:#f8f6f3;color:#111;transition:border-color .2s"
             onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='rgba(0,0,0,0.1)'">
         </div>
-        <div class="search-results" id="searchResults"></div>
+        <div id="visitorDropList" style="overflow-y:auto;max-height:300px;padding:6px 0"></div>
       </div>
-      <div class="search-hint" id="searchHint">
-        <div class="search-hint-dot"></div>
-        <span id="hintText">Rotate the globe or search a destination</span>
+      <!-- Hint pill -->
+      <div id="searchHint" style="margin-top:10px;display:flex;align-items:center;gap:7px;background:rgba(0,0,0,0.45);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:7px 13px;transition:opacity .3s">
+        <div style="width:6px;height:6px;background:#C8102E;border-radius:50%;animation:pls 2s ease-in-out infinite;flex-shrink:0"></div>
+        <span id="hintText" style="font-size:11.5px;color:rgba(255,255,255,0.85);font-weight:500">Rotate the globe or select a destination</span>
       </div>
     </div>
     <div class="globe-topbar" style="display:none"><div class="pulse"></div><span>Live</span></div>
@@ -737,12 +405,20 @@ nav{
     </div>
   </div>
 
-  <!-- Flight progress HUD (hidden — kept for JS references only) -->
-  <div id="pkgProgressHUD" style="display:none">
-    <div id="pkgProgIcon"></div>
-    <div id="pkgProgTitle"></div>
-    <div id="pkgProgSub"></div>
-    <div id="pkgProgEta"></div>
+  <!-- Flight progress HUD -->
+  <div id="pkgProgressHUD" style="position:absolute;bottom:260px;left:50%;transform:translateX(-50%);z-index:25;opacity:0;transition:opacity .5s;white-space:nowrap;pointer-events:none">
+    <div style="background:rgba(6,14,26,0.88);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:12px 24px;display:flex;align-items:center;gap:16px">
+      <div style="font-size:22px" id="pkgProgIcon">✈️</div>
+      <div>
+        <div id="pkgProgTitle" style="font-size:13px;font-weight:700;color:#fff;letter-spacing:.3px"></div>
+        <div id="pkgProgSub" style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px"></div>
+      </div>
+      <div style="width:1px;height:28px;background:rgba(255,255,255,0.1)"></div>
+      <div style="text-align:center">
+        <div id="pkgProgEta" style="font-size:14px;font-weight:700;color:#e8c06a;font-family:monospace"></div>
+        <div style="font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:1px;text-transform:uppercase;margin-top:1px">Duration</div>
+      </div>
+    </div>
   </div>
 
   <!-- Packages panel (slides up) -->
@@ -887,158 +563,139 @@ const ALL_COUNTRIES = [
 // Build fast lookup for which countries have full details
 const COUNTRY_MAP = {};
 COUNTRIES.forEach(c => { COUNTRY_MAP[c.name.toLowerCase()] = c; });
-
-// ── SEARCH LOGIC ──────────────────────────────────────────────────────────────
-const searchInput    = document.getElementById('searchInput');
-const searchClear    = document.getElementById('searchClear');
-const searchDropdown = document.getElementById('searchDropdown');
-const searchResults  = document.getElementById('searchResults');
-const searchDisplayText = document.getElementById('searchDisplayText');
-
-let allEntries = [];
-// Merge: start with COUNTRIES (full details), then append ALL_COUNTRIES that aren't duplicates
 const knownNames = new Set(COUNTRIES.map(c => c.name.toLowerCase()));
-allEntries = [
-  ...COUNTRIES.map(c => ({...c, available: true})),
-  ...ALL_COUNTRIES
+
+// ── VISITOR DROPDOWN (mirrors Packages search style) ────────────────────────
+let visitorDropOpen = false;
+
+function buildVisitorDropdown(filterQ) {
+  const list = document.getElementById('visitorDropList');
+  if (!list) return;
+  const q = (filterQ || '').trim().toLowerCase();
+
+  const avail   = COUNTRIES.filter(c => !q || c.name.toLowerCase().includes(q)).sort((a,b)=>a.name.localeCompare(b.name));
+  const unavail = ALL_COUNTRIES
     .filter(c => !knownNames.has(c.name.toLowerCase()))
-    .map(c => ({...c, available: false, id: c.name.toLowerCase().replace(/\s+/g,'-')}))
-];
-allEntries.sort((a,b) => a.name.localeCompare(b.name));
-
-function renderResults(query) {
-  const q = query.trim().toLowerCase();
-  if (!q) {
-    // Show all available countries alphabetically when no query
-    const sorted = [...COUNTRIES].sort((a,b) => a.name.localeCompare(b.name));
-    let html = `<div class="search-section-label">Available Visas</div>`;
-    sorted.forEach(c => {
-      html += `<div class="search-item available" id="si-${c.id}">
-        <span class="si-flag">${c.flag}</span>
-        <div class="si-info"><div class="si-name">${c.name}</div><div class="si-sub">${c.type}</div></div>
-        <span class="si-badge avail">Apply</span>
-      </div>`;
-    });
-    searchResults.innerHTML = html;
-    return;
-  }
-
-  const matches = allEntries.filter(c => c.name.toLowerCase().includes(q));
-  const avail   = matches.filter(c => c.available).sort((a,b) => a.name.localeCompare(b.name));
-  const unavail = matches.filter(c => !c.available).sort((a,b) => a.name.localeCompare(b.name));
-
-  if (!matches.length) {
-    searchResults.innerHTML = `<div class="search-empty"><span>🌐</span>No country found for "<b>${query}</b>"</div>`;
-    return;
-  }
+    .filter(c => !q || c.name.toLowerCase().includes(q))
+    .sort((a,b)=>a.name.localeCompare(b.name));
 
   let html = '';
   if (avail.length) {
-    html += `<div class="search-section-label">Available Visas</div>`;
+    html += `<div style="padding:8px 14px 4px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#999">Available Visas</div>`;
     avail.forEach(c => {
-      html += `<div class="search-item available" id="si-${c.id}">
-        <span class="si-flag">${c.flag}</span>
-        <div class="si-info"><div class="si-name">${c.name}</div><div class="si-sub">${c.type}</div></div>
-        <span class="si-badge avail">Apply</span>
+      html += `<div class="vdr-item vdr-avail" data-id="${c.id}" style="display:flex;align-items:center;gap:13px;padding:10px 16px;cursor:pointer;transition:background .15s;border-left:3px solid transparent">
+        <span style="font-size:20px;line-height:1;flex-shrink:0">${c.flag}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13.5px;font-weight:600;color:#111;font-family:Outfit,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
+          <div style="font-size:11px;color:#999;margin-top:1px;font-family:Outfit,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.type}</div>
+        </div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:20px;background:#fdeaed;color:#C8102E;flex-shrink:0">Apply</div>
       </div>`;
     });
   }
   if (unavail.length) {
-    html += `<div class="search-section-label">Other Countries</div>`;
-    unavail.forEach(c => {
-      html += `<div class="search-item unavailable">
-        <span class="si-flag">${c.flag}</span>
-        <div class="si-info"><div class="si-name">${c.name}</div><div class="si-sub">Contact us to enquire</div></div>
-        <span class="si-badge unavail">Enquire</span>
+    html += `<div style="padding:8px 14px 4px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#999">Other Countries</div>`;
+    unavail.slice(0, 40).forEach(c => {
+      html += `<div class="vdr-item vdr-unavail" style="display:flex;align-items:center;gap:13px;padding:10px 16px;opacity:0.55;border-left:3px solid transparent">
+        <span style="font-size:20px;line-height:1;flex-shrink:0">${c.flag}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13.5px;font-weight:600;color:#111;font-family:Outfit,sans-serif">${c.name}</div>
+          <div style="font-size:11px;color:#999;margin-top:1px;font-family:Outfit,sans-serif">Contact us to enquire</div>
+        </div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:20px;background:#f0ede8;color:#999;flex-shrink:0">Enquire</div>
       </div>`;
     });
   }
-  searchResults.innerHTML = html;
+  if (!html) html = `<div style="padding:22px;text-align:center;color:#999;font-size:13px"><span style="display:block;font-size:22px;margin-bottom:6px">🌐</span>No country found</div>`;
+  list.innerHTML = html;
+
+  // Inject style once
+  if (!document.getElementById('vdrStyle')) {
+    const s = document.createElement('style');
+    s.id = 'vdrStyle';
+    s.textContent = `.vdr-avail:hover{background:rgba(200,16,46,0.06)!important;border-left-color:rgba(200,16,46,0.35)!important}.vdr-item.active{background:#fdeaed!important;border-left-color:#C8102E!important}.vdr-avail{cursor:pointer}`;
+    document.head.appendChild(s);
+  }
+
+  // Click handler for available
+  list.querySelectorAll('.vdr-avail').forEach(el => {
+    el.addEventListener('mousedown', e => {
+      e.preventDefault();
+      const id = el.dataset.id;
+      const country = COUNTRIES.find(x => x.id === id);
+      if (country) selectVisitorCountry(country);
+    });
+    // Touch
+    el.addEventListener('touchend', e => {
+      e.preventDefault();
+      const id = el.dataset.id;
+      const country = COUNTRIES.find(x => x.id === id);
+      if (country) selectVisitorCountry(country);
+    }, {passive: false});
+  });
+  // Momentum scroll on list
+  makeMomentumScroll(list, null);
 }
 
-// ── VISITOR SEARCH: trigger bar opens dropdown; internal input has keyboard ──
-window.openVisitorSearch = function() {
-  const panel = document.getElementById('visitorSearchPanel');
-  const chevron = document.getElementById('visitorChevron');
-  renderResults(searchInput ? searchInput.value : '');
-  searchDropdown.classList.add('open');
-  if (panel) panel.classList.add('open');
-  if (chevron) { chevron.style.transform='translateY(-50%) rotate(180deg)'; chevron.style.color='#C8102E'; }
-  document.getElementById('searchHint').classList.add('hidden');
-  setTimeout(() => { if (searchInput) searchInput.focus(); }, 80);
+function selectVisitorCountry(c) {
+  const inp = document.getElementById('searchInput');
+  if (inp) inp.value = c.flag + '  ' + c.name;
+  // Highlight in list
+  document.querySelectorAll('.vdr-item').forEach(el => el.classList.remove('active'));
+  const activeEl = document.querySelector(`.vdr-avail[data-id="${c.id}"]`);
+  if (activeEl) activeEl.classList.add('active');
+  closeVisitorDropdown();
+  flyTo(c);
+}
+
+function openVisitorDropdown() {
+  visitorDropOpen = true;
+  buildVisitorDropdown('');
+  const dd = document.getElementById('visitorDropdown');
+  const chev = document.getElementById('visitorChevron');
+  dd.style.maxHeight = '360px';
+  dd.style.opacity = '1';
+  dd.style.transform = 'translateY(0)';
+  dd.style.pointerEvents = 'auto';
+  if (chev) { chev.style.transform = 'translateY(-50%) rotate(180deg)'; chev.style.color = '#C8102E'; }
+  const fi = document.getElementById('visitorDropFilter');
+  if (fi) { fi.value = ''; setTimeout(() => fi.focus(), 50); }
+}
+
+function closeVisitorDropdown() {
+  visitorDropOpen = false;
+  const dd = document.getElementById('visitorDropdown');
+  const chev = document.getElementById('visitorChevron');
+  if (!dd) return;
+  dd.style.maxHeight = '0';
+  dd.style.opacity = '0';
+  dd.style.transform = 'translateY(-8px)';
+  dd.style.pointerEvents = 'none';
+  if (chev) { chev.style.transform = 'translateY(-50%) rotate(0deg)'; chev.style.color = '#888'; }
+}
+
+function toggleVisitorDropdown() {
+  if (visitorDropOpen) closeVisitorDropdown();
+  else openVisitorDropdown();
+}
+
+window.filterVisitorDropdown = function(q) {
+  buildVisitorDropdown(q);
 };
 
-window.handleVisitorSearch = function(q) {
-  searchClear.style.display = q.length > 0 ? 'flex' : 'none';
-  renderResults(q);
-};
-
-// ── Search result selection — scroll-safe ──────────────────────────────────
-// Desktop: mousedown records position, mouseup only fires if mouse barely moved
-let _mouseDownY = 0, _mouseDownX = 0;
-searchResults.addEventListener('mousedown', e => {
-  _mouseDownY = e.clientY;
-  _mouseDownX = e.clientX;
-});
-searchResults.addEventListener('mouseup', e => {
-  const dy = Math.abs(e.clientY - _mouseDownY);
-  const dx = Math.abs(e.clientX - _mouseDownX);
-  if (dy > 6 || dx > 6) return; // dragged — not a click
-  const item = e.target.closest('.search-item.available');
-  if (!item) return;
-  e.preventDefault();
-  const id = item.id.replace('si-', '');
-  const country = COUNTRIES.find(x => x.id === id);
-  if (country) selectVisitorCountry(country);
-});
-// Touch: handled exclusively by makeMomentumScroll's onTap callback below
-// (the touchend listener above is intentionally removed — no duplicate handler)
-
-function selectVisitorCountry(country) {
-  const panel = document.getElementById('visitorSearchPanel');
-  const chevron = document.getElementById('visitorChevron');
-  searchDropdown.classList.remove('open');
-  if (panel) panel.classList.remove('open');
-  if (chevron) { chevron.style.transform='translateY(-50%) rotate(0deg)'; chevron.style.color='#aaa'; }
-  if (searchDisplayText) {
-    searchDisplayText.textContent = country.flag + '  ' + country.name;
-    searchDisplayText.style.color = '#1a1a1a';
-  }
-  searchClear.style.display = 'flex';
-  flyTo(country);
-}
-
-// Stop search panel touches from bubbling to Cesium/nav
-const _searchPanelEl = document.getElementById('visitorSearchPanel') || document.querySelector('.search-panel');
-if (_searchPanelEl) _searchPanelEl.addEventListener('touchstart', e => {
-  e.stopPropagation();
-}, {passive: false});
-
-document.addEventListener('click', e => {
-  if (!e.target.closest('.search-panel') && !e.target.closest('#visitorSearchPanel')) {
-    const panel = document.getElementById('visitorSearchPanel');
-    const chevron = document.getElementById('visitorChevron');
-    searchDropdown.classList.remove('open');
-    if (panel) panel.classList.remove('open');
-    if (chevron) { chevron.style.transform='translateY(-50%) rotate(0deg)'; chevron.style.color='#aaa'; }
-  }
-  if (!e.target.closest('#navHamburger') && !e.target.closest('#mobileMenu')) {
-    document.getElementById('navHamburger').classList.remove('open');
-    document.getElementById('mobileMenu').classList.remove('open');
-  }
+// Close on outside click
+document.addEventListener('mousedown', function(e) {
+  const wrap = document.getElementById('visitorSearchWrap');
+  if (wrap && !wrap.contains(e.target) && visitorDropOpen) closeVisitorDropdown();
 });
 
-function clearSearch() {
-  const panel = document.getElementById('visitorSearchPanel');
-  const chevron = document.getElementById('visitorChevron');
-  if (searchInput) searchInput.value = '';
-  searchClear.style.display = 'none';
-  searchDropdown.classList.remove('open');
-  if (panel) panel.classList.remove('open');
-  if (chevron) { chevron.style.transform='translateY(-50%) rotate(0deg)'; chevron.style.color='#aaa'; }
-  if (searchResults) searchResults.innerHTML = '';
-  if (searchDisplayText) { searchDisplayText.textContent = 'Select a destination country…'; searchDisplayText.style.color = '#999'; }
-}
+// Legacy refs kept for backward compat (marquee chip fly)
+const searchInput    = document.getElementById('searchInput');
+const searchDropdown = { classList: { add: ()=>{}, remove: ()=>{} } }; // no-op shim
+const searchResults  = { innerHTML: '' }; // no-op shim
+
+function clearSearch() { /* no-op — new design has no separate clear btn */ }
+
 
 // Navigation
 let globeBuilt = false;
@@ -1059,19 +716,32 @@ function toggleMobileMenu() {
   menu.classList.toggle('open', !isOpen);
 }
 
+// Close dropdowns on outside click
+document.addEventListener('click', e => {
+  if (!e.target.closest('#visitorSearchWrap') && typeof closeVisitorDropdown !== 'undefined') {
+    closeVisitorDropdown();
+  }
+  if (!e.target.closest('#navHamburger') && !e.target.closest('#mobileMenu')) {
+    const ham = document.getElementById('navHamburger');
+    const menu = document.getElementById('mobileMenu');
+    if (ham) ham.classList.remove('open');
+    if (menu) menu.classList.remove('open');
+  }
+});
+
 // ── SMOOTH MOMENTUM SCROLL HELPER ─────────────────────────────────────────────
 // Native-feel inertia scroll for elements inside body{overflow:hidden}
 function makeMomentumScroll(el, onTap) {
-  const FRICTION     = 0.978;
-  const MIN_VEL      = 0.3;
-  const TAP_MAX_MOVE = 6;        // px total finger travel — must be LESS than this to count as tap
-  const VEL_HISTORY  = 5;
-  const MAX_VEL      = 40;
+  const FRICTION     = 0.978;   // high = long glide (0.97–0.99 feels native)
+  const MIN_VEL      = 0.3;     // stop threshold px/frame
+  const TAP_MAX_MOVE = 8;       // px — above this = scroll, below = tap
+  const VEL_HISTORY  = 5;       // frames to average for launch velocity
+  const MAX_VEL      = 40;      // cap px/frame so fast flings don't teleport
 
-  let startX = 0, startY = 0, lastY = 0;
-  let totalMove = 0;             // accumulated absolute movement — key fix
+  let startY = 0, lastY = 0;
   let didScroll = false, rafId = null;
   let velY = 0;
+  // Rolling history for smooth velocity estimate
   const hist = [];
 
   function stop() {
@@ -1088,22 +758,19 @@ function makeMomentumScroll(el, onTap) {
 
   el.addEventListener('touchstart', e => {
     stop();
-    startX = e.touches[0].clientX;
     startY = lastY = e.touches[0].clientY;
-    totalMove = 0;
     didScroll = false;
     hist.length = 0;
   }, {passive: true});
 
   el.addEventListener('touchmove', e => {
-    const y  = e.touches[0].clientY;
-    const dy = lastY - y;
-    // Track TOTAL absolute movement (not just vertical) to catch diagonal swipes
-    totalMove += Math.abs(dy) + Math.abs(e.touches[0].clientX - startX) * 0.5;
-    if (totalMove > TAP_MAX_MOVE) didScroll = true;
+    const y   = e.touches[0].clientY;
+    const dy  = lastY - y;
+    if (Math.abs(startY - y) > TAP_MAX_MOVE) didScroll = true;
 
     if (didScroll) {
       el.scrollTop += dy;
+      // Keep a rolling window of recent deltas for velocity
       hist.push(dy);
       if (hist.length > VEL_HISTORY) hist.shift();
       e.preventDefault();
@@ -1116,35 +783,22 @@ function makeMomentumScroll(el, onTap) {
     if (didScroll) {
       e.preventDefault();
       e.stopPropagation();
+      // Launch velocity = average of recent deltas, capped
       if (hist.length) {
         const avg = hist.reduce((a, b) => a + b, 0) / hist.length;
         velY = Math.max(-MAX_VEL, Math.min(MAX_VEL, avg));
         if (Math.abs(velY) > MIN_VEL) rafId = requestAnimationFrame(coast);
       }
-      return; // ← swipe: never fires onTap
+      return;
     }
-    // Only reach here if truly tapped (no scroll)
     if (onTap) onTap(e);
   }, {passive: false});
 }
 
-let _suppressReopen = false;
-// Search results: smooth scroll + tap-to-select
-makeMomentumScroll(document.getElementById('searchResults'), e => {
-  const item = e.target.closest('.search-item.available');
-  if (!item) return;
-  e.preventDefault();
-  const id = item.id.replace('si-', '');
-  const country = COUNTRIES.find(x => x.id === id);
-  if (country) {
-    _suppressReopen = true;
-    searchInput.blur();
-    selectVisitorCountry(country);
-  }
-});
 
 // Mobile menu: smooth scroll only (links handle their own taps via onclick)
 makeMomentumScroll(document.getElementById('mobileMenu'), null);
+
 
 function goPageMob(name) {
   // Update desktop nav active state
@@ -1416,14 +1070,14 @@ function flyTo(c) {
   isFlyingTo = true;
   currentCountry = c;
 
-  // Update search item highlight
-  document.querySelectorAll('.search-item').forEach(el => el.classList.remove('active'));
-  const siEl = document.getElementById('si-' + c.id);
-  if (siEl) siEl.classList.add('active');
+  // Update search input display
+  const inp = document.getElementById('searchInput');
+  if (inp) inp.value = c.flag + '  ' + c.name;
+
   // Update marquee chip highlight
   document.querySelectorAll('.vm-chip').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.vm-chip[data-id="' + c.id + '"]').forEach(el => el.classList.add('active'));
-  searchDropdown.classList.remove('open');
+  closeVisitorDropdown();
 
   document.getElementById('countryCard').classList.remove('visible');
   document.getElementById('hintText').textContent = 'Flying to ' + c.name + '…';
@@ -1488,9 +1142,10 @@ function showCard(c) {
 
 function closeCard() {
   document.getElementById('countryCard').classList.remove('visible');
-  document.querySelectorAll('.search-item').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.vm-chip').forEach(el => el.classList.remove('active'));
-  document.getElementById('hintText').textContent = 'Rotate the globe or search a destination';
+  document.getElementById('hintText').textContent = 'Rotate the globe or select a destination';
+  const inp = document.getElementById('searchInput');
+  if (inp) inp.value = '';
   currentCountry = null;
   clearHighlight();
   viewer.entities.removeById('dest-pin');
@@ -1512,18 +1167,6 @@ window.addEventListener('load', () => {
     l.style.opacity = '0'; l.style.pointerEvents = 'none';
     setTimeout(() => l.remove(), 800);
   }, 1800);
-
-  // ── VIEWPORT LOCK — prevents mobile address bar collapsing from shifting layout ──
-  // Set --vh once and never update it. The nav is fixed so it never moves regardless.
-  // This stops any CSS that uses 100vh from jumping when the browser chrome resizes.
-  const setVH = () => {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-  };
-  setVH();
-  // Do NOT re-run on resize — that's what causes the jump. The layout uses dvh/fixed pos.
-  // Only re-run on orientationchange (rotating device is a genuine layout change).
-  window.addEventListener('orientationchange', () => setTimeout(setVH, 300));
 });
 
 // ── PACKAGES — MAPTILER + FULL FLIGHT SEQUENCE ───────────────────────────
@@ -1791,7 +1434,6 @@ function setupMap() {
 
   map.on('load', () => {
     mapReady = true;
-    map.resize(); // ensure canvas fills container on any screen size
     addOriginMarker();
     addCityDots();
     startIdleRotation();
@@ -2080,26 +1722,23 @@ function doFlight(pkg) {
   clearFlightVisuals();
   highlightCityDot(activePkg);
 
-  // Calculate zoom level to show both India and destination
+  // Show progress HUD — departing
+  showHUD('✈️', `Departing for ${pkg.city}`, `India → ${pkg.city}`, pkg.flight);
+
+  // Phase 1: zoom out flat to show both India and destination
   const midLng = (INDIA_LNG + pkg.lng) / 2;
   const midLat = (INDIA_LAT + pkg.lat) / 2;
   const dist = Math.sqrt(Math.pow(pkg.lng - INDIA_LNG, 2) + Math.pow(pkg.lat - INDIA_LAT, 2));
   const zoomOut = Math.max(1.2, 4.8 - dist * 0.020);
 
-  // Always snap back to India first so the flight visibly departs from India
-  map.jumpTo({ center: [INDIA_LNG, INDIA_LAT], zoom: 3.2, pitch: 0, bearing: 0 });
-
-  // Phase 1: smoothly zoom out to show both origin and destination
-  setTimeout(() => {
-    map.flyTo({
-      center: [midLng, midLat],
-      zoom: zoomOut,
-      pitch: 0,
-      bearing: 0,
-      duration: 900,
-      essential: true,
-    });
-  }, 200); // small delay so jumpTo settles before flyTo begins
+  map.flyTo({
+    center: [midLng, midLat],
+    zoom: zoomOut,
+    pitch: 0,
+    bearing: 0,
+    duration: 900,
+    essential: true,
+  });
 
   // Phase 2: draw path AFTER map finishes flying (moveend = accurate coordinates)
   let phase2Done = false;
@@ -2406,7 +2045,8 @@ function buildPkgDropdown() {
         <div style="font-size:11px;color:#999;margin-top:1px;font-family:Outfit,sans-serif">${p.destinations ? p.destinations.map(d=>d.name).slice(0,3).join(' · ') : p.city}</div>
       </div>
       <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:10px;color:#bbb;font-family:Outfit,sans-serif">${p.flight}</div>
+        <div style="font-size:12px;font-weight:700;color:#C8102E;font-family:Outfit,sans-serif">${p.price}</div>
+        <div style="font-size:10px;color:#bbb;font-family:Outfit,sans-serif;margin-top:1px">${p.flight}</div>
       </div>
     </div>`;
   }).join('');
@@ -2418,71 +2058,6 @@ function buildPkgDropdown() {
     s.textContent = `.pkg-drop-item{display:flex;align-items:center;gap:13px;padding:10px 16px;cursor:pointer;transition:background .15s;border-left:3px solid transparent} .pkg-drop-item.active{background:rgba(200,16,46,0.08)!important;border-left-color:#C8102E}`;
     document.head.appendChild(s);
   }
-}
-
-// ── KEYBOARD-AWARE DROPDOWN POSITIONING ───────────────────────────────────
-// On mobile/tablet the virtual keyboard shrinks the visual viewport.
-// We reposition the dropdown to be fixed relative to the visual viewport
-// so it always appears above the keyboard, never gets clipped.
-
-function isMobileOrTablet() {
-  return window.innerWidth <= 1024;
-}
-
-function positionPkgDropdownFixed() {
-  const dd = document.getElementById('pkgDropdown');
-  const wrap = document.getElementById('pkgSearchWrap');
-  if (!dd || !wrap || !pkgDropOpen) return;
-
-  const vv = window.visualViewport;
-  const wrapRect = wrap.getBoundingClientRect();
-
-  // Input bar bottom relative to the visual viewport
-  const inputBottom = wrapRect.bottom - (vv ? vv.offsetTop : 0);
-
-  // Available space below the input bar (above keyboard)
-  const viewportBottom = vv ? vv.height : window.innerHeight;
-  const spaceBelow = viewportBottom - inputBottom - 8; // 8px gap
-
-  const maxDropHeight = Math.min(320, Math.max(120, spaceBelow));
-
-  // Switch to fixed so keyboard doesn't push it off screen
-  dd.style.position = 'fixed';
-  dd.style.top = (inputBottom + (vv ? vv.offsetTop : 0) + 6) + 'px';
-  dd.style.left = wrapRect.left + 'px';
-  dd.style.width = wrapRect.width + 'px';
-  dd.style.marginTop = '0';
-  dd.style.maxHeight = maxDropHeight + 'px';
-
-  // Also constrain the inner list height
-  const list = document.getElementById('pkgDropList');
-  if (list) list.style.maxHeight = (maxDropHeight - 56) + 'px'; // subtract filter row
-}
-
-function resetPkgDropdownPosition() {
-  const dd = document.getElementById('pkgDropdown');
-  const list = document.getElementById('pkgDropList');
-  if (!dd) return;
-  dd.style.position = '';
-  dd.style.top = '';
-  dd.style.left = '';
-  dd.style.width = '';
-  dd.style.marginTop = '';
-  if (list) list.style.maxHeight = '';
-}
-
-// Reposition whenever the visual viewport resizes (keyboard open/close)
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', function() {
-    if (pkgDropOpen && isMobileOrTablet()) {
-      positionPkgDropdownFixed();
-    }
-  });
-  window.visualViewport.addEventListener('scroll', function() {
-    if (pkgDropOpen && isMobileOrTablet()) {
-      positionPkgDropdownFixed();
-    }
-  });
 }
 
 window.togglePkgDropdown = function() {
@@ -2498,20 +2073,7 @@ window.togglePkgDropdown = function() {
     dd.style.pointerEvents = 'auto';
     chevron.style.transform = 'translateY(-50%) rotate(180deg)';
     chevron.style.color = '#C8102E';
-    if (filterInput) {
-      filterInput.value = '';
-      setTimeout(() => {
-        filterInput.focus();
-        // After keyboard appears, reposition dropdown above it
-        if (isMobileOrTablet()) {
-          setTimeout(positionPkgDropdownFixed, 350);
-        }
-      }, 50);
-    }
-    if (isMobileOrTablet()) {
-      // Initial position before keyboard opens
-      setTimeout(positionPkgDropdownFixed, 10);
-    }
+    if (filterInput) { filterInput.value = ''; setTimeout(()=>filterInput.focus(), 50); }
   } else {
     closePkgDropdown();
   }
@@ -2528,7 +2090,6 @@ function closePkgDropdown() {
   dd.style.pointerEvents = 'none';
   chevron.style.transform = 'translateY(-50%) rotate(0deg)';
   chevron.style.color = '#888';
-  resetPkgDropdownPosition();
 }
 
 window.filterPkgDropdown = function(q) {
@@ -2558,18 +2119,11 @@ window.selectPkgCountry = function(key) {
   setTimeout(() => window.pkgQuick(key), 50);
 };
 
-// Close dropdown on outside click/touch — mousedown for desktop, touchstart for mobile
-function outsidePkgClose(e) {
+// Close dropdown on outside click — use mousedown so it fires before click on items
+document.addEventListener('mousedown', function(e) {
   const wrap = document.getElementById('pkgSearchWrap');
-  const dd = document.getElementById('pkgDropdown');
-  if (!pkgDropOpen) return;
-  // Allow touches/clicks inside the wrap or the (fixed-positioned) dropdown
-  if (wrap && wrap.contains(e.target)) return;
-  if (dd && dd.contains(e.target)) return;
-  closePkgDropdown();
-}
-document.addEventListener('mousedown', outsidePkgClose);
-document.addEventListener('touchstart', outsidePkgClose, { passive: true });
+  if (wrap && !wrap.contains(e.target) && pkgDropOpen) closePkgDropdown();
+});
 
 window.triggerFlightSearch = function() {
   togglePkgDropdown();
@@ -2621,16 +2175,9 @@ window.goPage = function(name, el) {
   if (name === 'tickets') {
     setTimeout(() => {
       updateSVGSize();
-      if (!mapInited) {
-        initMap();
-      } else {
-        if (map && mapReady) {
-          map.resize(); // critical: forces map to recalculate its canvas size
-          updateSVGSize();
-          if (!activePkg) startIdleRotation();
-        }
-      }
-    }, 100);
+      if (!mapInited) initMap();
+      else if (map && mapReady && !activePkg) startIdleRotation();
+    }, 80);
   } else {
     stopIdleRotation();
   }

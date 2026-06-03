@@ -2117,60 +2117,92 @@ function doFlight(pkg) {
   setTimeout(startPhase2, phase2Fallback); // fallback if moveend already fired
 
   // Phase 3: after flight lands, zoom into destination
-  const _phase3Delay = (window.innerWidth <= 860) ? 1900 : 3200;
+  const _phase3Delay = (window.innerWidth <= 860) ? 2300 : 3200;
   setTimeout(() => {
     if (!activePkg) return;
     const plane = document.getElementById('pkgPlane');
     // Hide plane icon during zoom-in — dest dot shows instead
     if (plane) plane.style.display = 'none';
 
-    function updateAllSVGOnMove() {
-      if (!activePkg) return;
-      const pkg2 = PKG_DATA[activePkg];
-      if (!pkg2) return;
-      const dpt = lngLatToXY([pkg2.lng, pkg2.lat]);
-      const spt = lngLatToXY([INDIA_LNG, INDIA_LAT]);
-      // Redraw path with reset dash so line stays fully visible
-      const newD = bezierPath(spt, dpt);
-      ['pkgGhostPath','pkgGlowPath','pkgMainPath'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el && el.getAttribute('d')) {
-          el.setAttribute('d', newD);
-          el.style.strokeDasharray = 'none';
-          el.style.strokeDashoffset = '0';
-        }
-      });
-      // Keep destination glow dot pinned to correct pixel position
-      const dg = document.getElementById('pkgDestGlow');
-      if (dg) {
-        dg.innerHTML = `
-          <circle cx="${dpt.x}" cy="${dpt.y}" r="35" fill="url(#destGrad)" opacity="0.6"/>
-          <circle cx="${dpt.x}" cy="${dpt.y}" r="9" fill="${pkg2.color}" opacity="0.95"/>
-          <circle cx="${dpt.x}" cy="${dpt.y}" r="5" fill="#fff" opacity="1"/>
-        `;
-      }
-    }
+    // On mobile: hide SVG overlay entirely during zoom-in so the GPU only has
+    // to render the WebGL map — no per-frame SVG redraws competing with it.
+    // On desktop: keep live updates (hardware is fast enough).
+    const svgOverlay = document.getElementById('pkgFlightSVG');
+    if (isMobile && svgOverlay) svgOverlay.style.visibility = 'hidden';
 
-    // Debounce SVG updates during zoom-in to avoid per-frame redraws causing lag on mobile
-    let _svgRafId = null;
-    function updateAllSVGOnMoveDebounced() {
-      if (_svgRafId) return;
-      _svgRafId = requestAnimationFrame(() => {
-        _svgRafId = null;
-        updateAllSVGOnMove();
-      });
-    }
-
-    map.on('move', updateAllSVGOnMoveDebounced);
-    map.once('moveend', () => {
-      map.off('move', updateAllSVGOnMoveDebounced);
-      if (_svgRafId) { cancelAnimationFrame(_svgRafId); _svgRafId = null; }
-      // Final clean redraw at settled zoom level
-      updateAllSVGOnMove();
-      if (activePkg) drawRelatedRoutes(PKG_DATA[activePkg]);
-    });
-    // Shorter zoom-in on mobile to keep animation snappy
     const zoomInDuration = isMobile ? 700 : 1400;
+
+    if (!isMobile) {
+      // Desktop: keep SVG in sync during move (debounced to 1 per rAF)
+      let _svgRafId = null;
+      function updateAllSVGOnMove() {
+        if (!activePkg) return;
+        const pkg2 = PKG_DATA[activePkg];
+        if (!pkg2) return;
+        const dpt = lngLatToXY([pkg2.lng, pkg2.lat]);
+        const spt = lngLatToXY([INDIA_LNG, INDIA_LAT]);
+        const newD = bezierPath(spt, dpt);
+        ['pkgGhostPath','pkgGlowPath','pkgMainPath'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el && el.getAttribute('d')) {
+            el.setAttribute('d', newD);
+            el.style.strokeDasharray = 'none';
+            el.style.strokeDashoffset = '0';
+          }
+        });
+        const dg = document.getElementById('pkgDestGlow');
+        if (dg) {
+          dg.innerHTML = `
+            <circle cx="${dpt.x}" cy="${dpt.y}" r="35" fill="url(#destGrad)" opacity="0.6"/>
+            <circle cx="${dpt.x}" cy="${dpt.y}" r="9" fill="${pkg2.color}" opacity="0.95"/>
+            <circle cx="${dpt.x}" cy="${dpt.y}" r="5" fill="#fff" opacity="1"/>
+          `;
+        }
+      }
+      function updateDebounced() {
+        if (_svgRafId) return;
+        _svgRafId = requestAnimationFrame(() => { _svgRafId = null; updateAllSVGOnMove(); });
+      }
+      map.on('move', updateDebounced);
+      map.once('moveend', () => {
+        map.off('move', updateDebounced);
+        if (_svgRafId) { cancelAnimationFrame(_svgRafId); _svgRafId = null; }
+        updateAllSVGOnMove();
+        if (activePkg) drawRelatedRoutes(PKG_DATA[activePkg]);
+      });
+    } else {
+      // Mobile: redraw SVG only once after zoom fully settles, then fade it back in
+      map.once('moveend', () => {
+        if (!activePkg) return;
+        const pkg2 = PKG_DATA[activePkg];
+        if (!pkg2) return;
+        const dpt = lngLatToXY([pkg2.lng, pkg2.lat]);
+        const spt = lngLatToXY([INDIA_LNG, INDIA_LAT]);
+        const newD = bezierPath(spt, dpt);
+        ['pkgGhostPath','pkgGlowPath','pkgMainPath'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el && el.getAttribute('d')) {
+            el.setAttribute('d', newD);
+            el.style.strokeDasharray = 'none';
+            el.style.strokeDashoffset = '0';
+          }
+        });
+        const dg = document.getElementById('pkgDestGlow');
+        if (dg) {
+          dg.innerHTML = `
+            <circle cx="${dpt.x}" cy="${dpt.y}" r="35" fill="url(#destGrad)" opacity="0.6"/>
+            <circle cx="${dpt.x}" cy="${dpt.y}" r="9" fill="${pkg2.color}" opacity="0.95"/>
+            <circle cx="${dpt.x}" cy="${dpt.y}" r="5" fill="#fff" opacity="1"/>
+          `;
+        }
+        drawRelatedRoutes(pkg2);
+        // Fade SVG back in after redraw is committed
+        requestAnimationFrame(() => {
+          if (svgOverlay) svgOverlay.style.visibility = '';
+        });
+      });
+    }
+
     map.flyTo({
       center: [pkg.lng, pkg.lat],
       zoom: pkg.zoom,
@@ -2179,7 +2211,7 @@ function doFlight(pkg) {
       duration: zoomInDuration,
       essential: true,
     });
-  }, isMobile ? 1900 : 3200);
+  }, isMobile ? 2300 : 3200);
 
   // Show flight info in HUD
   document.getElementById('pkgFlightRoute').textContent = `DEL → ${pkg.code}`;
@@ -2203,26 +2235,29 @@ function onArrived(pkg, dstXY) {
   }
   redrawDestGlow();
 
-  // 3 expanding arrival rings at live position
-  const d0 = getLiveDst();
-  for (let i = 0; i < 4; i++) {
-    const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    ring.setAttribute('cx', d0.x); ring.setAttribute('cy', d0.y);
-    ring.setAttribute('r', '9'); ring.setAttribute('fill','none');
-    ring.setAttribute('stroke', pkg.color); ring.setAttribute('stroke-width','2');
-    ring.setAttribute('opacity','0.8');
-    dg.appendChild(ring);
-    setTimeout(() => {
-      const st = Date.now();
-      function animRing2() {
-        const t = Math.min((Date.now()-st)/1500,1);
-        ring.setAttribute('r', 9 + t * 65);
-        ring.setAttribute('opacity', 0.8*(1-t));
-        if (t<1) requestAnimationFrame(animRing2);
-        else if (ring.parentNode) ring.parentNode.removeChild(ring);
-      }
-      requestAnimationFrame(animRing2);
-    }, i * 400);
+  // 3 expanding arrival rings at live position — skip on mobile (zoom-in starts soon after)
+  const isMobileArrival = window.innerWidth <= 860;
+  if (!isMobileArrival) {
+    const d0 = getLiveDst();
+    for (let i = 0; i < 4; i++) {
+      const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      ring.setAttribute('cx', d0.x); ring.setAttribute('cy', d0.y);
+      ring.setAttribute('r', '9'); ring.setAttribute('fill','none');
+      ring.setAttribute('stroke', pkg.color); ring.setAttribute('stroke-width','2');
+      ring.setAttribute('opacity','0.8');
+      dg.appendChild(ring);
+      setTimeout(() => {
+        const st = Date.now();
+        function animRing2() {
+          const t = Math.min((Date.now()-st)/1500,1);
+          ring.setAttribute('r', 9 + t * 65);
+          ring.setAttribute('opacity', 0.8*(1-t));
+          if (t<1) requestAnimationFrame(animRing2);
+          else if (ring.parentNode) ring.parentNode.removeChild(ring);
+        }
+        requestAnimationFrame(animRing2);
+      }, i * 400);
+    }
   }
 
   // Update HUD

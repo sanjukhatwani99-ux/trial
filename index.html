@@ -17,7 +17,7 @@
   --shadow-lg:0 12px 48px rgba(0,0,0,0.16);
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
+html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;-webkit-text-size-adjust:100%}
 
 nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(248,246,243,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm)}
 .nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--black);display:flex;align-items:center;gap:2px;letter-spacing:-0.5px;cursor:pointer}
@@ -30,7 +30,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .nav-cta{background:var(--red)!important;color:#fff!important;padding:8px 20px!important;border-radius:8px!important;font-weight:600!important;box-shadow:0 2px 12px var(--red-glow)}
 .nav-cta:hover{background:var(--red-dark)!important;transform:translateY(-1px)}
 
-.page{display:none;width:100%;height:100vh;padding-top:62px}
+.page{display:none;width:100%;height:100vh;height:100dvh;padding-top:62px}
 .page.active{display:flex}
 
 #page-home{flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse 70% 55% at 50% 38%,rgba(200,16,46,0.07) 0%,transparent 70%),var(--bg)}
@@ -95,8 +95,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
 .nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;background:rgba(248,246,243,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.1);z-index:600;padding:12px 16px 16px;flex-direction:column;gap:4px;transform:translateY(-10px);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-height:calc(100vh - 62px);overflow-y:scroll;-webkit-overflow-scrolling:touch}
+.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;background:rgba(248,246,243,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.1);z-index:600;padding:12px 16px 16px;flex-direction:column;gap:4px;transform:translateY(-10px);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-height:calc(100vh - 62px);overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
 .mobile-menu.open{transform:translateY(0);opacity:1;pointer-events:auto}
+.mobile-menu::-webkit-scrollbar{display:none}
 .mobile-menu a{display:block;color:var(--text-2);text-decoration:none;font-size:14px;font-weight:500;padding:10px 14px;border-radius:9px;transition:all .2s;cursor:pointer}
 .mobile-menu a:hover{color:var(--text);background:var(--bg2)}
 .mobile-menu a.active{color:var(--red);background:var(--red-light);font-weight:600}
@@ -119,22 +120,33 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 @keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* ── RESPONSIVE ── */
+
+/* ── TABLET & SMALL DESKTOP (≤960px) ── */
+@media (max-width:960px){
+  nav{padding:0 24px}
+  .nav-links a{font-size:12.5px;padding:6px 10px}
+  .nav-cta{padding:7px 14px!important}
+}
+
+/* ── HAMBURGER BREAKPOINT (≤860px) ── */
 @media (max-width:860px){
   nav{padding:0 20px}
   .nav-links{display:none}
   .nav-hamburger{display:flex}
   .mobile-menu{display:flex;top:62px;max-height:calc(100vh - 62px)}
 }
+
+/* ── TABLET PORTRAIT & LARGE MOBILE (≤768px) ── */
 @media (max-width:768px){
   nav{height:56px}
   .mobile-menu{top:56px;max-height:calc(100vh - 56px)}
-  .page{padding-top:56px}
+  .page{padding-top:56px;height:100dvh}
 
   /* Home */
-  #page-home{overflow-y:auto}
-  #page-home>div{padding:32px 20px 40px;min-height:calc(100vh - 56px)}
-  #page-home h1{font-size:clamp(28px,7vw,46px)}
-  #page-home>div>p{font-size:14.5px;margin-top:14px}
+  #page-home{overflow-y:auto;height:auto;min-height:100dvh}
+  #page-home>div{padding:28px 20px 40px;min-height:calc(100dvh - 56px);justify-content:center}
+  #page-home h1{font-size:clamp(26px,7vw,46px);max-width:100%}
+  #page-home>div>p{font-size:14.5px;margin-top:14px;max-width:100%}
   .home-badge{font-size:10px;padding:5px 14px;margin-bottom:18px}
   .home-stats{gap:0;flex-wrap:wrap;justify-content:center;margin-top:32px;padding-top:20px}
   .home-stats>div{flex:0 0 50%;padding:12px 0;text-align:center}
@@ -146,10 +158,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
   .btn-primary,.btn-ghost{width:100%;text-align:center;padding:14px 20px}
 
   /* Globe / Visitor */
-  #page-visitor{overflow:visible}
-  .globe-area{height:calc(100vh - 56px);min-height:calc(100vh - 56px)}
-  .visa-marquee-wrap{position:fixed;bottom:0;left:0;right:0;z-index:200;height:68px;border-top:1px solid rgba(255,255,255,0.08)}
-  #cesiumContainer{height:calc(100vh - 56px - 68px)}
+  #page-visitor{overflow:hidden;height:100dvh}
+  .globe-area{height:calc(100dvh - 56px);min-height:calc(100dvh - 56px);flex:1}
+  .visa-marquee-wrap{position:absolute;bottom:0;left:0;right:0;z-index:200;height:68px;border-top:1px solid rgba(255,255,255,0.08)}
+  #cesiumContainer{height:calc(100dvh - 56px - 68px)!important;width:100%!important}
   .vm-chip{height:68px;padding:0 16px;gap:5px}
   .vm-flag-img{width:34px;height:22px;border-radius:3px}
   .vm-name{font-size:9.5px;letter-spacing:.5px}
@@ -158,30 +170,71 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
   .card-country-name{font-size:16px}
   .card-apply-btn{padding:11px}
   .globe-coords{left:10px;bottom:84px;font-size:10px;padding:4px 10px}
+  .globe-topbar{top:10px;font-size:11px;padding:6px 16px}
 
   /* Visitor search */
   #visitorSearchWrap{top:8px!important;width:calc(100% - 20px)!important;left:10px!important;right:10px!important;transform:none!important}
-  #visitorDropList{max-height:45vh!important}
+  #visitorDropList{max-height:40vh!important}
 
-  /* Packages search */
-  #pkgSearchWrap{width:calc(100% - 20px)!important;left:10px!important;right:10px!important;transform:none!important}
-  #pkgDropList{max-height:45vh!important}
+  /* Packages page */
+  #page-tickets{overflow:hidden;height:100dvh}
+  #pkgSearchWrap{top:56px!important;width:calc(100% - 20px)!important;left:10px!important;right:10px!important;transform:none!important}
+  #pkgDropList{max-height:40vh!important}
   #pkgPanel{border-radius:20px 20px 0 0}
+  #pkgHUD{padding:10px 16px}
+  #pkgCards{gap:10px}
+  .pkg-card2{width:175px}
+  .pkg-card2-img{height:90px}
+  .pvchip{font-size:10.5px;padding:4px 11px}
 
   /* Minimal pages */
+  .minimal-page{overflow-y:auto;height:100dvh}
   .minimal-page h2{font-size:36px}
   .minimal-page>div>p{font-size:14px;padding:0 20px}
   .page-badge{font-size:9.5px}
 }
 
+/* ── MOBILE LANDSCAPE (short height) ── */
+@media (max-height:500px) and (orientation:landscape){
+  nav{height:48px}
+  .mobile-menu{top:48px;max-height:calc(100dvh - 48px)}
+  .page{padding-top:48px}
+
+  #page-home>div{padding:16px 20px 20px;min-height:calc(100dvh - 48px)}
+  #page-home h1{font-size:clamp(20px,5vw,36px)}
+  .home-stats{margin-top:16px;padding-top:14px}
+  .home-btns{flex-direction:row;margin-top:14px}
+  .btn-primary,.btn-ghost{width:auto;padding:10px 20px}
+
+  .globe-area{height:calc(100dvh - 48px)}
+  .visa-marquee-wrap{height:52px}
+  #cesiumContainer{height:calc(100dvh - 48px - 52px)!important}
+  .vm-chip{height:52px;padding:0 12px;gap:3px}
+  .vm-flag-img{width:28px;height:19px}
+  .vm-name{font-size:8.5px}
+  .country-card{bottom:68px;left:auto;right:10px;max-width:260px;padding:10px 12px}
+  .card-meta{gap:6px}
+  .globe-coords{bottom:68px}
+
+  #pkgSearchWrap{top:52px!important}
+  #pkgPanel .pkg-card2-img{height:70px}
+  .pkg-card2{width:150px}
+
+  .minimal-page h2{font-size:28px}
+}
+
+/* ── SMALL MOBILE PORTRAIT (≤480px) ── */
 @media (max-width:480px){
   nav{height:52px}
-  .mobile-menu{top:52px;max-height:calc(100vh - 52px)}
+  .mobile-menu{top:52px;max-height:calc(100dvh - 52px)}
   .page{padding-top:52px}
   .nav-logo{font-size:19px}
 
-  .globe-area{height:calc(100vh - 52px)}
-  #cesiumContainer{height:calc(100vh - 52px - 62px)}
+  #page-home>div{padding:24px 16px 32px}
+  #page-home h1{font-size:clamp(24px,8vw,38px)}
+
+  .globe-area{height:calc(100dvh - 52px)}
+  #cesiumContainer{height:calc(100dvh - 52px - 62px)!important}
   .visa-marquee-wrap{height:62px}
   .vm-chip{height:62px;padding:0 12px;gap:4px}
   .vm-flag-img{width:30px;height:20px}
@@ -191,11 +244,48 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
   .globe-coords{bottom:78px;left:8px}
 
   #visitorSearchWrap{top:6px!important;width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
-  #pkgSearchWrap{width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
+  #pkgSearchWrap{top:52px!important;width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
   #pkgDropList{max-height:38vh!important}
   .minimal-page h2{font-size:28px}
   .pkg-card2{width:155px}
   .pkg-card2-img{height:80px}
+
+  /* packages HUD compact */
+  #pkgHUD{padding:8px 12px}
+  #pkgHUD [style*="clamp(15px"]{font-size:14px!important}
+  #pkgHUD [style*="letter-spacing:3px"]{display:none}
+}
+
+/* ── VERY SMALL MOBILE (≤360px) ── */
+@media (max-width:360px){
+  nav{padding:0 12px}
+  .nav-logo{font-size:17px}
+  #page-home h1{font-size:clamp(22px,8.5vw,34px)}
+  .home-btns{gap:8px}
+  .btn-primary,.btn-ghost{padding:12px 16px;font-size:13.5px}
+  .country-card{left:6px;right:6px;padding:10px 10px 8px}
+  .card-country-name{font-size:14px}
+  .pkg-card2{width:140px}
+  .pkg-card2-img{height:72px}
+  .minimal-page h2{font-size:24px}
+}
+
+/* ── TABLET LANDSCAPE (769px–1024px) ── */
+@media (min-width:769px) and (max-width:1024px){
+  nav{padding:0 24px}
+  .nav-links a{font-size:12.5px;padding:6px 9px}
+  .nav-cta{padding:7px 14px!important}
+  #page-home h1{font-size:clamp(32px,4.5vw,60px)}
+  .home-stats{gap:32px}
+  .country-card{min-width:270px;max-width:300px}
+}
+
+/* ── ENSURE dvh FALLBACK ── */
+@supports not (height: 100dvh){
+  .page{height:calc(100vh - 0px)}
+  #page-home{min-height:100vh}
+  .globe-area{height:calc(100vh - 56px)}
+  #cesiumContainer{height:calc(100vh - 56px - 68px)!important}
 }
 
 
@@ -221,14 +311,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
 .nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;background:rgba(248,246,243,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:10px 0 16px;z-index:490;overflow-y:auto;max-height:calc(100vh - 62px);box-shadow:0 8px 32px rgba(0,0,0,0.12)}
-.mobile-menu.open{display:block}
-.mobile-menu a{display:block;padding:12px 24px;font-size:15px;font-weight:500;color:var(--text-2);cursor:pointer;transition:all .2s;border-left:3px solid transparent}
-.mobile-menu a:hover,.mobile-menu a.active{color:var(--red);background:var(--red-light);border-left-color:var(--red)}
-.mobile-menu .mob-cta{margin:10px 24px 0;background:var(--red);color:#fff!important;border-radius:10px;text-align:center;font-weight:600;border-left:none!important;display:block}
+
 
 /* ── PACKAGES PAGE v2 CARDS ── */
-background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.82);font-family:'Outfit',sans-serif;font-size:11.5px;font-weight:600;padding:5px 13px;border-radius:20px;cursor:pointer;transition:all .22s;letter-spacing:.3px;backdrop-filter:blur(10px)}
+.pvchip{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.82);font-family:'Outfit',sans-serif;font-size:11.5px;font-weight:600;padding:5px 13px;border-radius:20px;cursor:pointer;transition:all .22s;letter-spacing:.3px;backdrop-filter:blur(10px)}
 .pvchip:hover{background:rgba(200,16,46,0.28);border-color:rgba(200,16,46,0.6);color:#fff;transform:translateY(-1px);box-shadow:0 4px 16px rgba(200,16,46,0.25)}
 .pkg-card2{flex-shrink:0;width:200px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .28s;position:relative}
 .pkg-card2:hover{transform:translateY(-5px) scale(1.02);border-color:rgba(200,16,46,0.45);box-shadow:0 16px 48px rgba(200,16,46,0.2),0 0 0 1px rgba(200,16,46,0.2)}
@@ -243,6 +329,40 @@ background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:
 #pkgCards::-webkit-scrollbar{height:3px}
 #pkgCards::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:3px}
 
+
+/* ── CLIP MAP MARKERS TO MAP BOUNDS ── */
+#page-tickets { clip-path: inset(0); }
+#pkgMap, #pkgMap > * {
+  overflow: hidden !important;
+}
+.maptilergl-marker, .maplibregl-marker {
+  will-change: transform;
+}
+/* ── HIDE ALL MAP CONTROL UI (MapTiler / MapLibre) ── */
+#pkgMap .maptilergl-ctrl-top-left,
+#pkgMap .maptilergl-ctrl-top-right,
+#pkgMap .maptilergl-ctrl-bottom-left,
+#pkgMap .maptilergl-ctrl-bottom-right,
+#pkgMap .maptilergl-ctrl,
+#pkgMap .maptilergl-ctrl-group,
+#pkgMap .maptilergl-ctrl-group button,
+#pkgMap .maplibregl-ctrl-top-left,
+#pkgMap .maplibregl-ctrl-top-right,
+#pkgMap .maplibregl-ctrl-bottom-left,
+#pkgMap .maplibregl-ctrl-bottom-right,
+#pkgMap .maplibregl-ctrl,
+#pkgMap .maplibregl-ctrl-group,
+#pkgMap .maplibregl-ctrl-group button,
+#pkgMap .maplibregl-ctrl-attrib,
+#pkgMap .maptilergl-ctrl-attrib,
+#pkgMap [class*="-ctrl-top-"],
+#pkgMap [class*="-ctrl-bottom-"],
+#pkgMap [class*="-ctrl-group"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
 </style>
 </head>
 <body>
@@ -349,10 +469,10 @@ background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:
 
 <div class="page minimal-page" id="page-student"><div><div class="page-badge">Student Visa</div><h2>Study <span>Abroad</span></h2><p>Your gateway to world-class education. We handle the paperwork — you focus on your future.</p></div></div>
 <div class="page minimal-page" id="page-work"><div><div class="page-badge">Work Visa</div><h2>Work <span>Global</span></h2><p>Employment and skilled worker visas for professionals ready to go worldwide.</p></div></div>
-<div class="page" id="page-tickets" style="flex-direction:column;overflow:hidden;background:#060e1a;position:relative">
+<div class="page" id="page-tickets" style="flex-direction:column;overflow:hidden;background:#060e1a;position:relative;clip-path:inset(0)">
 
   <!-- Mapbox container -->
-  <div id="pkgMap" style="position:absolute;inset:0;width:100%;height:100%"></div>
+  <div id="pkgMap" style="position:absolute;inset:0;width:100%;height:100%;overflow:hidden"></div>
 
   <!-- Atmospheric overlay vignette -->
   <div style="position:absolute;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse 80% 60% at 50% 50%, transparent 40%, rgba(6,14,26,0.55) 100%)"></div>
@@ -406,7 +526,7 @@ background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:
   </div>
 
   <!-- Flight progress HUD -->
-  <div id="pkgProgressHUD" style="position:absolute;bottom:260px;left:50%;transform:translateX(-50%);z-index:25;opacity:0;transition:opacity .5s;white-space:nowrap;pointer-events:none">
+  <div id="pkgProgressHUD" style="display:none">
     <div style="background:rgba(6,14,26,0.88);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:12px 24px;display:flex;align-items:center;gap:16px">
       <div style="font-size:22px" id="pkgProgIcon">✈️</div>
       <div>
@@ -1392,7 +1512,12 @@ let pendingFly = null;
     .pkg-city-marker:hover { transform: scale(1.8) !important; }
     .maptilergl-popup-content { background:transparent!important; padding:0!important; box-shadow:none!important; border:none!important; }
     .maptilergl-popup-tip { display:none!important; }
-    .maptilergl-ctrl-bottom-left, .maptilergl-ctrl-bottom-right, .maptilergl-ctrl-top-right { display:none!important; }
+    .maptilergl-ctrl-bottom-left, .maptilergl-ctrl-bottom-right,
+    .maptilergl-ctrl-top-right, .maptilergl-ctrl-top-left,
+    .maptilergl-ctrl, .maptilergl-ctrl-group,
+    .maplibregl-ctrl-bottom-left, .maplibregl-ctrl-bottom-right,
+    .maplibregl-ctrl-top-right, .maplibregl-ctrl-top-left,
+    .maplibregl-ctrl, .maplibregl-ctrl-group { display:none!important; }
   `;
   document.head.appendChild(s);
 })();
@@ -1430,16 +1555,42 @@ function setupMap() {
     bearing: 0,
     antialias: true,
     interactive: true,
+    navigationControl: false,
+    geolocateControl: false,
+    maptilerLogo: false,
+    attributionControl: false,
   });
 
   map.on('load', () => {
     mapReady = true;
+
+    // ── Nuke all map UI controls from the DOM ──
+    setTimeout(() => {
+      const mapEl = document.getElementById('pkgMap');
+      if (!mapEl) return;
+      const selectors = [
+        '[class*="-ctrl-top-left"]',
+        '[class*="-ctrl-top-right"]',
+        '[class*="-ctrl-bottom-left"]',
+        '[class*="-ctrl-bottom-right"]',
+        '[class*="-ctrl-group"]',
+        '[class*="NavigationControl"]',
+        '[class*="GeolocateControl"]',
+        '[class*="AttributionControl"]',
+        '[class*="-ctrl-attrib"]',
+        '[class*="-compact"]',
+      ];
+      selectors.forEach(sel => {
+        mapEl.querySelectorAll(sel).forEach(el => el.remove());
+      });
+    }, 500);
+
     addOriginMarker();
-    addCityDots();
     startIdleRotation();
 
     // Redraw SVG overlay whenever map moves/zooms so coordinates stay in sync
     map.on('move', () => {
+      clipMarkersToMapBounds();
       if (!activePkg) return;
       const pkg = PKG_DATA[activePkg];
       if (!pkg) return;
@@ -1482,17 +1633,19 @@ function addOriginMarker() {
 function addCityDots() {
   WORLD_CITIES.forEach((city, i) => {
     const hasPackage = !!city.key;
+    // Skip non-package cities — they clutter the map edges
+    if (!hasPackage) return;
     const el = document.createElement('div');
     el.className = 'pkg-city-marker';
     el.title = city.name;
     el.style.cssText = `
-      width:${hasPackage ? 12 : 8}px;
-      height:${hasPackage ? 12 : 8}px;
+      width:12px;
+      height:12px;
       border-radius:50%;
-      background:${hasPackage ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.4)'};
-      border:2px solid ${hasPackage ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.25)'};
-      box-shadow:${hasPackage ? '0 0 12px rgba(255,255,255,0.6)' : '0 0 6px rgba(255,255,255,0.2)'};
-      cursor:${hasPackage ? 'pointer' : 'default'};
+      background:rgba(255,255,255,0.9);
+      border:2px solid rgba(255,255,255,0.7);
+      box-shadow:0 0 12px rgba(255,255,255,0.6);
+      cursor:pointer;
       animation: pkgCityPop 0.5s ease-out ${i * 40}ms both;
       position:relative;z-index:1;
     `;
@@ -1533,6 +1686,27 @@ function addCityDots() {
   });
 }
 
+// ── CLIP MARKERS TO MAP BOUNDS ────────────────────────────────────────────
+function clipMarkersToMapBounds() {
+  if (!map) return;
+  const mapEl = document.getElementById('pkgMap');
+  if (!mapEl) return;
+  const W = mapEl.offsetWidth;
+  const H = mapEl.offsetHeight;
+  const PAD = 10;
+  // Query ALL marker wrapper divs directly — works regardless of MapTiler nesting
+  mapEl.querySelectorAll('.maptilergl-marker, .maplibregl-marker').forEach(wrapEl => {
+    const style = wrapEl.style.transform || '';
+    const match = style.match(/translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/);
+    if (match) {
+      const x = parseFloat(match[1]);
+      const y = parseFloat(match[2]);
+      const visible = x > -PAD && x < W + PAD && y > -PAD && y < H + PAD;
+      wrapEl.style.display = visible ? '' : 'none';
+    }
+  });
+}
+
 // ── CITY TOOLTIP ───────────────────────────────────────────────────────────
 let _tooltipEl = null;
 function showCityTooltip(anchorEl, city, hasPackage) {
@@ -1540,13 +1714,28 @@ function showCityTooltip(anchorEl, city, hasPackage) {
   if (!hasPackage) return;
   const pkg = PKG_DATA[city.key];
   if (!pkg) return;
+
+  // Find the map container to position the tooltip inside it
+  const mapContainer = document.getElementById('pkgMap');
+  if (!mapContainer) return;
+
+  // Get dot position relative to the map container
+  const dotRect = anchorEl.getBoundingClientRect();
+  const mapRect = mapContainer.getBoundingClientRect();
+
+  const dotCenterX = dotRect.left + dotRect.width / 2 - mapRect.left;
+  const dotTopY    = dotRect.top - mapRect.top;
+
   const tip = document.createElement('div');
   tip.id = 'pkgCityTip';
   tip.style.cssText = `
-    position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);
+    position:absolute;
+    left:${dotCenterX}px;
+    top:${dotTopY}px;
+    transform:translate(-50%, calc(-100% - 12px));
     background:rgba(6,14,26,0.95);backdrop-filter:blur(16px);
     border:1px solid rgba(255,255,255,0.15);border-radius:12px;
-    padding:10px 14px;white-space:nowrap;pointer-events:none;z-index:99;
+    padding:10px 14px;white-space:nowrap;pointer-events:none;z-index:999;
     box-shadow:0 8px 32px rgba(0,0,0,0.5);
     animation:pkgCityPop 0.2s ease-out both;
   `;
@@ -1556,8 +1745,9 @@ function showCityTooltip(anchorEl, city, hasPackage) {
     <div style="font-size:10px;color:rgba(255,255,255,0.5);font-family:Outfit,sans-serif;text-align:center;margin-top:2px">${pkg.price} · ${pkg.flight}</div>
     <div style="font-size:9px;color:#C8102E;font-weight:700;font-family:Outfit,sans-serif;text-align:center;margin-top:4px;letter-spacing:.5px">CLICK TO EXPLORE ✈️</div>
   `;
-  anchorEl.style.position = 'relative';
-  anchorEl.appendChild(tip);
+
+  // Append to the map container so absolute positioning is relative to the map
+  mapContainer.appendChild(tip);
   _tooltipEl = tip;
 }
 function hideCityTooltip() {
@@ -1963,7 +2153,7 @@ function onArrived(pkg, dstXY) {
 }
 
 // ── HUD ────────────────────────────────────────────────────────────────────
-function showHUD(icon, title, sub, eta) {
+function showHUD(icon, title, sub, eta) { return; //
   const hud = document.getElementById('pkgProgressHUD');
   document.getElementById('pkgProgIcon').textContent = icon;
   document.getElementById('pkgProgTitle').textContent = title;
@@ -2044,10 +2234,7 @@ function buildPkgDropdown() {
         <div style="font-size:13.5px;font-weight:600;color:#111;font-family:Outfit,sans-serif">${key}</div>
         <div style="font-size:11px;color:#999;margin-top:1px;font-family:Outfit,sans-serif">${p.destinations ? p.destinations.map(d=>d.name).slice(0,3).join(' · ') : p.city}</div>
       </div>
-      <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:12px;font-weight:700;color:#C8102E;font-family:Outfit,sans-serif">${p.price}</div>
-        <div style="font-size:10px;color:#bbb;font-family:Outfit,sans-serif;margin-top:1px">${p.flight}</div>
-      </div>
+
     </div>`;
   }).join('');
 

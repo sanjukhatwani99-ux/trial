@@ -316,6 +316,15 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 #pkgMap, #pkgMap > * {
   overflow: hidden !important;
 }
+/* Ensure map fills entire tickets page (behind padding-top) */
+#page-tickets #pkgMap {
+  top: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 100% !important;
+  width: 100% !important;
+}
 .maptilergl-marker, .maplibregl-marker {
   will-change: transform;
 }
@@ -813,6 +822,17 @@ function goPage(name, el) {
   document.getElementById('page-' + name).classList.add('active');
   if (el) el.classList.add('active');
   if (name === 'visitor' && !globeBuilt) { globeBuilt = true; setTimeout(initGlobe, 80); }
+  if (name === 'tickets') {
+    setTimeout(() => {
+      updateSVGSize();
+      if (!mapInited) {
+        initMap();
+      } else if (map) {
+        // Force map to recalculate its size after page becomes visible
+        try { map.resize(); } catch(e) {}
+      }
+    }, 60);
+  }
 }
 
 // ── MOBILE MENU ─────────────────────────────────────────────
@@ -931,6 +951,16 @@ function goPageMob(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   if (name === 'visitor' && !globeBuilt) { globeBuilt = true; setTimeout(initGlobe, 80); }
+  if (name === 'tickets') {
+    setTimeout(() => {
+      updateSVGSize();
+      if (!mapInited) {
+        initMap();
+      } else if (map) {
+        try { map.resize(); } catch(e) {}
+      }
+    }, 80);
+  }
   // Close menu
   document.getElementById('navHamburger').classList.remove('open');
   document.getElementById('mobileMenu').classList.remove('open');
@@ -1544,11 +1574,12 @@ function setupMap() {
 
   maptilersdk.config.apiKey = MAPTILER_KEY;
 
+  const initZoom = window.innerWidth <= 860 ? 1.8 : 2.8;
   map = new maptilersdk.Map({
     container: 'pkgMap',
     style: maptilersdk.MapStyle.SATELLITE,
     center: [INDIA_LNG, INDIA_LAT],
-    zoom: 2.8,
+    zoom: initZoom,
     pitch: 0,
     bearing: 0,
     antialias: true,
@@ -1557,10 +1588,17 @@ function setupMap() {
     geolocateControl: false,
     maptilerLogo: false,
     attributionControl: false,
+    // Performance optimizations for mobile
+    fadeDuration: window.innerWidth <= 860 ? 0 : 300,
+    trackResize: true,
   });
 
   map.on('load', () => {
     mapReady = true;
+
+    // Force resize to ensure map fills container (especially important on mobile)
+    setTimeout(() => { try { map.resize(); } catch(e) {} }, 50);
+    setTimeout(() => { try { map.resize(); } catch(e) {} }, 300);
 
     // ── Nuke all map UI controls from the DOM ──
     setTimeout(() => {
@@ -1913,18 +1951,26 @@ function doFlight(pkg) {
   // Show progress HUD — departing
   showHUD('✈️', `Departing for ${pkg.city}`, `India → ${pkg.city}`, pkg.flight);
 
-  // Phase 1: zoom out flat to show both India and destination
+  // Detect mobile for faster, more visible animation
+  const isMobile = window.innerWidth <= 860;
+
+  // Phase 1: zoom out to show BOTH India and destination clearly
   const midLng = (INDIA_LNG + pkg.lng) / 2;
-  const midLat = (INDIA_LAT + pkg.lat) / 2;
+  // Shift midLat slightly toward India for better visual balance
+  const midLat = (INDIA_LAT + pkg.lat) / 2 + (isMobile ? 2 : 1);
   const dist = Math.sqrt(Math.pow(pkg.lng - INDIA_LNG, 2) + Math.pow(pkg.lat - INDIA_LAT, 2));
-  const zoomOut = Math.max(1.2, 4.8 - dist * 0.020);
+  // More aggressive zoom-out on mobile (smaller screen needs lower zoom to show both points)
+  const zoomOut = isMobile
+    ? Math.max(0.8, 3.2 - dist * 0.018)   // mobile: zoom out further
+    : Math.max(1.2, 4.8 - dist * 0.020);  // desktop: existing behaviour
+  const flyDuration = isMobile ? 600 : 900;
 
   map.flyTo({
     center: [midLng, midLat],
     zoom: zoomOut,
     pitch: 0,
     bearing: 0,
-    duration: 900,
+    duration: flyDuration,
     essential: true,
   });
 
@@ -1951,30 +1997,31 @@ function doFlight(pkg) {
     // Draw related routes in background
     drawRelatedRoutes(pkg);
 
-    // Pulse rings at origin
+    // Pulse rings at origin (fewer on mobile for perf)
     const or = document.getElementById('pkgOriginRings');
     or.innerHTML = `
       <circle cx="${srcXY.x}" cy="${srcXY.y}" r="6" fill="#e8c06a" opacity="0.9"/>
       <circle cx="${srcXY.x}" cy="${srcXY.y}" r="4" fill="#fff" opacity="1"/>
     `;
-    // Animate 3 expanding rings
-    for (let i = 0; i < 3; i++) {
+    const ringCount = isMobile ? 2 : 3;
+    const ringInterval = isMobile ? 350 : 500;
+    for (let i = 0; i < ringCount; i++) {
       const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
       ring.setAttribute('cx', srcXY.x); ring.setAttribute('cy', srcXY.y);
       ring.setAttribute('r', '6'); ring.setAttribute('fill', 'none');
       ring.setAttribute('stroke', '#e8c06a'); ring.setAttribute('stroke-width', '1.5');
       ring.setAttribute('opacity', '0.7');
       or.appendChild(ring);
-      // Animate ring expansion with rAF
-      const delay = i * 500;
+      const ringDur = isMobile ? 800 : 1200;
+      const delay = i * ringInterval;
       setTimeout(() => {
         const startT = Date.now();
         function animRing() {
-          const t = Math.min((Date.now() - startT) / 1200, 1);
+          const t = Math.min((Date.now() - startT) / ringDur, 1);
           ring.setAttribute('r', 6 + t * 50);
           ring.setAttribute('opacity', 0.7 * (1 - t));
           if (t < 1) requestAnimationFrame(animRing);
-          else { or.removeChild(ring); }
+          else if (ring.parentNode) ring.parentNode.removeChild(ring);
         }
         requestAnimationFrame(animRing);
       }, delay);
@@ -1995,15 +2042,17 @@ function doFlight(pkg) {
     glowP.style.strokeDashoffset = totalLen + 'px';
     plane.style.display = 'block';
 
-    // Separate path element for getPointAtLength (not in SVG display)
+    // Separate path element for getPointAtLength
     const planePath = document.createElementNS('http://www.w3.org/2000/svg','path');
     planePath.setAttribute('d', pathD);
     planePath.style.visibility = 'hidden';
     document.getElementById('pkgFlightSVG').appendChild(planePath);
-    // Force layout so getTotalLength works
     planePath.getTotalLength();
 
-    const flightDur = 2500;
+    // Mobile: 1200ms flight, Desktop: 2500ms
+    const flightDur = isMobile ? 1200 : 2500;
+    // Mobile: spawn fewer particles for perf
+    const particleChance = isMobile ? 0.15 : 0.3;
     const startTime = Date.now();
 
     function animFlight() {
@@ -2023,10 +2072,10 @@ function doFlight(pkg) {
       const angle = Math.atan2(pt.y - ptB.y, pt.x - ptB.x) * 180 / Math.PI;
       plane.setAttribute('transform', `translate(${pt.x},${pt.y}) rotate(${angle})`);
 
-      // Particles
-      if (Math.random() < 0.3) spawnParticle(pt.x, pt.y, pkg.color);
+      // Particles (fewer on mobile)
+      if (Math.random() < particleChance) spawnParticle(pt.x, pt.y, pkg.color);
 
-      // Update altimeter with a nice climbing number
+      // Update altimeter
       const altEl = document.getElementById('pkgAltVal');
       if (altEl) {
         const alt = Math.round(t < 0.5 ? t * 2 * 38000 : 38000 - (t - 0.5) * 2 * 10000);
@@ -2044,11 +2093,12 @@ function doFlight(pkg) {
 
   } // end startPhase2
 
-  map.once('moveend', () => setTimeout(startPhase2, 50));
-  setTimeout(startPhase2, 1100); // fallback if moveend already fired
+  const phase2Fallback = isMobile ? 700 : 1100;
+  map.once('moveend', () => setTimeout(startPhase2, 30));
+  setTimeout(startPhase2, phase2Fallback); // fallback if moveend already fired
 
-  // Phase 3: after flight lands, zoom gently into destination — still flat
-  // Phase 3: zoom into destination, keeping all SVG elements pinned correctly
+  // Phase 3: after flight lands, zoom into destination
+  const _phase3Delay = (window.innerWidth <= 860) ? 1900 : 3200;
   setTimeout(() => {
     if (!activePkg) return;
     const plane = document.getElementById('pkgPlane');
@@ -2097,7 +2147,7 @@ function doFlight(pkg) {
       duration: 1400,
       essential: true,
     });
-  }, 3600);
+  }, isMobile ? 1900 : 3200);
 
   // Show flight info in HUD
   document.getElementById('pkgFlightRoute').textContent = `DEL → ${pkg.code}`;
@@ -2347,7 +2397,7 @@ window.closePkgPanel = function() {
   document.getElementById('pkgAltimeter').style.opacity = '0';
   highlightCityDot(null);
   if (map && mapReady) {
-    map.flyTo({ center: [INDIA_LNG, INDIA_LAT], zoom: 2.8, pitch: 0, bearing: 0, duration: 1400, essential: true });
+    map.flyTo({ center: [INDIA_LNG, INDIA_LAT], zoom: window.innerWidth <= 860 ? 1.8 : 2.8, pitch: 0, bearing: 0, duration: 1000, essential: true });
   }
 };
 

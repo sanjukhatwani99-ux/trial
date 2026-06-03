@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Visavera – Global Visa Services</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Widgets/widgets.css">
@@ -17,7 +17,7 @@
   --shadow-lg:0 12px 48px rgba(0,0,0,0.16);
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;-webkit-text-size-adjust:100%}
+html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
 
 nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(248,246,243,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm)}
 .nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--black);display:flex;align-items:center;gap:2px;letter-spacing:-0.5px;cursor:pointer}
@@ -89,19 +89,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .globe-coords{position:absolute;bottom:90px;left:22px;font-size:11px;color:rgba(255,255,255,0.9);font-weight:500;background:rgba(0,0,0,0.45);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:6px 14px;z-index:20;letter-spacing:.3px}
 
 /* ── HAMBURGER / MOBILE NAV ── */
-.nav-hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:36px;height:36px;background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;transition:background .2s}
-.nav-hamburger:hover{background:var(--bg2)}
-.nav-hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s}
+.nav-hamburger{display:none;align-items:center;justify-content:center;flex-direction:column;gap:5px;width:40px;height:40px;padding:8px;border-radius:9px;background:transparent;border:1.5px solid var(--border-2);cursor:pointer;transition:all .2s;flex-shrink:0}
+.nav-hamburger:hover{border-color:var(--red);background:var(--red-light)}
+.nav-hamburger.open{background:var(--red-light);border-color:var(--red)}
+.nav-hamburger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;transition:all .35s cubic-bezier(.77,0,.175,1);transform-origin:center}
 .nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
 .nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;background:rgba(248,246,243,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.1);z-index:600;padding:12px 16px 16px;flex-direction:column;gap:4px;transform:translateY(-10px);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-height:calc(100vh - 62px);overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
+.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;background:rgba(248,246,243,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.12);z-index:600;padding:12px 16px 20px;flex-direction:column;gap:4px;transform:translateY(-12px);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
 .mobile-menu.open{transform:translateY(0);opacity:1;pointer-events:auto}
 .mobile-menu::-webkit-scrollbar{display:none}
-.mobile-menu a{display:block;color:var(--text-2);text-decoration:none;font-size:14px;font-weight:500;padding:10px 14px;border-radius:9px;transition:all .2s;cursor:pointer}
+.mobile-menu a{display:block;color:var(--text-2);text-decoration:none;font-size:15px;font-weight:500;padding:12px 16px;border-radius:10px;transition:all .2s;cursor:pointer}
 .mobile-menu a:hover{color:var(--text);background:var(--bg2)}
 .mobile-menu a.active{color:var(--red);background:var(--red-light);font-weight:600}
-.mobile-menu .mob-cta{background:var(--red);color:#fff!important;font-weight:600!important;text-align:center;margin-top:6px;box-shadow:0 2px 12px var(--red-glow)}
+.mobile-menu .mob-cta{background:var(--red);color:#fff!important;font-weight:600!important;text-align:center;margin-top:8px;padding:14px 16px;border-radius:10px;box-shadow:0 4px 16px var(--red-glow)}
 
 /* ── MARQUEE STRIP ── */
 .visa-marquee-wrap{position:absolute;bottom:0;left:0;right:0;z-index:25;background:rgba(5,13,25,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.08);box-shadow:0 -4px 24px rgba(0,0,0,0.3);height:80px;display:flex;align-items:center;overflow:hidden}
@@ -119,49 +120,55 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .vm-chip.active .vm-name{color:#fff}
 @keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* ── RESPONSIVE ── */
+/* ═══════════════════════════════════════════
+   RESPONSIVE SYSTEM — all breakpoints
+   ═══════════════════════════════════════════ */
 
-/* ── TABLET & SMALL DESKTOP (≤960px) ── */
+/* ── BASE: use dvh for mobile browser-chrome safety ── */
+html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.page{height:100vh;height:100dvh}
+
+/* ── TABLET / SMALL DESKTOP ≤ 960px ── */
 @media (max-width:960px){
   nav{padding:0 24px}
   .nav-links a{font-size:12.5px;padding:6px 10px}
-  .nav-cta{padding:7px 14px!important}
+  .nav-cta{padding:7px 15px!important}
 }
 
-/* ── HAMBURGER BREAKPOINT (≤860px) ── */
+/* ── SHOW HAMBURGER ≤ 860px ── */
 @media (max-width:860px){
-  nav{padding:0 20px}
-  .nav-links{display:none}
-  .nav-hamburger{display:flex}
-  .mobile-menu{display:flex;top:62px;max-height:calc(100vh - 62px)}
+  nav{padding:0 18px}
+  .nav-links{display:none!important}
+  .nav-hamburger{display:flex!important}
+  .mobile-menu{display:flex;top:62px}
 }
 
-/* ── TABLET PORTRAIT & LARGE MOBILE (≤768px) ── */
+/* ── TABLET PORTRAIT ≤ 768px ── */
 @media (max-width:768px){
-  nav{height:56px}
-  .mobile-menu{top:56px;max-height:calc(100vh - 56px)}
+  nav{height:56px;padding:0 16px}
+  .mobile-menu{top:56px;max-height:calc(100dvh - 56px)}
   .page{padding-top:56px;height:100dvh}
 
-  /* Home */
-  #page-home{overflow-y:auto;height:auto;min-height:100dvh}
-  #page-home>div{padding:28px 20px 40px;min-height:calc(100dvh - 56px);justify-content:center}
-  #page-home h1{font-size:clamp(26px,7vw,46px);max-width:100%}
+  /* ── Home ── */
+  #page-home{overflow-y:auto;height:auto;min-height:100dvh;align-items:flex-start}
+  #page-home>div{padding:32px 20px 48px;min-height:calc(100dvh - 56px);width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  #page-home h1{font-size:clamp(26px,7vw,44px);max-width:100%}
   #page-home>div>p{font-size:14.5px;margin-top:14px;max-width:100%}
   .home-badge{font-size:10px;padding:5px 14px;margin-bottom:18px}
-  .home-stats{gap:0;flex-wrap:wrap;justify-content:center;margin-top:32px;padding-top:20px}
-  .home-stats>div{flex:0 0 50%;padding:12px 0;text-align:center}
+  .home-stats{gap:0;flex-wrap:wrap;justify-content:center;margin-top:32px;padding-top:20px;width:100%}
+  .home-stats>div{flex:0 0 50%;padding:14px 0;text-align:center}
   .home-stats>div:nth-child(1),.home-stats>div:nth-child(2){border-bottom:1px solid var(--border)}
   .home-stats>div:nth-child(1),.home-stats>div:nth-child(3){border-right:1px solid var(--border)}
   .stat-num{font-size:24px}
   .stat-lbl{font-size:11px}
-  .home-btns{flex-direction:column;align-items:stretch;gap:10px;margin-top:24px}
-  .btn-primary,.btn-ghost{width:100%;text-align:center;padding:14px 20px}
+  .home-btns{flex-direction:column;align-items:stretch;gap:10px;margin-top:26px;width:100%}
+  .btn-primary,.btn-ghost{width:100%;text-align:center;padding:14px 20px;font-size:14px}
 
-  /* Globe / Visitor */
-  #page-visitor{overflow:hidden;height:100dvh}
-  .globe-area{height:calc(100dvh - 56px);min-height:calc(100dvh - 56px);flex:1}
-  .visa-marquee-wrap{position:absolute;bottom:0;left:0;right:0;z-index:200;height:68px;border-top:1px solid rgba(255,255,255,0.08)}
-  #cesiumContainer{height:calc(100dvh - 56px - 68px)!important;width:100%!important}
+  /* ── Globe / Visitor ── */
+  #page-visitor{overflow:hidden}
+  .globe-area{position:relative;flex:1;height:calc(100dvh - 56px)}
+  #cesiumContainer{width:100%!important;height:calc(100dvh - 56px - 68px)!important}
+  .visa-marquee-wrap{position:absolute;bottom:0;left:0;right:0;height:68px;z-index:200}
   .vm-chip{height:68px;padding:0 16px;gap:5px}
   .vm-flag-img{width:34px;height:22px;border-radius:3px}
   .vm-name{font-size:9.5px;letter-spacing:.5px}
@@ -170,68 +177,36 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
   .card-country-name{font-size:16px}
   .card-apply-btn{padding:11px}
   .globe-coords{left:10px;bottom:84px;font-size:10px;padding:4px 10px}
-  .globe-topbar{top:10px;font-size:11px;padding:6px 16px}
 
-  /* Visitor search */
+  /* ── Visitor search ── */
   #visitorSearchWrap{top:8px!important;width:calc(100% - 20px)!important;left:10px!important;right:10px!important;transform:none!important}
   #visitorDropList{max-height:40vh!important}
 
-  /* Packages page */
-  #page-tickets{overflow:hidden;height:100dvh}
-  #pkgSearchWrap{top:56px!important;width:calc(100% - 20px)!important;left:10px!important;right:10px!important;transform:none!important}
+  /* ── Packages page ── */
+  #page-tickets{overflow:hidden}
+  #pkgSearchWrap{top:60px!important;width:calc(100% - 20px)!important;left:10px!important;right:10px!important;transform:none!important}
   #pkgDropList{max-height:40vh!important}
   #pkgPanel{border-radius:20px 20px 0 0}
-  #pkgHUD{padding:10px 16px}
-  #pkgCards{gap:10px}
+  #pkgHUD{padding:10px 14px}
   .pkg-card2{width:175px}
   .pkg-card2-img{height:90px}
-  .pvchip{font-size:10.5px;padding:4px 11px}
 
-  /* Minimal pages */
-  .minimal-page{overflow-y:auto;height:100dvh}
+  /* ── Minimal pages ── */
+  .minimal-page{overflow-y:auto}
   .minimal-page h2{font-size:36px}
   .minimal-page>div>p{font-size:14px;padding:0 20px}
   .page-badge{font-size:9.5px}
 }
 
-/* ── MOBILE LANDSCAPE (short height) ── */
-@media (max-height:500px) and (orientation:landscape){
-  nav{height:48px}
-  .mobile-menu{top:48px;max-height:calc(100dvh - 48px)}
-  .page{padding-top:48px}
-
-  #page-home>div{padding:16px 20px 20px;min-height:calc(100dvh - 48px)}
-  #page-home h1{font-size:clamp(20px,5vw,36px)}
-  .home-stats{margin-top:16px;padding-top:14px}
-  .home-btns{flex-direction:row;margin-top:14px}
-  .btn-primary,.btn-ghost{width:auto;padding:10px 20px}
-
-  .globe-area{height:calc(100dvh - 48px)}
-  .visa-marquee-wrap{height:52px}
-  #cesiumContainer{height:calc(100dvh - 48px - 52px)!important}
-  .vm-chip{height:52px;padding:0 12px;gap:3px}
-  .vm-flag-img{width:28px;height:19px}
-  .vm-name{font-size:8.5px}
-  .country-card{bottom:68px;left:auto;right:10px;max-width:260px;padding:10px 12px}
-  .card-meta{gap:6px}
-  .globe-coords{bottom:68px}
-
-  #pkgSearchWrap{top:52px!important}
-  #pkgPanel .pkg-card2-img{height:70px}
-  .pkg-card2{width:150px}
-
-  .minimal-page h2{font-size:28px}
-}
-
-/* ── SMALL MOBILE PORTRAIT (≤480px) ── */
+/* ── MOBILE PORTRAIT ≤ 480px ── */
 @media (max-width:480px){
-  nav{height:52px}
-  .mobile-menu{top:52px;max-height:calc(100dvh - 52px)}
-  .page{padding-top:52px}
+  nav{height:52px;padding:0 14px}
   .nav-logo{font-size:19px}
+  .mobile-menu{top:52px;max-height:calc(100dvh - 52px)}
+  .page{padding-top:52px;height:100dvh}
 
-  #page-home>div{padding:24px 16px 32px}
-  #page-home h1{font-size:clamp(24px,8vw,38px)}
+  #page-home>div{padding:24px 16px 40px;min-height:calc(100dvh - 52px)}
+  #page-home h1{font-size:clamp(23px,8vw,38px)}
 
   .globe-area{height:calc(100dvh - 52px)}
   #cesiumContainer{height:calc(100dvh - 52px - 62px)!important}
@@ -244,48 +219,61 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
   .globe-coords{bottom:78px;left:8px}
 
   #visitorSearchWrap{top:6px!important;width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
-  #pkgSearchWrap{top:52px!important;width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
+  #pkgSearchWrap{top:56px!important;width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
   #pkgDropList{max-height:38vh!important}
+  #pkgHUD{padding:8px 12px}
   .minimal-page h2{font-size:28px}
   .pkg-card2{width:155px}
   .pkg-card2-img{height:80px}
-
-  /* packages HUD compact */
-  #pkgHUD{padding:8px 12px}
-  #pkgHUD [style*="clamp(15px"]{font-size:14px!important}
-  #pkgHUD [style*="letter-spacing:3px"]{display:none}
 }
 
-/* ── VERY SMALL MOBILE (≤360px) ── */
+/* ── VERY SMALL ≤ 360px ── */
 @media (max-width:360px){
   nav{padding:0 12px}
   .nav-logo{font-size:17px}
-  #page-home h1{font-size:clamp(22px,8.5vw,34px)}
-  .home-btns{gap:8px}
-  .btn-primary,.btn-ghost{padding:12px 16px;font-size:13.5px}
-  .country-card{left:6px;right:6px;padding:10px 10px 8px}
-  .card-country-name{font-size:14px}
+  .nav-hamburger{width:36px;height:36px;padding:7px}
+  #page-home h1{font-size:clamp(21px,8.5vw,32px)}
+  .btn-primary,.btn-ghost{font-size:13.5px;padding:12px 16px}
+  .country-card{left:6px;right:6px}
   .pkg-card2{width:140px}
   .pkg-card2-img{height:72px}
   .minimal-page h2{font-size:24px}
 }
 
-/* ── TABLET LANDSCAPE (769px–1024px) ── */
-@media (min-width:769px) and (max-width:1024px){
-  nav{padding:0 24px}
-  .nav-links a{font-size:12.5px;padding:6px 9px}
-  .nav-cta{padding:7px 14px!important}
-  #page-home h1{font-size:clamp(32px,4.5vw,60px)}
-  .home-stats{gap:32px}
-  .country-card{min-width:270px;max-width:300px}
+/* ── LANDSCAPE (short screens) ── */
+@media (max-height:520px) and (orientation:landscape){
+  nav{height:48px}
+  .mobile-menu{top:48px;max-height:calc(100dvh - 48px)}
+  .page{padding-top:48px;height:100dvh}
+
+  #page-home{overflow-y:auto;min-height:100dvh;height:auto}
+  #page-home>div{padding:16px 24px 24px;min-height:calc(100dvh - 48px)}
+  #page-home h1{font-size:clamp(20px,4vw,34px)}
+  .home-stats{margin-top:14px;padding-top:12px}
+  .home-btns{flex-direction:row;margin-top:14px}
+  .btn-primary,.btn-ghost{width:auto;padding:10px 22px}
+
+  .globe-area{height:calc(100dvh - 48px)}
+  .visa-marquee-wrap{height:50px}
+  #cesiumContainer{height:calc(100dvh - 48px - 50px)!important}
+  .vm-chip{height:50px;padding:0 12px;gap:3px}
+  .vm-flag-img{width:28px;height:18px}
+  .vm-name{font-size:8.5px}
+  .country-card{bottom:66px;left:auto;right:10px;max-width:260px;min-width:0;padding:10px 12px}
+  .card-meta{flex-direction:row}
+  .globe-coords{bottom:66px}
+
+  #visitorSearchWrap{top:4px!important}
+  #pkgSearchWrap{top:50px!important}
+  .minimal-page h2{font-size:26px}
 }
 
-/* ── ENSURE dvh FALLBACK ── */
-@supports not (height: 100dvh){
-  .page{height:calc(100vh - 0px)}
-  #page-home{min-height:100vh}
-  .globe-area{height:calc(100vh - 56px)}
-  #cesiumContainer{height:calc(100vh - 56px - 68px)!important}
+/* ── TABLET LANDSCAPE 769px–1024px ── */
+@media (min-width:769px) and (max-width:1024px){
+  #page-home h1{font-size:clamp(30px,4.5vw,58px)}
+  .home-stats{gap:28px}
+  .country-card{min-width:270px;max-width:295px}
+  .nav-links a{font-size:12.5px;padding:6px 9px}
 }
 
 
@@ -303,14 +291,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .page-badge{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;color:var(--red);border:1px solid rgba(200,16,46,0.25);background:var(--red-light);padding:6px 16px;border-radius:20px;margin-bottom:20px;display:inline-block}
 
 
-/* ── HAMBURGER + MOBILE MENU ── */
-.nav-hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:40px;height:40px;padding:9px;border-radius:8px;background:transparent;border:1.5px solid var(--border-2);cursor:pointer;transition:all .2s}
-.nav-hamburger:hover{border-color:var(--red);background:var(--red-light)}
-.nav-hamburger span{display:block;width:100%;height:2px;background:var(--text);border-radius:2px;transition:all .35s cubic-bezier(.77,0,.175,1);transform-origin:center}
-.nav-hamburger.open{background:var(--red-light);border-color:var(--red)}
-.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
-.nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
-.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+/* ── HAMBURGER + MOBILE MENU (deduped — see above) ── */
 
 
 /* ── PACKAGES PAGE v2 CARDS ── */

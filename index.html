@@ -324,7 +324,22 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 #pkgCards::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:3px}
 
 
-/* ── CLIP MAP MARKERS TO MAP BOUNDS ── */
+/* ── STUDENT / WORK GLOBE CONTAINERS ── */
+#studentCesiumContainer,#workCesiumContainer{width:100%;height:100%}
+#page-student,#page-work{overflow:hidden;background:#07111f}
+
+@media (max-width:768px){
+  #studentCesiumContainer{height:calc(100dvh - 56px - 68px)!important}
+  #workCesiumContainer{height:calc(100dvh - 56px - 68px)!important}
+  #studentSearchWrap{top:8px!important;width:calc(100% - 20px)!important;left:10px!important;right:10px!important;transform:none!important}
+  #workSearchWrap{top:8px!important;width:calc(100% - 20px)!important;left:10px!important;right:10px!important;transform:none!important}
+}
+@media (max-width:480px){
+  #studentCesiumContainer{height:calc(100dvh - 52px - 62px)!important}
+  #workCesiumContainer{height:calc(100dvh - 52px - 62px)!important}
+  #studentSearchWrap{top:6px!important;width:calc(100% - 16px)!important;left:8px!important;right:8px!important;transform:none!important}
+  #workSearchWrap{top:6px!important;width:calc(100% - 16px)!important;left:8px!important;right:8px!important;transform:none!important}
+}
 #page-tickets { clip-path: inset(0); }
 #pkgMap, #pkgMap > * {
   overflow: hidden !important;
@@ -444,7 +459,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <div id="visitorSearchWrap" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
       <div style="position:relative">
         <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;z-index:1;display:flex;align-items:center"><svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg"><!-- Passport body --><rect x="1" y="0.5" width="18" height="21" rx="2" fill="#1a3a6b"/><rect x="1" y="0.5" width="18" height="21" rx="2" stroke="#0f2548" stroke-width="0.5"/><!-- Spine --><rect x="1" y="0.5" width="3" height="21" rx="1.5" fill="#162f5a"/><!-- Saffron stripe --><rect x="4" y="2" width="14" height="2.5" rx="0.5" fill="#FF9933" opacity="0.95"/><!-- White stripe --><rect x="4" y="4.5" width="14" height="2.5" fill="#f0f0f0" opacity="0.95"/><!-- Green stripe --><rect x="4" y="7" width="14" height="2.5" rx="0.5" fill="#138808" opacity="0.95"/><!-- Ashoka Chakra circle --><circle cx="11" cy="15" r="3.8" fill="#f0f0f0" opacity="0.15"/><!-- Chakra ring --><circle cx="11" cy="15" r="3.2" fill="none" stroke="#f0f0f0" stroke-width="0.7" opacity="0.9"/><!-- Chakra center --><circle cx="11" cy="15" r="0.7" fill="#1a3a6b" stroke="#f0f0f0" stroke-width="0.4"/><!-- Chakra spokes (24) --><g stroke="#f0f0f0" stroke-width="0.4" opacity="0.9"><line x1="11" y1="12.2" x2="11" y2="11.5"/><line x1="12.3" y1="12.5" x2="12.7" y2="12"/><line x1="13.5" y1="13.5" x2="14" y2="13.1"/><line x1="13.8" y1="15" x2="14.5" y2="15"/><line x1="13.5" y1="16.5" x2="14" y2="16.9"/><line x1="12.3" y1="17.5" x2="12.7" y2="18"/><line x1="11" y1="17.8" x2="11" y2="18.5"/><line x1="9.7" y1="17.5" x2="9.3" y2="18"/><line x1="8.5" y1="16.5" x2="8" y2="16.9"/><line x1="8.2" y1="15" x2="7.5" y2="15"/><line x1="8.5" y1="13.5" x2="8" y2="13.1"/><line x1="9.7" y1="12.5" x2="9.3" y2="12"/></g></svg></span>
-        <input id="searchInput" type="search" placeholder="Search destination…" autocomplete="off" spellcheck="false" inputmode="search"
+        <input id="searchInput" type="search" placeholder="Search visitor destination…" autocomplete="off" spellcheck="false" inputmode="search"
           style="width:100%;padding:14px 48px 14px 46px;font-size:16px;font-family:'Outfit',sans-serif;font-weight:500;color:#111;background:rgba(255,255,255,0.97);border:1.5px solid rgba(255,255,255,0.3);border-radius:16px;outline:none;box-shadow:0 6px 32px rgba(0,0,0,0.28),0 1px 4px rgba(0,0,0,0.12);cursor:pointer;transition:all .25s;backdrop-filter:blur(20px)"
           onfocus="openVisitorDropdown()" onclick="openVisitorDropdown()">
         <div id="visitorChevron" onclick="toggleVisitorDropdown()" style="position:absolute;right:18px;top:50%;transform:translateY(-50%);pointer-events:auto;cursor:pointer;transition:transform .25s;color:#888;font-size:13px;user-select:none">▼</div>
@@ -505,8 +520,133 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   </div>
 </div>
 
-<div class="page minimal-page" id="page-student"><div><div class="page-badge">Student Visa</div><h2>Study <span>Abroad</span></h2><p>Your gateway to world-class education. We handle the paperwork — you focus on your future.</p></div></div>
-<div class="page minimal-page" id="page-work"><div><div class="page-badge">Work Visa</div><h2>Work <span>Global</span></h2><p>Employment and skilled worker visas for professionals ready to go worldwide.</p></div></div>
+<!-- ═══════════════════════════════════════════ STUDENT VISA PAGE ═══ -->
+<div class="page" id="page-student" style="overflow:hidden;background:#07111f">
+  <div class="globe-area" style="position:relative;flex:1">
+    <!-- Search bar -->
+    <div id="studentSearchWrap" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
+      <div style="position:relative">
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;z-index:1;font-size:17px">🎓</span>
+        <input id="studentSearchInput" type="search" placeholder="Search study destination…" autocomplete="off" spellcheck="false" inputmode="search"
+          style="width:100%;padding:14px 48px 14px 46px;font-size:16px;font-family:'Outfit',sans-serif;font-weight:500;color:#111;background:rgba(255,255,255,0.97);border:1.5px solid rgba(255,255,255,0.3);border-radius:16px;outline:none;box-shadow:0 6px 32px rgba(0,0,0,0.28),0 1px 4px rgba(0,0,0,0.12);cursor:pointer;transition:all .25s;backdrop-filter:blur(20px)"
+          onfocus="openStudentDropdown()" onclick="openStudentDropdown()">
+        <div onclick="toggleStudentDropdown()" style="position:absolute;right:18px;top:50%;transform:translateY(-50%);pointer-events:auto;cursor:pointer;color:#888;font-size:13px;user-select:none" id="studentChevron">▼</div>
+      </div>
+      <div id="studentDropdown" style="margin-top:6px;background:rgba(255,255,255,0.98);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:16px;box-shadow:0 16px 60px rgba(0,0,0,0.4);overflow:hidden;max-height:0;opacity:0;transform:translateY(-8px);transition:max-height .35s cubic-bezier(0.4,0,0.2,1),opacity .25s,transform .25s;pointer-events:none">
+        <div style="padding:10px 14px 8px;border-bottom:1px solid rgba(0,0,0,0.06)">
+          <input id="studentDropFilter" type="text" placeholder="🔍  Filter countries…" autocomplete="off" spellcheck="false"
+            oninput="filterStudentDropdown(this.value)"
+            style="width:100%;padding:9px 14px;font-size:16px;font-family:'Outfit',sans-serif;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;outline:none;background:#f8f6f3;color:#111;transition:border-color .2s"
+            onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='rgba(0,0,0,0.1)'">
+        </div>
+        <div id="studentDropList" style="overflow-y:auto;max-height:300px;padding:6px 0;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:none"></div>
+      </div>
+      <div id="studentHint" style="margin-top:10px;display:flex;align-items:center;gap:7px;background:rgba(0,0,0,0.45);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:7px 13px;transition:opacity .3s">
+        <div style="width:6px;height:6px;background:#C8102E;border-radius:50%;animation:pls 2s ease-in-out infinite;flex-shrink:0"></div>
+        <span id="studentHintText" style="font-size:11.5px;color:rgba(255,255,255,0.85);font-weight:500">Rotate the globe or select a study destination</span>
+      </div>
+    </div>
+    <div class="globe-topbar" style="display:none"><div class="pulse"></div><span>Live</span></div>
+    <div id="studentCesiumContainer" style="width:100%;height:100%"></div>
+    <!-- Country card -->
+    <div class="country-card" id="studentCard">
+      <button class="card-close" onclick="closeStudentCard()">✕</button>
+      <div class="card-flag-banner"><img id="studentCardFlag" src="" alt="" class="card-flag-img-big"></div>
+      <div class="card-body">
+        <div class="card-body-left">
+          <div class="card-name-row">
+            <img id="studentCardFlagSmall" src="" alt="" class="card-flag-small">
+            <div class="card-country-name" id="studentCardName">United Kingdom</div>
+          </div>
+          <div class="card-visa-type" id="studentCardType"></div>
+        </div>
+        <div class="card-meta">
+          <div class="card-meta-item">
+            <div class="card-meta-label">Processing</div>
+            <div class="card-meta-val" id="studentCardProc"></div>
+          </div>
+          <div class="card-meta-item">
+            <div class="card-meta-label">Duration</div>
+            <div class="card-meta-val" id="studentCardValidity"></div>
+          </div>
+        </div>
+      </div>
+      <button class="card-apply-btn" id="studentCardApplyBtn">Apply →</button>
+    </div>
+    <div class="globe-coords" id="studentGlobeCoords">20.59°N · 78.96°E · India</div>
+    <!-- Marquee -->
+    <div class="visa-marquee-wrap" id="studentMarquee">
+      <div class="visa-marquee-inner" id="studentMarqueeInner">
+        <div class="visa-marquee-track" id="studentMarqueeTrack"></div>
+        <div class="visa-marquee-track" id="studentMarqueeTrack2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ WORK VISA PAGE ═══ -->
+<div class="page" id="page-work" style="overflow:hidden;background:#07111f">
+  <div class="globe-area" style="position:relative;flex:1">
+    <!-- Search bar -->
+    <div id="workSearchWrap" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
+      <div style="position:relative">
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;z-index:1;font-size:17px">💼</span>
+        <input id="workSearchInput" type="search" placeholder="Search work destination…" autocomplete="off" spellcheck="false" inputmode="search"
+          style="width:100%;padding:14px 48px 14px 46px;font-size:16px;font-family:'Outfit',sans-serif;font-weight:500;color:#111;background:rgba(255,255,255,0.97);border:1.5px solid rgba(255,255,255,0.3);border-radius:16px;outline:none;box-shadow:0 6px 32px rgba(0,0,0,0.28),0 1px 4px rgba(0,0,0,0.12);cursor:pointer;transition:all .25s;backdrop-filter:blur(20px)"
+          onfocus="openWorkDropdown()" onclick="openWorkDropdown()">
+        <div onclick="toggleWorkDropdown()" style="position:absolute;right:18px;top:50%;transform:translateY(-50%);pointer-events:auto;cursor:pointer;color:#888;font-size:13px;user-select:none" id="workChevron">▼</div>
+      </div>
+      <div id="workDropdown" style="margin-top:6px;background:rgba(255,255,255,0.98);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:16px;box-shadow:0 16px 60px rgba(0,0,0,0.4);overflow:hidden;max-height:0;opacity:0;transform:translateY(-8px);transition:max-height .35s cubic-bezier(0.4,0,0.2,1),opacity .25s,transform .25s;pointer-events:none">
+        <div style="padding:10px 14px 8px;border-bottom:1px solid rgba(0,0,0,0.06)">
+          <input id="workDropFilter" type="text" placeholder="🔍  Filter countries…" autocomplete="off" spellcheck="false"
+            oninput="filterWorkDropdown(this.value)"
+            style="width:100%;padding:9px 14px;font-size:16px;font-family:'Outfit',sans-serif;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;outline:none;background:#f8f6f3;color:#111;transition:border-color .2s"
+            onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='rgba(0,0,0,0.1)'">
+        </div>
+        <div id="workDropList" style="overflow-y:auto;max-height:300px;padding:6px 0;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:none"></div>
+      </div>
+      <div id="workHint" style="margin-top:10px;display:flex;align-items:center;gap:7px;background:rgba(0,0,0,0.45);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:7px 13px;transition:opacity .3s">
+        <div style="width:6px;height:6px;background:#C8102E;border-radius:50%;animation:pls 2s ease-in-out infinite;flex-shrink:0"></div>
+        <span id="workHintText" style="font-size:11.5px;color:rgba(255,255,255,0.85);font-weight:500">Rotate the globe or select a work destination</span>
+      </div>
+    </div>
+    <div class="globe-topbar" style="display:none"><div class="pulse"></div><span>Live</span></div>
+    <div id="workCesiumContainer" style="width:100%;height:100%"></div>
+    <!-- Country card -->
+    <div class="country-card" id="workCard">
+      <button class="card-close" onclick="closeWorkCard()">✕</button>
+      <div class="card-flag-banner"><img id="workCardFlag" src="" alt="" class="card-flag-img-big"></div>
+      <div class="card-body">
+        <div class="card-body-left">
+          <div class="card-name-row">
+            <img id="workCardFlagSmall" src="" alt="" class="card-flag-small">
+            <div class="card-country-name" id="workCardName">Canada</div>
+          </div>
+          <div class="card-visa-type" id="workCardType"></div>
+        </div>
+        <div class="card-meta">
+          <div class="card-meta-item">
+            <div class="card-meta-label">Processing</div>
+            <div class="card-meta-val" id="workCardProc"></div>
+          </div>
+          <div class="card-meta-item">
+            <div class="card-meta-label">Permit</div>
+            <div class="card-meta-val" id="workCardValidity"></div>
+          </div>
+        </div>
+      </div>
+      <button class="card-apply-btn" id="workCardApplyBtn">Apply →</button>
+    </div>
+    <div class="globe-coords" id="workGlobeCoords">20.59°N · 78.96°E · India</div>
+    <!-- Marquee -->
+    <div class="visa-marquee-wrap" id="workMarquee">
+      <div class="visa-marquee-inner" id="workMarqueeInner">
+        <div class="visa-marquee-track" id="workMarqueeTrack"></div>
+        <div class="visa-marquee-track" id="workMarqueeTrack2"></div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="page" id="page-tickets" style="flex-direction:column;overflow:hidden;background:#060e1a;position:relative;clip-path:inset(0)">
 
   <!-- Mapbox container -->
@@ -535,7 +675,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   <div id="pkgSearchWrap" style="position:absolute;top:72px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
     <div style="position:relative">
       <div style="position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:15px;z-index:1;pointer-events:none">✈️</div>
-      <input id="pkgSearch" type="search" placeholder="Search destination…" autocomplete="off" spellcheck="false" inputmode="search"
+      <input id="pkgSearch" type="search" placeholder="Search package destination…" autocomplete="off" spellcheck="false" inputmode="search"
         style="width:100%;padding:15px 52px 15px 48px;font-size:16px;font-family:'Outfit',sans-serif;font-weight:500;color:#1a1a1a;background:rgba(255,255,255,0.97);border:2px solid transparent;border-radius:16px;outline:none;box-shadow:0 12px 50px rgba(0,0,0,0.5),0 2px 8px rgba(0,0,0,0.2);transition:border-color .3s,box-shadow .3s;backdrop-filter:blur(20px);cursor:pointer"
         onclick="togglePkgDropdown()" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='transparent'">
       <!-- Chevron -->
@@ -728,12 +868,23 @@ function buildVisitorDropdown(filterQ) {
     .filter(c => !q || c.name.toLowerCase().includes(q))
     .sort((a,b)=>a.name.localeCompare(b.name));
 
+  // Helper: emoji flag → ISO2 lowercase for flagcdn
+  function flagToIso2(emoji) {
+    const chars = [...(emoji||'')];
+    if (chars.length < 2) return '';
+    return chars.map(c => String.fromCharCode(c.codePointAt(0) - 0x1F1E6 + 65)).join('').toLowerCase();
+  }
+  function flagImg(emoji) {
+    const iso2 = flagToIso2(emoji);
+    return `<img src="https://flagcdn.com/20x15/${iso2}.png" width="20" height="15" style="border-radius:2px;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;object-fit:cover" onerror="this.style.display='none'">`;
+  }
+
   let html = '';
   if (avail.length) {
     html += `<div style="padding:8px 14px 4px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#999">Available Visas</div>`;
     avail.forEach(c => {
       html += `<div class="vdr-item vdr-avail" data-id="${c.id}" style="display:flex;align-items:center;gap:13px;padding:10px 16px;cursor:pointer;transition:background .15s;border-left:3px solid transparent">
-        <span style="font-size:20px;line-height:1;flex-shrink:0">${c.flag}</span>
+        ${flagImg(c.flag)}
         <div style="flex:1;min-width:0">
           <div style="font-size:13.5px;font-weight:600;color:#111;font-family:Outfit,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
           <div style="font-size:11px;color:#999;margin-top:1px;font-family:Outfit,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.type}</div>
@@ -746,7 +897,7 @@ function buildVisitorDropdown(filterQ) {
     html += `<div style="padding:8px 14px 4px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#999">Other Countries</div>`;
     unavail.slice(0, 40).forEach(c => {
       html += `<div class="vdr-item vdr-unavail" style="display:flex;align-items:center;gap:13px;padding:10px 16px;opacity:0.55;border-left:3px solid transparent">
-        <span style="font-size:20px;line-height:1;flex-shrink:0">${c.flag}</span>
+        ${flagImg(c.flag)}
         <div style="flex:1;min-width:0">
           <div style="font-size:13.5px;font-weight:600;color:#111;font-family:Outfit,sans-serif">${c.name}</div>
           <div style="font-size:11px;color:#999;margin-top:1px;font-family:Outfit,sans-serif">Contact us to enquire</div>
@@ -1762,7 +1913,9 @@ function addCityDots() {
       });
     }
 
+    el.style.opacity = '0';
     const marker = new maptilersdk.Marker({ element: el, anchor: 'center' }).setLngLat([city.lng, city.lat]).addTo(map);
+    map.once('idle', () => { el.style.opacity = '1'; });
 
     // Country label tag — only for package cities
     if (hasPackage) {
@@ -1781,7 +1934,9 @@ function addCityDots() {
       tagDiv.addEventListener('mouseenter', () => { tagDiv.style.background = 'rgba(200,16,46,0.85)'; tagDiv.style.borderColor = 'rgba(200,16,46,0.6)'; });
       tagDiv.addEventListener('mouseleave', () => { tagDiv.style.background = 'rgba(6,14,26,0.82)'; tagDiv.style.borderColor = 'rgba(255,255,255,0.18)'; });
       tagDiv.addEventListener('touchend', (e) => { e.stopPropagation(); e.preventDefault(); window.selectPkgCountry(city.key); }, {passive: false});
+      lblEl.style.opacity = '0';
       const lblMarker = new maptilersdk.Marker({ element: lblEl, anchor: 'bottom' }).setLngLat([city.lng, city.lat]).addTo(map);
+      map.once('idle', () => { lblEl.style.opacity = '1'; });
       cityMarkers.push({ marker, lblMarker, el, city });
     } else {
       cityMarkers.push({ marker, lblMarker: null, el, city });
@@ -2402,13 +2557,22 @@ function buildPkgDropdown(filterQ) {
     return text.includes(q);
   });
 
+  // Helper: emoji flag → ISO2 code for flagcdn
+  function flagToIso2(emoji) {
+    const chars = [...emoji];
+    if (chars.length < 2) return '';
+    return chars.map(c => String.fromCharCode(c.codePointAt(0) - 0x1F1E6 + 65)).join('').toLowerCase();
+  }
+
   let html = '';
   if (keys.length) {
     keys.forEach(key => {
       const p = PKG_DATA[key];
       const sub = p.destinations ? p.destinations.map(d=>d.name).slice(0,3).join(' · ') : p.city;
+      const iso2 = flagToIso2(p.flag);
+      const flagImg = `<img src="https://flagcdn.com/20x15/${iso2}.png" width="20" height="15" style="border-radius:2px;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;object-fit:cover" onerror="this.style.display='none'">`;
       html += `<div class="pkg-drop-item" data-key="${key}" style="display:flex;align-items:center;gap:13px;padding:10px 16px;cursor:pointer;transition:background .15s;border-left:3px solid transparent">
-        <span style="font-size:20px;line-height:1;flex-shrink:0">${p.flag}</span>
+        ${flagImg}
         <div style="flex:1;min-width:0">
           <div style="font-size:13.5px;font-weight:600;color:#111;font-family:Outfit,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${key}</div>
           <div style="font-size:11px;color:#999;margin-top:1px;font-family:Outfit,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${sub}</div>
@@ -2580,6 +2744,378 @@ window.addEventListener('load', () => {
   // ready immediately when the user opens the Packages page
   setTimeout(initMap, 150);
 });
+
+// ══════════════════════════════════════════════════════════
+//  STUDENT VISA PAGE — full globe + search + card
+// ══════════════════════════════════════════════════════════
+const STUDENT_COUNTRIES = [
+  {id:'gbr', iso:'GBR', name:'United Kingdom',  flag:'🇬🇧', lat:54.0,  lng:-2.0,   h:2800000, type:'Student Visa (Tier 4)',         proc:'3–4 weeks', validity:'Course duration'},
+  {id:'usa', iso:'USA', name:'United States',   flag:'🇺🇸', lat:38.0,  lng:-97.0,  h:5500000, type:'F-1 Student Visa',              proc:'2–4 weeks', validity:'Duration of Status'},
+  {id:'can', iso:'CAN', name:'Canada',          flag:'🇨🇦', lat:56.1,  lng:-106.3, h:7000000, type:'Study Permit',                  proc:'4–8 weeks', validity:'Course + 90 days'},
+  {id:'aus', iso:'AUS', name:'Australia',       flag:'🇦🇺', lat:-25.3, lng:133.8,  h:7000000, type:'Student Visa (Subclass 500)',   proc:'4–6 weeks', validity:'Course duration'},
+  {id:'deu', iso:'DEU', name:'Germany',         flag:'🇩🇪', lat:51.2,  lng:10.5,   h:2200000, type:'Student Visa (§16b AufenthG)',  proc:'4–8 weeks', validity:'Course + 3 months'},
+  {id:'nzl', iso:'NZL', name:'New Zealand',     flag:'🇳🇿', lat:-40.9, lng:174.9,  h:2800000, type:'Student Visa',                  proc:'3–4 weeks', validity:'Course duration'},
+  {id:'fra', iso:'FRA', name:'France',          flag:'🇫🇷', lat:46.2,  lng:2.2,    h:2400000, type:'Long-Stay Student Visa (VLS-TS)',proc:'3–5 weeks', validity:'1 year renewable'},
+  {id:'irl', iso:'IRL', name:'Ireland',         flag:'🇮🇪', lat:53.1,  lng:-8.2,   h:1800000, type:'Study Visa (D Study)',          proc:'4–8 weeks', validity:'Course + 6 months'},
+  {id:'sgp', iso:'SGP', name:'Singapore',       flag:'🇸🇬', lat:1.35,  lng:103.8,  h:600000,  type:'Student\'s Pass',               proc:'1–2 weeks', validity:'Course duration'},
+  {id:'jpn', iso:'JPN', name:'Japan',           flag:'🇯🇵', lat:36.2,  lng:138.3,  h:2800000, type:'College Student Visa (留学)',   proc:'3–4 weeks', validity:'Up to 2 years'},
+  {id:'ned', iso:'NLD', name:'Netherlands',     flag:'🇳🇱', lat:52.1,  lng:5.3,    h:1600000, type:'MVV Study Visa',                proc:'3–5 weeks', validity:'Course + 3 months'},
+  {id:'swe', iso:'SWE', name:'Sweden',          flag:'🇸🇪', lat:60.1,  lng:18.6,   h:2500000, type:'Residence Permit for Studies',  proc:'2–4 weeks', validity:'Course duration'},
+  {id:'ita', iso:'ITA', name:'Italy',           flag:'🇮🇹', lat:41.9,  lng:12.6,   h:2200000, type:'Student Visa (Type D)',         proc:'3–4 weeks', validity:'1 year renewable'},
+  {id:'esp', iso:'ESP', name:'Spain',           flag:'🇪🇸', lat:40.5,  lng:-3.7,   h:2400000, type:'Long-Term Student Visa',        proc:'1–3 months', validity:'1 year renewable'},
+];
+
+const STUDENT_ISO2 = {GBR:'gb',USA:'us',CAN:'ca',AUS:'au',DEU:'de',NZL:'nz',FRA:'fr',IRL:'ie',SGP:'sg',JPN:'jp',NLD:'nl',SWE:'se',ITA:'it',ESP:'es'};
+let studentViewer=null, studentCurrentCountry=null, studentIsFlyingTo=false;
+let studentGeoDS=null, studentEntityByIso={}, studentGlobeBuilt=false;
+let studentDropOpen=false;
+const studentIsoMap={};
+STUDENT_COUNTRIES.forEach(c=>studentIsoMap[c.iso]=c);
+
+(function buildStudentMarquee(){
+  function makeChips(){
+    return STUDENT_COUNTRIES.map(c=>{
+      const chip=document.createElement('div');
+      chip.className='vm-chip'; chip.dataset.id=c.id;
+      const code=STUDENT_ISO2[c.iso]||c.iso.toLowerCase().slice(0,2);
+      chip.innerHTML=`<img class="vm-flag-img" src="https://flagcdn.com/w80/${code}.png" alt="${c.name}" loading="lazy"><span class="vm-name">${c.name}</span>`;
+      chip.addEventListener('click',()=>studentFlyTo(c));
+      return chip;
+    });
+  }
+  const t1=document.getElementById('studentMarqueeTrack');
+  const t2=document.getElementById('studentMarqueeTrack2');
+  if(t1&&t2){makeChips().forEach(ch=>t1.appendChild(ch));makeChips().forEach(ch=>t2.appendChild(ch));}
+})();
+
+function initStudentGlobe(){
+  const arcgis=new Cesium.UrlTemplateImageryProvider({url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',maximumLevel:19,credit:new Cesium.Credit('Esri',false),tileWidth:256,tileHeight:256});
+  studentViewer=new Cesium.Viewer('studentCesiumContainer',{baseLayer:new Cesium.ImageryLayer(arcgis),terrainProvider:new Cesium.EllipsoidTerrainProvider(),animation:false,baseLayerPicker:false,fullscreenButton:false,vrButton:false,geocoder:false,homeButton:false,infoBox:false,sceneModePicker:false,selectionIndicator:false,timeline:false,navigationHelpButton:false,requestRenderMode:false,creditContainer:document.createElement('div')});
+  const sc=studentViewer.scene, gl=sc.globe;
+  gl.maximumScreenSpaceError=2.0; gl.tileCacheSize=150; gl.preloadAncestors=true; gl.preloadSiblings=false; gl.enableLighting=false;
+  sc.fxaa=true; sc.skyAtmosphere.show=true; sc.fog.enabled=true; sc.fog.density=0.0002;
+  sc.backgroundColor=Cesium.Color.fromCssColorString('#020810');
+
+  Cesium.GeoJsonDataSource.load('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson',{stroke:Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'),fill:Cesium.Color.fromCssColorString('rgba(0,0,0,0)'),strokeWidth:1,clampToGround:false}).then(ds=>{
+    studentGeoDS=ds;
+    ds.entities.values.forEach(e=>{if(e.polygon){e.polygon.fill=new Cesium.ConstantProperty(false);e.polygon.outline=new Cesium.ConstantProperty(true);e.polygon.arcType=new Cesium.ConstantProperty(Cesium.ArcType.GEODESIC);e.polygon.outlineColor=new Cesium.ConstantProperty(Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'));e.polygon.outlineWidth=new Cesium.ConstantProperty(1);}});
+    studentViewer.dataSources.add(ds);
+    buildStudentEntityCache();
+    const handler=new Cesium.ScreenSpaceEventHandler(sc.canvas);
+    handler.setInputAction(e=>{const p=studentViewer.scene.pick(e.position);if(Cesium.defined(p)&&p.id instanceof Cesium.Entity){const props=p.id.properties;const iso=props.ADM0_A3?._value||props.ISO_A3?._value;if(iso&&studentIsoMap[iso])studentFlyTo(studentIsoMap[iso]);}},Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    handler.setInputAction(e=>{const p=studentViewer.scene.pick(e.endPosition);let is=false;if(Cesium.defined(p)&&p.id instanceof Cesium.Entity){const props=p.id.properties;const iso=props.ADM0_A3?._value||props.ISO_A3?._value;is=!!(iso&&studentIsoMap[iso]);}sc.canvas.style.cursor=is?'pointer':'grab';},Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+  });
+  studentViewer.camera.setView({destination:Cesium.Cartesian3.fromDegrees(78.96,20.59,18000000),orientation:{heading:0,pitch:-Cesium.Math.PI_OVER_TWO,roll:0}});
+  setTimeout(()=>{studentViewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(78.96,20.59,14000000),orientation:{heading:0,pitch:-Cesium.Math.PI_OVER_TWO,roll:0},duration:2.5,easingFunction:Cesium.EasingFunction.QUADRATIC_OUT});},400);
+  setInterval(()=>{if(!studentViewer||studentCurrentCountry)return;try{const pos=studentViewer.camera.positionCartographic;const lat=Cesium.Math.toDegrees(pos.latitude);const lng=Cesium.Math.toDegrees(pos.longitude);document.getElementById('studentGlobeCoords').textContent=`${Math.abs(lat).toFixed(2)}°${lat>=0?'N':'S'} · ${Math.abs(lng).toFixed(2)}°${lng>=0?'E':'W'}`;}catch(e){}},600);
+}
+
+function buildStudentEntityCache(){
+  studentEntityByIso={};
+  if(!studentGeoDS)return;
+  const sz={};
+  studentGeoDS.entities.values.forEach(e=>{
+    if(!e.polygon)return;
+    const iso=e.properties.ADM0_A3?._value||e.properties.ISO_A3?._value;
+    if(!iso)return;
+    let size=0;try{size=e.polygon.hierarchy?.getValue(Cesium.JulianDate.now())?.positions?.length||0;}catch(err){}
+    if(!studentEntityByIso[iso]||size>(sz[iso]||0)){studentEntityByIso[iso]=e;sz[iso]=size;}
+  });
+}
+
+let _studentGlowT=0;
+const S_COL_HI=new Cesium.CallbackProperty(()=>{_studentGlowT+=0.04;const p=0.55+0.45*Math.sin(_studentGlowT*2.5);return Cesium.Color.fromCssColorString(`rgba(255,255,255,${p.toFixed(2)})`);},false);
+const S_MAT_HI=new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString('rgba(255,255,255,0.06)'));
+const S_COL_DM=new Cesium.ConstantProperty(Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'));
+const S_W1=new Cesium.ConstantProperty(1), S_W4=new Cesium.ConstantProperty(4);
+const S_FILL_ON=new Cesium.ConstantProperty(true), S_FILL_OFF=new Cesium.ConstantProperty(false);
+let sHighlightedIso=null;
+function highlightStudentCountry(iso){
+  if(sHighlightedIso&&studentEntityByIso[sHighlightedIso]){const p=studentEntityByIso[sHighlightedIso];p.polygon.fill=S_FILL_OFF;p.polygon.outlineColor=S_COL_DM;p.polygon.outlineWidth=S_W1;}
+  if(studentEntityByIso[iso]){const e=studentEntityByIso[iso];e.polygon.fill=S_FILL_ON;e.polygon.material=S_MAT_HI;e.polygon.outlineColor=S_COL_HI;e.polygon.outlineWidth=S_W4;e.polygon.outline=S_FILL_ON;}
+  sHighlightedIso=iso;
+}
+function clearStudentHighlight(){
+  if(sHighlightedIso&&studentEntityByIso[sHighlightedIso]){const e=studentEntityByIso[sHighlightedIso];e.polygon.fill=S_FILL_OFF;e.polygon.outlineColor=S_COL_DM;e.polygon.outlineWidth=S_W1;}
+  sHighlightedIso=null;
+}
+
+function studentFlyTo(c){
+  if(studentIsFlyingTo||!studentViewer)return;
+  studentIsFlyingTo=true; studentCurrentCountry=c;
+  const inp=document.getElementById('studentSearchInput');if(inp)inp.value=c.flag+'  '+c.name;
+  document.querySelectorAll('#studentMarquee .vm-chip').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll(`#studentMarquee .vm-chip[data-id="${c.id}"]`).forEach(el=>el.classList.add('active'));
+  closeStudentDropdown();
+  document.getElementById('studentCard').classList.remove('visible');
+  document.getElementById('studentHintText').textContent='Flying to '+c.name+'…';
+  document.getElementById('studentGlobeCoords').textContent=`${Math.abs(c.lat).toFixed(2)}°${c.lat>=0?'N':'S'} · ${Math.abs(c.lng).toFixed(2)}°${c.lng>=0?'E':'W'} · ${c.name}`;
+  highlightStudentCountry(c.iso);
+  studentViewer.entities.removeById('sdest');
+  studentViewer.entities.add({id:'sdest',position:Cesium.Cartesian3.fromDegrees(c.lng,c.lat),point:{pixelSize:16,color:Cesium.Color.fromCssColorString('#C8102E'),outlineColor:Cesium.Color.WHITE,outlineWidth:3,disableDepthTestDistance:Number.POSITIVE_INFINITY}});
+  studentViewer.scene.globe.maximumScreenSpaceError=8.0;
+  studentViewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(c.lng,c.lat,18000000),orientation:{heading:0,pitch:-Cesium.Math.PI_OVER_TWO,roll:0},duration:1.8,easingFunction:Cesium.EasingFunction.QUADRATIC_IN_OUT,complete:()=>{
+    studentViewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(c.lng,c.lat,c.h),orientation:{heading:0,pitch:-Cesium.Math.PI_OVER_TWO,roll:0},duration:1.8,easingFunction:Cesium.EasingFunction.QUADRATIC_OUT,complete:()=>{
+      studentViewer.scene.globe.maximumScreenSpaceError=2.0;
+      studentIsFlyingTo=false;
+      document.getElementById('studentHintText').textContent='Arrived · '+c.name;
+      showStudentCard(c);
+    }});
+  }});
+}
+
+function showStudentCard(c){
+  const code=STUDENT_ISO2[c.iso]||c.iso.toLowerCase().slice(0,2);
+  document.getElementById('studentCardFlag').src=`https://flagcdn.com/w640/${code}.png`;
+  document.getElementById('studentCardFlagSmall').src=`https://flagcdn.com/w80/${code}.png`;
+  document.getElementById('studentCardName').textContent=c.name;
+  document.getElementById('studentCardType').textContent=c.type;
+  document.getElementById('studentCardProc').textContent=c.proc;
+  document.getElementById('studentCardValidity').textContent=c.validity;
+  document.getElementById('studentCardApplyBtn').textContent='Apply for '+c.name+' Student Visa →';
+  document.getElementById('studentCard').classList.add('visible');
+}
+window.closeStudentCard=function(){
+  document.getElementById('studentCard').classList.remove('visible');
+  document.querySelectorAll('#studentMarquee .vm-chip').forEach(el=>el.classList.remove('active'));
+  document.getElementById('studentHintText').textContent='Rotate the globe or select a study destination';
+  const inp=document.getElementById('studentSearchInput');if(inp)inp.value='';
+  studentCurrentCountry=null; clearStudentHighlight();
+  if(studentViewer){studentViewer.entities.removeById('sdest');studentViewer.scene.globe.maximumScreenSpaceError=8.0;studentViewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(78.96,20.59,14000000),orientation:{heading:0,pitch:-Cesium.Math.PI_OVER_TWO,roll:0},duration:1.8,easingFunction:Cesium.EasingFunction.QUADRATIC_OUT,complete:()=>{studentViewer.scene.globe.maximumScreenSpaceError=2.0;}});}
+  document.getElementById('studentGlobeCoords').textContent='20.59°N · 78.96°E · India';
+};
+
+// ── Student Dropdown ──────────────────────────────────────
+function buildStudentDropdown(q){
+  const list=document.getElementById('studentDropList');if(!list)return;
+  q=(q||'').trim().toLowerCase();
+  function flagToIso2(em){const chars=[...(em||'')];if(chars.length<2)return'';return chars.map(c=>String.fromCharCode(c.codePointAt(0)-0x1F1E6+65)).join('').toLowerCase();}
+  function flagImg(em){const iso2=flagToIso2(em);return`<img src="https://flagcdn.com/20x15/${iso2}.png" width="20" height="15" style="border-radius:2px;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;object-fit:cover" onerror="this.style.display='none'">`;}
+  const avail=STUDENT_COUNTRIES.filter(c=>!q||c.name.toLowerCase().includes(q)).sort((a,b)=>a.name.localeCompare(b.name));
+  const knownStudentNames=new Set(STUDENT_COUNTRIES.map(c=>c.name.toLowerCase()));
+  const unavail=ALL_COUNTRIES.filter(c=>!knownStudentNames.has(c.name.toLowerCase())&&(!q||c.name.toLowerCase().includes(q))).sort((a,b)=>a.name.localeCompare(b.name));
+  let html='';
+  if(avail.length){html+=`<div style="padding:8px 14px 4px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#999">Available Visas</div>`;avail.forEach(c=>{const code=STUDENT_ISO2[c.iso]||c.iso.toLowerCase().slice(0,2);html+=`<div class="vis-drop-item" onclick="studentSelectCountry('${c.id}')" style="display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;transition:background .15s;border-radius:0" onmouseover="this.style.background='#f5f2ef'" onmouseout="this.style.background=''"><img src="https://flagcdn.com/w40/${code}.png" width="26" height="18" style="border-radius:3px;border:1px solid rgba(0,0,0,0.1);object-fit:cover;flex-shrink:0" onerror="this.style.display='none'"><div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:600;color:#111">${c.name}</div><div style="font-size:11px;color:#999;margin-top:1px">${c.type}</div></div><span style="font-size:10px;font-weight:700;letter-spacing:.6px;background:#e8f5e9;color:#2e7d32;padding:3px 9px;border-radius:8px;text-transform:uppercase;flex-shrink:0">Available</span></div>`;});}
+  if(unavail.length){html+=`<div style="padding:8px 14px 4px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#bbb;margin-top:2px">Other Countries</div>`;unavail.forEach(c=>{html+=`<div style="display:flex;align-items:center;gap:12px;padding:11px 14px;opacity:0.55;cursor:default;border-radius:0">${flagImg(c.flag)}<div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:500;color:#555">${c.name}</div><div style="font-size:11px;color:#bbb;margin-top:1px">Coming Soon</div></div><span style="font-size:10px;font-weight:600;background:#f0ede8;color:#aaa;padding:3px 9px;border-radius:8px">Enquire</span></div>`;});}
+  list.innerHTML=html||'<div style="padding:24px;text-align:center;color:#999;font-size:13px">No results found</div>';
+}
+window.studentSelectCountry=function(id){const c=STUDENT_COUNTRIES.find(x=>x.id===id);if(!c)return;closeStudentDropdown();setTimeout(()=>studentFlyTo(c),50);};
+function openStudentDropdown(){
+  if(studentDropOpen)return;
+  studentDropOpen=true;
+  buildStudentDropdown('');
+  const dd=document.getElementById('studentDropdown'),ch=document.getElementById('studentChevron');
+  dd.style.maxHeight='380px';dd.style.opacity='1';dd.style.transform='translateY(0)';dd.style.pointerEvents='auto';
+  if(ch)ch.style.transform='translateY(-50%) rotate(180deg)';
+  setTimeout(()=>{const f=document.getElementById('studentDropFilter');if(f)f.focus();},100);
+}
+function closeStudentDropdown(){
+  if(!studentDropOpen)return;
+  studentDropOpen=false;
+  const dd=document.getElementById('studentDropdown'),ch=document.getElementById('studentChevron');
+  dd.style.maxHeight='0';dd.style.opacity='0';dd.style.transform='translateY(-8px)';dd.style.pointerEvents='none';
+  if(ch)ch.style.transform='translateY(-50%)';
+  const fi=document.getElementById('studentDropFilter');if(fi){fi.value='';fi.blur();}
+}
+window.toggleStudentDropdown=function(){studentDropOpen?closeStudentDropdown():openStudentDropdown();};
+window.filterStudentDropdown=function(q){buildStudentDropdown(q);};
+window.openStudentDropdown=openStudentDropdown;
+document.addEventListener('mousedown',function(e){const w=document.getElementById('studentSearchWrap');if(w&&!w.contains(e.target)&&studentDropOpen)closeStudentDropdown();});
+
+
+// ══════════════════════════════════════════════════════════
+//  WORK VISA PAGE — full globe + search + card
+// ══════════════════════════════════════════════════════════
+const WORK_COUNTRIES = [
+  {id:'can', iso:'CAN', name:'Canada',          flag:'🇨🇦', lat:56.1,  lng:-106.3, h:7000000, type:'Temporary Foreign Worker Permit', proc:'4–8 weeks',  validity:'Up to 2 years'},
+  {id:'aus', iso:'AUS', name:'Australia',       flag:'🇦🇺', lat:-25.3, lng:133.8,  h:7000000, type:'Temporary Skill Shortage (TSS)',   proc:'3–6 weeks',  validity:'Up to 4 years'},
+  {id:'deu', iso:'DEU', name:'Germany',         flag:'🇩🇪', lat:51.2,  lng:10.5,   h:2200000, type:'Skilled Worker Visa (§18 AufenthG)',proc:'6–10 wks', validity:'Up to 4 years'},
+  {id:'gbr', iso:'GBR', name:'United Kingdom',  flag:'🇬🇧', lat:54.0,  lng:-2.0,   h:2800000, type:'Skilled Worker Visa (Tier 2)',     proc:'3–8 weeks',  validity:'Up to 5 years'},
+  {id:'nzl', iso:'NZL', name:'New Zealand',     flag:'🇳🇿', lat:-40.9, lng:174.9,  h:2800000, type:'Accredited Employer Work Visa',    proc:'3–4 weeks',  validity:'Up to 3 years'},
+  {id:'sgp', iso:'SGP', name:'Singapore',       flag:'🇸🇬', lat:1.35,  lng:103.8,  h:600000,  type:'Employment Pass (EP)',             proc:'3–8 weeks',  validity:'Up to 2 years'},
+  {id:'are', iso:'ARE', name:'UAE',             flag:'🇦🇪', lat:24.0,  lng:54.0,   h:1800000, type:'UAE Work Permit / Residence Visa', proc:'2–4 weeks',  validity:'2 years'},
+  {id:'usa', iso:'USA', name:'United States',   flag:'🇺🇸', lat:38.0,  lng:-97.0,  h:5500000, type:'H-1B Specialty Occupation Visa',  proc:'3–6 months', validity:'Up to 3 years'},
+  {id:'jpn', iso:'JPN', name:'Japan',           flag:'🇯🇵', lat:36.2,  lng:138.3,  h:2800000, type:'Engineer/Specialist Visa (技術)',  proc:'4–8 weeks',  validity:'Up to 5 years'},
+  {id:'ned', iso:'NLD', name:'Netherlands',     flag:'🇳🇱', lat:52.1,  lng:5.3,    h:1600000, type:'Highly Skilled Migrant Permit',   proc:'2–3 weeks',  validity:'Up to 5 years'},
+  {id:'che', iso:'CHE', name:'Switzerland',     flag:'🇨🇭', lat:46.8,  lng:8.2,    h:1400000, type:'Work Permit B (Saisonniers)',      proc:'4–8 weeks',  validity:'Up to 1 year'},
+  {id:'dnk', iso:'DNK', name:'Denmark',         flag:'🇩🇰', lat:56.3,  lng:9.5,    h:1800000, type:'Positive List Work Permit',        proc:'1–2 months', validity:'Up to 4 years'},
+  {id:'swe', iso:'SWE', name:'Sweden',          flag:'🇸🇪', lat:60.1,  lng:18.6,   h:2500000, type:'Work Permit for Employment',       proc:'2–4 months', validity:'Up to 2 years'},
+  {id:'por', iso:'PRT', name:'Portugal',        flag:'🇵🇹', lat:39.4,  lng:-8.2,   h:2000000, type:'Work Visa / Tech Visa',            proc:'4–8 weeks',  validity:'Up to 2 years'},
+];
+
+const WORK_ISO2={CAN:'ca',AUS:'au',DEU:'de',GBR:'gb',NZL:'nz',SGP:'sg',ARE:'ae',USA:'us',JPN:'jp',NLD:'nl',CHE:'ch',DNK:'dk',SWE:'se',PRT:'pt'};
+let workViewer=null, workCurrentCountry=null, workIsFlyingTo=false;
+let workGeoDS=null, workEntityByIso={}, workGlobeBuilt=false;
+let workDropOpen=false;
+const workIsoMap={};
+WORK_COUNTRIES.forEach(c=>workIsoMap[c.iso]=c);
+
+(function buildWorkMarquee(){
+  function makeChips(){
+    return WORK_COUNTRIES.map(c=>{
+      const chip=document.createElement('div');
+      chip.className='vm-chip'; chip.dataset.id=c.id;
+      const code=WORK_ISO2[c.iso]||c.iso.toLowerCase().slice(0,2);
+      chip.innerHTML=`<img class="vm-flag-img" src="https://flagcdn.com/w80/${code}.png" alt="${c.name}" loading="lazy"><span class="vm-name">${c.name}</span>`;
+      chip.addEventListener('click',()=>workFlyTo(c));
+      return chip;
+    });
+  }
+  const t1=document.getElementById('workMarqueeTrack');
+  const t2=document.getElementById('workMarqueeTrack2');
+  if(t1&&t2){makeChips().forEach(ch=>t1.appendChild(ch));makeChips().forEach(ch=>t2.appendChild(ch));}
+})();
+
+function initWorkGlobe(){
+  const arcgis=new Cesium.UrlTemplateImageryProvider({url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',maximumLevel:19,credit:new Cesium.Credit('Esri',false),tileWidth:256,tileHeight:256});
+  workViewer=new Cesium.Viewer('workCesiumContainer',{baseLayer:new Cesium.ImageryLayer(arcgis),terrainProvider:new Cesium.EllipsoidTerrainProvider(),animation:false,baseLayerPicker:false,fullscreenButton:false,vrButton:false,geocoder:false,homeButton:false,infoBox:false,sceneModePicker:false,selectionIndicator:false,timeline:false,navigationHelpButton:false,requestRenderMode:false,creditContainer:document.createElement('div')});
+  const sc=workViewer.scene, gl=sc.globe;
+  gl.maximumScreenSpaceError=2.0; gl.tileCacheSize=150; gl.preloadAncestors=true; gl.preloadSiblings=false; gl.enableLighting=false;
+  sc.fxaa=true; sc.skyAtmosphere.show=true; sc.fog.enabled=true; sc.fog.density=0.0002;
+  sc.backgroundColor=Cesium.Color.fromCssColorString('#020810');
+
+  Cesium.GeoJsonDataSource.load('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson',{stroke:Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'),fill:Cesium.Color.fromCssColorString('rgba(0,0,0,0)'),strokeWidth:1,clampToGround:false}).then(ds=>{
+    workGeoDS=ds;
+    ds.entities.values.forEach(e=>{if(e.polygon){e.polygon.fill=new Cesium.ConstantProperty(false);e.polygon.outline=new Cesium.ConstantProperty(true);e.polygon.arcType=new Cesium.ConstantProperty(Cesium.ArcType.GEODESIC);e.polygon.outlineColor=new Cesium.ConstantProperty(Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'));e.polygon.outlineWidth=new Cesium.ConstantProperty(1);}});
+    workViewer.dataSources.add(ds);
+    buildWorkEntityCache();
+    const handler=new Cesium.ScreenSpaceEventHandler(sc.canvas);
+    handler.setInputAction(e=>{const p=workViewer.scene.pick(e.position);if(Cesium.defined(p)&&p.id instanceof Cesium.Entity){const props=p.id.properties;const iso=props.ADM0_A3?._value||props.ISO_A3?._value;if(iso&&workIsoMap[iso])workFlyTo(workIsoMap[iso]);}},Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    handler.setInputAction(e=>{const p=workViewer.scene.pick(e.endPosition);let is=false;if(Cesium.defined(p)&&p.id instanceof Cesium.Entity){const props=p.id.properties;const iso=props.ADM0_A3?._value||props.ISO_A3?._value;is=!!(iso&&workIsoMap[iso]);}sc.canvas.style.cursor=is?'pointer':'grab';},Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+  });
+  workViewer.camera.setView({destination:Cesium.Cartesian3.fromDegrees(78.96,20.59,18000000),orientation:{heading:0,pitch:-Cesium.Math.PI_OVER_TWO,roll:0}});
+  setTimeout(()=>{workViewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(78.96,20.59,14000000),orientation:{heading:0,pitch:-Cesium.Math.PI_OVER_TWO,roll:0},duration:2.5,easingFunction:Cesium.EasingFunction.QUADRATIC_OUT});},400);
+  setInterval(()=>{if(!workViewer||workCurrentCountry)return;try{const pos=workViewer.camera.positionCartographic;const lat=Cesium.Math.toDegrees(pos.latitude);const lng=Cesium.Math.toDegrees(pos.longitude);document.getElementById('workGlobeCoords').textContent=`${Math.abs(lat).toFixed(2)}°${lat>=0?'N':'S'} · ${Math.abs(lng).toFixed(2)}°${lng>=0?'E':'W'}`;}catch(e){}},600);
+}
+
+function buildWorkEntityCache(){
+  workEntityByIso={};
+  if(!workGeoDS)return;
+  const sz={};
+  workGeoDS.entities.values.forEach(e=>{
+    if(!e.polygon)return;
+    const iso=e.properties.ADM0_A3?._value||e.properties.ISO_A3?._value;
+    if(!iso)return;
+    let size=0;try{size=e.polygon.hierarchy?.getValue(Cesium.JulianDate.now())?.positions?.length||0;}catch(err){}
+    if(!workEntityByIso[iso]||size>(sz[iso]||0)){workEntityByIso[iso]=e;sz[iso]=size;}
+  });
+}
+
+let _workGlowT=0;
+const W_COL_HI=new Cesium.CallbackProperty(()=>{_workGlowT+=0.04;const p=0.55+0.45*Math.sin(_workGlowT*2.5);return Cesium.Color.fromCssColorString(`rgba(255,255,255,${p.toFixed(2)})`);},false);
+const W_MAT_HI=new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString('rgba(255,255,255,0.06)'));
+const W_COL_DM=new Cesium.ConstantProperty(Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'));
+const W_W1=new Cesium.ConstantProperty(1), W_W4=new Cesium.ConstantProperty(4);
+const W_FILL_ON=new Cesium.ConstantProperty(true), W_FILL_OFF=new Cesium.ConstantProperty(false);
+let wHighlightedIso=null;
+function highlightWorkCountry(iso){
+  if(wHighlightedIso&&workEntityByIso[wHighlightedIso]){const p=workEntityByIso[wHighlightedIso];p.polygon.fill=W_FILL_OFF;p.polygon.outlineColor=W_COL_DM;p.polygon.outlineWidth=W_W1;}
+  if(workEntityByIso[iso]){const e=workEntityByIso[iso];e.polygon.fill=W_FILL_ON;e.polygon.material=W_MAT_HI;e.polygon.outlineColor=W_COL_HI;e.polygon.outlineWidth=W_W4;e.polygon.outline=W_FILL_ON;}
+  wHighlightedIso=iso;
+}
+function clearWorkHighlight(){
+  if(wHighlightedIso&&workEntityByIso[wHighlightedIso]){const e=workEntityByIso[wHighlightedIso];e.polygon.fill=W_FILL_OFF;e.polygon.outlineColor=W_COL_DM;e.polygon.outlineWidth=W_W1;}
+  wHighlightedIso=null;
+}
+
+function workFlyTo(c){
+  if(workIsFlyingTo||!workViewer)return;
+  workIsFlyingTo=true; workCurrentCountry=c;
+  const inp=document.getElementById('workSearchInput');if(inp)inp.value=c.flag+'  '+c.name;
+  document.querySelectorAll('#workMarquee .vm-chip').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll(`#workMarquee .vm-chip[data-id="${c.id}"]`).forEach(el=>el.classList.add('active'));
+  closeWorkDropdown();
+  document.getElementById('workCard').classList.remove('visible');
+  document.getElementById('workHintText').textContent='Flying to '+c.name+'…';
+  document.getElementById('workGlobeCoords').textContent=`${Math.abs(c.lat).toFixed(2)}°${c.lat>=0?'N':'S'} · ${Math.abs(c.lng).toFixed(2)}°${c.lng>=0?'E':'W'} · ${c.name}`;
+  highlightWorkCountry(c.iso);
+  workViewer.entities.removeById('wdest');
+  workViewer.entities.add({id:'wdest',position:Cesium.Cartesian3.fromDegrees(c.lng,c.lat),point:{pixelSize:16,color:Cesium.Color.fromCssColorString('#C8102E'),outlineColor:Cesium.Color.WHITE,outlineWidth:3,disableDepthTestDistance:Number.POSITIVE_INFINITY}});
+  workViewer.scene.globe.maximumScreenSpaceError=8.0;
+  workViewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(c.lng,c.lat,18000000),orientation:{heading:0,pitch:-Cesium.Math.PI_OVER_TWO,roll:0},duration:1.8,easingFunction:Cesium.EasingFunction.QUADRATIC_IN_OUT,complete:()=>{
+    workViewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(c.lng,c.lat,c.h),orientation:{heading:0,pitch:-Cesium.Math.PI_OVER_TWO,roll:0},duration:1.8,easingFunction:Cesium.EasingFunction.QUADRATIC_OUT,complete:()=>{
+      workViewer.scene.globe.maximumScreenSpaceError=2.0;
+      workIsFlyingTo=false;
+      document.getElementById('workHintText').textContent='Arrived · '+c.name;
+      showWorkCard(c);
+    }});
+  }});
+}
+
+function showWorkCard(c){
+  const code=WORK_ISO2[c.iso]||c.iso.toLowerCase().slice(0,2);
+  document.getElementById('workCardFlag').src=`https://flagcdn.com/w640/${code}.png`;
+  document.getElementById('workCardFlagSmall').src=`https://flagcdn.com/w80/${code}.png`;
+  document.getElementById('workCardName').textContent=c.name;
+  document.getElementById('workCardType').textContent=c.type;
+  document.getElementById('workCardProc').textContent=c.proc;
+  document.getElementById('workCardValidity').textContent=c.validity;
+  document.getElementById('workCardApplyBtn').textContent='Apply for '+c.name+' Work Visa →';
+  document.getElementById('workCard').classList.add('visible');
+}
+window.closeWorkCard=function(){
+  document.getElementById('workCard').classList.remove('visible');
+  document.querySelectorAll('#workMarquee .vm-chip').forEach(el=>el.classList.remove('active'));
+  document.getElementById('workHintText').textContent='Rotate the globe or select a work destination';
+  const inp=document.getElementById('workSearchInput');if(inp)inp.value='';
+  workCurrentCountry=null; clearWorkHighlight();
+  if(workViewer){workViewer.entities.removeById('wdest');workViewer.scene.globe.maximumScreenSpaceError=8.0;workViewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(78.96,20.59,14000000),orientation:{heading:0,pitch:-Cesium.Math.PI_OVER_TWO,roll:0},duration:1.8,easingFunction:Cesium.EasingFunction.QUADRATIC_OUT,complete:()=>{workViewer.scene.globe.maximumScreenSpaceError=2.0;}});}
+  document.getElementById('workGlobeCoords').textContent='20.59°N · 78.96°E · India';
+};
+
+// ── Work Dropdown ────────────────────────────────────────
+function buildWorkDropdown(q){
+  const list=document.getElementById('workDropList');if(!list)return;
+  q=(q||'').trim().toLowerCase();
+  function flagToIso2(em){const chars=[...(em||'')];if(chars.length<2)return'';return chars.map(c=>String.fromCharCode(c.codePointAt(0)-0x1F1E6+65)).join('').toLowerCase();}
+  function flagImg(em){const iso2=flagToIso2(em);return`<img src="https://flagcdn.com/20x15/${iso2}.png" width="20" height="15" style="border-radius:2px;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;object-fit:cover" onerror="this.style.display='none'">`;}
+  const avail=WORK_COUNTRIES.filter(c=>!q||c.name.toLowerCase().includes(q)).sort((a,b)=>a.name.localeCompare(b.name));
+  const knownWorkNames=new Set(WORK_COUNTRIES.map(c=>c.name.toLowerCase()));
+  const unavail=ALL_COUNTRIES.filter(c=>!knownWorkNames.has(c.name.toLowerCase())&&(!q||c.name.toLowerCase().includes(q))).sort((a,b)=>a.name.localeCompare(b.name));
+  let html='';
+  if(avail.length){html+=`<div style="padding:8px 14px 4px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#999">Available Visas</div>`;avail.forEach(c=>{const code=WORK_ISO2[c.iso]||c.iso.toLowerCase().slice(0,2);html+=`<div class="vis-drop-item" onclick="workSelectCountry('${c.id}')" style="display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;transition:background .15s;border-radius:0" onmouseover="this.style.background='#f5f2ef'" onmouseout="this.style.background=''"><img src="https://flagcdn.com/w40/${code}.png" width="26" height="18" style="border-radius:3px;border:1px solid rgba(0,0,0,0.1);object-fit:cover;flex-shrink:0" onerror="this.style.display='none'"><div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:600;color:#111">${c.name}</div><div style="font-size:11px;color:#999;margin-top:1px">${c.type}</div></div><span style="font-size:10px;font-weight:700;letter-spacing:.6px;background:#e3f2fd;color:#1565c0;padding:3px 9px;border-radius:8px;text-transform:uppercase;flex-shrink:0">Available</span></div>`;});}
+  if(unavail.length){html+=`<div style="padding:8px 14px 4px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#bbb;margin-top:2px">Other Countries</div>`;unavail.forEach(c=>{html+=`<div style="display:flex;align-items:center;gap:12px;padding:11px 14px;opacity:0.55;cursor:default;border-radius:0">${flagImg(c.flag)}<div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:500;color:#555">${c.name}</div><div style="font-size:11px;color:#bbb;margin-top:1px">Coming Soon</div></div><span style="font-size:10px;font-weight:600;background:#f0ede8;color:#aaa;padding:3px 9px;border-radius:8px">Enquire</span></div>`;});}
+  list.innerHTML=html||'<div style="padding:24px;text-align:center;color:#999;font-size:13px">No results found</div>';
+}
+window.workSelectCountry=function(id){const c=WORK_COUNTRIES.find(x=>x.id===id);if(!c)return;closeWorkDropdown();setTimeout(()=>workFlyTo(c),50);};
+function openWorkDropdown(){
+  if(workDropOpen)return;
+  workDropOpen=true;
+  buildWorkDropdown('');
+  const dd=document.getElementById('workDropdown'),ch=document.getElementById('workChevron');
+  dd.style.maxHeight='380px';dd.style.opacity='1';dd.style.transform='translateY(0)';dd.style.pointerEvents='auto';
+  if(ch)ch.style.transform='translateY(-50%) rotate(180deg)';
+  setTimeout(()=>{const f=document.getElementById('workDropFilter');if(f)f.focus();},100);
+}
+function closeWorkDropdown(){
+  if(!workDropOpen)return;
+  workDropOpen=false;
+  const dd=document.getElementById('workDropdown'),ch=document.getElementById('workChevron');
+  dd.style.maxHeight='0';dd.style.opacity='0';dd.style.transform='translateY(-8px)';dd.style.pointerEvents='none';
+  if(ch)ch.style.transform='translateY(-50%)';
+  const fi=document.getElementById('workDropFilter');if(fi){fi.value='';fi.blur();}
+}
+window.toggleWorkDropdown=function(){workDropOpen?closeWorkDropdown():openWorkDropdown();};
+window.filterWorkDropdown=function(q){buildWorkDropdown(q);};
+window.openWorkDropdown=openWorkDropdown;
+document.addEventListener('mousedown',function(e){const w=document.getElementById('workSearchWrap');if(w&&!w.contains(e.target)&&workDropOpen)closeWorkDropdown();});
+
+// ── Hook into page navigation for student + work globes ────
+const _origGoPageSW=window.goPage;
+window.goPage=function(name,el){
+  _origGoPageSW(name,el);
+  if(name==='student'&&!studentGlobeBuilt){studentGlobeBuilt=true;setTimeout(initStudentGlobe,80);}
+  if(name==='work'&&!workGlobeBuilt){workGlobeBuilt=true;setTimeout(initWorkGlobe,80);}
+};
+// Also hook mobile navigation
+const _origGoPageMobSW=window.goPageMob;
+// goPageMob is defined inline and references globeBuilt — patch it for student/work
+const _origGoPageMobFn=goPageMob;
+window.goPageMob=function(name){
+  _origGoPageMobFn(name);
+  if(name==='student'&&!studentGlobeBuilt){studentGlobeBuilt=true;setTimeout(initStudentGlobe,80);}
+  if(name==='work'&&!workGlobeBuilt){workGlobeBuilt=true;setTimeout(initWorkGlobe,80);}
+};
 
 window.addEventListener('resize', () => {
   updateSVGSize();

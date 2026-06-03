@@ -403,8 +403,8 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <div id="visitorSearchWrap" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
       <div style="position:relative">
         <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;z-index:1">🔍</span>
-        <input id="searchInput" type="text" placeholder="Select a destination country…" autocomplete="off" spellcheck="false" readonly
-          style="width:100%;padding:14px 48px 14px 46px;font-size:14.5px;font-family:'Outfit',sans-serif;font-weight:500;color:#111;background:rgba(255,255,255,0.97);border:1.5px solid rgba(255,255,255,0.3);border-radius:16px;outline:none;box-shadow:0 6px 32px rgba(0,0,0,0.28),0 1px 4px rgba(0,0,0,0.12);cursor:pointer;transition:all .25s;backdrop-filter:blur(20px)"
+        <input id="searchInput" type="search" placeholder="Search destination…" autocomplete="off" spellcheck="false" inputmode="search"
+          style="width:100%;padding:14px 48px 14px 46px;font-size:16px;font-family:'Outfit',sans-serif;font-weight:500;color:#111;background:rgba(255,255,255,0.97);border:1.5px solid rgba(255,255,255,0.3);border-radius:16px;outline:none;box-shadow:0 6px 32px rgba(0,0,0,0.28),0 1px 4px rgba(0,0,0,0.12);cursor:pointer;transition:all .25s;backdrop-filter:blur(20px)"
           onfocus="openVisitorDropdown()" onclick="openVisitorDropdown()">
         <div id="visitorChevron" onclick="toggleVisitorDropdown()" style="position:absolute;right:18px;top:50%;transform:translateY(-50%);pointer-events:auto;cursor:pointer;transition:transform .25s;color:#888;font-size:13px;user-select:none">▼</div>
       </div>
@@ -412,7 +412,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
         <div style="padding:10px 14px 8px;border-bottom:1px solid rgba(0,0,0,0.06)">
           <input id="visitorDropFilter" type="text" placeholder="🔍  Filter countries…" autocomplete="off" spellcheck="false"
             oninput="filterVisitorDropdown(this.value)"
-            style="width:100%;padding:9px 14px;font-size:13.5px;font-family:'Outfit',sans-serif;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;outline:none;background:#f8f6f3;color:#111;transition:border-color .2s"
+            style="width:100%;padding:9px 14px;font-size:16px;font-family:'Outfit',sans-serif;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;outline:none;background:#f8f6f3;color:#111;transition:border-color .2s"
             onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='rgba(0,0,0,0.1)'">
         </div>
         <div id="visitorDropList" style="overflow-y:auto;max-height:300px;padding:6px 0"></div>
@@ -487,8 +487,8 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   <div id="pkgSearchWrap" style="position:absolute;top:72px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
     <div style="position:relative">
       <div style="position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:15px;z-index:1;pointer-events:none">✈️</div>
-      <input id="pkgSearch" type="text" placeholder="Select a destination country…" autocomplete="off" spellcheck="false" readonly
-        style="width:100%;padding:15px 52px 15px 48px;font-size:13.5px;font-family:'Outfit',sans-serif;font-weight:500;color:#1a1a1a;background:rgba(255,255,255,0.97);border:2px solid transparent;border-radius:16px;outline:none;box-shadow:0 12px 50px rgba(0,0,0,0.5),0 2px 8px rgba(0,0,0,0.2);transition:border-color .3s,box-shadow .3s;backdrop-filter:blur(20px);cursor:pointer"
+      <input id="pkgSearch" type="search" placeholder="Search destination…" autocomplete="off" spellcheck="false" inputmode="search"
+        style="width:100%;padding:15px 52px 15px 48px;font-size:16px;font-family:'Outfit',sans-serif;font-weight:500;color:#1a1a1a;background:rgba(255,255,255,0.97);border:2px solid transparent;border-radius:16px;outline:none;box-shadow:0 12px 50px rgba(0,0,0,0.5),0 2px 8px rgba(0,0,0,0.2);transition:border-color .3s,box-shadow .3s;backdrop-filter:blur(20px);cursor:pointer"
         onclick="togglePkgDropdown()" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='transparent'">
       <!-- Chevron -->
       <div id="pkgChevron" onclick="togglePkgDropdown()" style="position:absolute;right:18px;top:50%;transform:translateY(-50%);pointer-events:auto;cursor:pointer;transition:transform .25s;color:#888;font-size:13px;user-select:none">▼</div>
@@ -499,7 +499,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <!-- Search filter inside dropdown -->
       <div style="padding:10px 12px 6px;border-bottom:1px solid rgba(0,0,0,0.06)">
         <input id="pkgDropFilter" type="text" placeholder="🔍  Filter countries…" autocomplete="off" spellcheck="false"
-          style="width:100%;padding:8px 14px;font-size:13px;font-family:'Outfit',sans-serif;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;outline:none;background:#f8f6f3;color:#1a1a1a;transition:border-color .2s"
+          style="width:100%;padding:8px 14px;font-size:16px;font-family:'Outfit',sans-serif;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;outline:none;background:#f8f6f3;color:#1a1a1a;transition:border-color .2s"
           oninput="filterPkgDropdown(this.value)" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='rgba(0,0,0,0.1)'">
       </div>
       <div id="pkgDropList" style="overflow-y:auto;max-height:280px;padding:6px 0"></div>
@@ -726,21 +726,24 @@ function buildVisitorDropdown(filterQ) {
       const country = COUNTRIES.find(x => x.id === id);
       if (country) selectVisitorCountry(country);
     });
-    // Touch
+    // Touch — only select if list was NOT being scrolled
     el.addEventListener('touchend', e => {
+      if (list._isScrolling) return; // user was scrolling, not tapping
       e.preventDefault();
       const id = el.dataset.id;
       const country = COUNTRIES.find(x => x.id === id);
       if (country) selectVisitorCountry(country);
     }, {passive: false});
   });
-  // Momentum scroll on list
+  // Momentum scroll on list (sets list._isScrolling)
   makeMomentumScroll(list, null);
 }
 
 function selectVisitorCountry(c) {
   const inp = document.getElementById('searchInput');
-  if (inp) inp.value = c.flag + '  ' + c.name;
+  if (inp) { inp.value = c.flag + '  ' + c.name; inp.blur(); }
+  // Dismiss keyboard on mobile
+  if (document.activeElement) document.activeElement.blur();
   // Highlight in list
   document.querySelectorAll('.vdr-item').forEach(el => el.classList.remove('active'));
   const activeEl = document.querySelector(`.vdr-avail[data-id="${c.id}"]`);
@@ -760,7 +763,7 @@ function openVisitorDropdown() {
   dd.style.pointerEvents = 'auto';
   if (chev) { chev.style.transform = 'translateY(-50%) rotate(180deg)'; chev.style.color = '#C8102E'; }
   const fi = document.getElementById('visitorDropFilter');
-  if (fi) { fi.value = ''; setTimeout(() => fi.focus(), 50); }
+  if (fi) { fi.value = ''; setTimeout(() => { fi.focus(); fi.removeAttribute('readonly'); }, 80); }
 }
 
 function closeVisitorDropdown() {
@@ -773,6 +776,10 @@ function closeVisitorDropdown() {
   dd.style.transform = 'translateY(-8px)';
   dd.style.pointerEvents = 'none';
   if (chev) { chev.style.transform = 'translateY(-50%) rotate(0deg)'; chev.style.color = '#888'; }
+  // Dismiss keyboard
+  const fi = document.getElementById('visitorDropFilter');
+  if (fi) fi.blur();
+  if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
 }
 
 function toggleVisitorDropdown() {
@@ -832,18 +839,20 @@ document.addEventListener('click', e => {
 
 // ── SMOOTH MOMENTUM SCROLL HELPER ─────────────────────────────────────────────
 // Native-feel inertia scroll for elements inside body{overflow:hidden}
+// el._isScrolling is exposed so child touchend handlers can bail if user scrolled
 function makeMomentumScroll(el, onTap) {
-  const FRICTION     = 0.978;   // high = long glide (0.97–0.99 feels native)
-  const MIN_VEL      = 0.3;     // stop threshold px/frame
-  const TAP_MAX_MOVE = 8;       // px — above this = scroll, below = tap
-  const VEL_HISTORY  = 5;       // frames to average for launch velocity
-  const MAX_VEL      = 40;      // cap px/frame so fast flings don't teleport
+  const FRICTION     = 0.978;
+  const MIN_VEL      = 0.3;
+  const TAP_MAX_MOVE = 6;       // px — tighter threshold so scrolls are caught early
+  const VEL_HISTORY  = 5;
+  const MAX_VEL      = 40;
 
   let startY = 0, lastY = 0;
   let didScroll = false, rafId = null;
   let velY = 0;
-  // Rolling history for smooth velocity estimate
   const hist = [];
+
+  el._isScrolling = false; // expose for child handlers
 
   function stop() {
     if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
@@ -852,7 +861,7 @@ function makeMomentumScroll(el, onTap) {
 
   function coast() {
     velY *= FRICTION;
-    if (Math.abs(velY) < MIN_VEL) { stop(); return; }
+    if (Math.abs(velY) < MIN_VEL) { stop(); el._isScrolling = false; return; }
     el.scrollTop += velY;
     rafId = requestAnimationFrame(coast);
   }
@@ -861,17 +870,19 @@ function makeMomentumScroll(el, onTap) {
     stop();
     startY = lastY = e.touches[0].clientY;
     didScroll = false;
+    el._isScrolling = false;
     hist.length = 0;
   }, {passive: true});
 
   el.addEventListener('touchmove', e => {
-    const y   = e.touches[0].clientY;
-    const dy  = lastY - y;
-    if (Math.abs(startY - y) > TAP_MAX_MOVE) didScroll = true;
-
+    const y  = e.touches[0].clientY;
+    const dy = lastY - y;
+    if (Math.abs(startY - y) > TAP_MAX_MOVE) {
+      didScroll = true;
+      el._isScrolling = true;
+    }
     if (didScroll) {
       el.scrollTop += dy;
-      // Keep a rolling window of recent deltas for velocity
       hist.push(dy);
       if (hist.length > VEL_HISTORY) hist.shift();
       e.preventDefault();
@@ -884,14 +895,20 @@ function makeMomentumScroll(el, onTap) {
     if (didScroll) {
       e.preventDefault();
       e.stopPropagation();
-      // Launch velocity = average of recent deltas, capped
       if (hist.length) {
         const avg = hist.reduce((a, b) => a + b, 0) / hist.length;
         velY = Math.max(-MAX_VEL, Math.min(MAX_VEL, avg));
-        if (Math.abs(velY) > MIN_VEL) rafId = requestAnimationFrame(coast);
+        if (Math.abs(velY) > MIN_VEL) {
+          rafId = requestAnimationFrame(coast);
+        } else {
+          el._isScrolling = false;
+        }
+      } else {
+        el._isScrolling = false;
       }
       return;
     }
+    el._isScrolling = false;
     if (onTap) onTap(e);
   }, {passive: false});
 }
@@ -2209,13 +2226,12 @@ function buildPkgDropdown() {
   if (!list) return;
   list.innerHTML = Object.keys(PKG_DATA).map(key => {
     const p = PKG_DATA[key];
-    return `<div class="pkg-drop-item" data-key="${key}" onmousedown="event.preventDefault();selectPkgCountry('${key}')" onmouseover="if(!this.classList.contains('active'))this.style.background='rgba(200,16,46,0.06)'" onmouseout="if(!this.classList.contains('active'))this.style.background='transparent'">
+    return `<div class="pkg-drop-item" data-key="${key}" onmouseover="if(!this.classList.contains('active'))this.style.background='rgba(200,16,46,0.06)'" onmouseout="if(!this.classList.contains('active'))this.style.background='transparent'">
       <span style="font-size:22px;line-height:1;flex-shrink:0">${p.flag}</span>
       <div style="flex:1;min-width:0">
         <div style="font-size:13.5px;font-weight:600;color:#111;font-family:Outfit,sans-serif">${key}</div>
         <div style="font-size:11px;color:#999;margin-top:1px;font-family:Outfit,sans-serif">${p.destinations ? p.destinations.map(d=>d.name).slice(0,3).join(' · ') : p.city}</div>
       </div>
-
     </div>`;
   }).join('');
 
@@ -2226,6 +2242,25 @@ function buildPkgDropdown() {
     s.textContent = `.pkg-drop-item{display:flex;align-items:center;gap:13px;padding:10px 16px;cursor:pointer;transition:background .15s;border-left:3px solid transparent} .pkg-drop-item.active{background:rgba(200,16,46,0.08)!important;border-left-color:#C8102E}`;
     document.head.appendChild(s);
   }
+
+  // Attach mouse + touch handlers after rendering
+  list.querySelectorAll('.pkg-drop-item').forEach(el => {
+    const key = el.dataset.key;
+    // Mouse (desktop)
+    el.addEventListener('mousedown', e => {
+      e.preventDefault();
+      selectPkgCountry(key);
+    });
+    // Touch (mobile) — guard against scroll
+    el.addEventListener('touchend', e => {
+      if (list._isScrolling) return; // user was scrolling, not tapping
+      e.preventDefault();
+      selectPkgCountry(key);
+    }, {passive: false});
+  });
+
+  // Momentum scroll on list (sets list._isScrolling)
+  makeMomentumScroll(list, null);
 }
 
 window.togglePkgDropdown = function() {
@@ -2241,7 +2276,7 @@ window.togglePkgDropdown = function() {
     dd.style.pointerEvents = 'auto';
     chevron.style.transform = 'translateY(-50%) rotate(180deg)';
     chevron.style.color = '#C8102E';
-    if (filterInput) { filterInput.value = ''; setTimeout(()=>filterInput.focus(), 50); }
+    if (filterInput) { filterInput.value = ''; setTimeout(()=>{ filterInput.focus(); filterInput.removeAttribute('readonly'); }, 80); }
   } else {
     closePkgDropdown();
   }
@@ -2258,6 +2293,10 @@ function closePkgDropdown() {
   dd.style.pointerEvents = 'none';
   chevron.style.transform = 'translateY(-50%) rotate(0deg)';
   chevron.style.color = '#888';
+  // Dismiss keyboard
+  const fi = document.getElementById('pkgDropFilter');
+  if (fi) fi.blur();
+  if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
 }
 
 window.filterPkgDropdown = function(q) {
@@ -2276,7 +2315,9 @@ window.selectPkgCountry = function(key) {
   if (!p) return;
   // Update dropdown display label
   const searchEl = document.getElementById('pkgSearch');
-  if (searchEl) searchEl.value = p.flag + '  ' + key;
+  if (searchEl) { searchEl.value = p.flag + '  ' + key; searchEl.blur(); }
+  // Dismiss keyboard on mobile
+  if (document.activeElement) document.activeElement.blur();
   // Highlight active row in open dropdown (if open)
   document.querySelectorAll('.pkg-drop-item').forEach(el => el.classList.remove('active'));
   const activeEl = document.querySelector(`.pkg-drop-item[data-key="${key}"]`);

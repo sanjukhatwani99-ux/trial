@@ -290,6 +290,22 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 }
 
 
+/* ── VISAS NAV DROPDOWN ── */
+.nav-visa-li{position:relative;list-style:none}
+.nav-visa-trigger{color:var(--text-2);text-decoration:none;font-size:13.5px;font-weight:500;padding:6px 13px;border-radius:7px;transition:all .2s;cursor:pointer;display:flex;align-items:center;gap:2px;user-select:none}
+.nav-visa-trigger:hover,.nav-visa-trigger.open{color:var(--text);background:var(--bg2)}
+.nav-visa-trigger.open{color:var(--red);background:var(--red-light);font-weight:600}
+.nav-visa-drop{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(-6px);min-width:230px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 16px 48px rgba(0,0,0,0.14);padding:6px;opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;z-index:700}
+.nav-visa-drop.open{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.nav-visa-drop::before{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-bottom-color:#fff;border-top:none;filter:drop-shadow(0 -2px 2px rgba(0,0,0,0.06))}
+.nav-visa-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:background .16s;text-decoration:none;color:var(--text)}
+.nav-visa-item:hover{background:var(--red-light)}
+.nav-visa-item:hover .nvi-title{color:var(--red)}
+.nvi-icon{font-size:20px;flex-shrink:0;line-height:1;width:28px;text-align:center}
+.nvi-text{display:flex;flex-direction:column;gap:2px}
+.nvi-title{font-size:13.5px;font-weight:600;color:var(--black);transition:color .16s}
+.nvi-sub{font-size:11px;color:var(--text-3)}
+
 .loader{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;z-index:999;transition:opacity .8s}
 .loader-logo{font-family:'Playfair Display',serif;font-size:38px;font-weight:900;color:var(--black)}
 .loader-logo span{color:var(--red)}
@@ -414,12 +430,18 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   <div class="nav-logo" onclick="goPage('home',null)" ontouchstart="event.stopPropagation()">Visa<span>vera</span><div class="nav-dot"></div></div>
   <ul class="nav-links">
     <li><a class="active" onclick="goPage('home',this)">Home</a></li>
-    <li><a onclick="goPage('visitor',this)">Visitor Visa</a></li>
-    <li><a onclick="goPage('student',this)">Student Visa</a></li>
-    <li><a onclick="goPage('work',this)">Work Visa</a></li>
-    <li><a onclick="goPage('tickets',this)">Packages</a></li>
-    <li><a onclick="goPage('about',this)">About</a></li>
-    <li><a class="nav-cta" onclick="goPage('contact',this)">Contact Us</a></li>
+    <li><a onclick="goPage('about',this)">About Us</a></li>
+    <li class="nav-visa-li" id="navVisaLi">
+      <a class="nav-visa-trigger" id="navVisaTrigger" onclick="toggleVisaNavDrop(event)">Visas <svg style="display:inline;vertical-align:middle;margin-left:3px;margin-top:-2px;transition:transform .25s" id="visaNavChevronSvg" width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <div class="nav-visa-drop" id="navVisaDrop">
+        <a class="nav-visa-item" onclick="goPage('visitor',null);closeVisaNavDrop()"><span class="nvi-icon">🌍</span><span class="nvi-text"><span class="nvi-title">Visitor Visa</span><span class="nvi-sub">Tourist &amp; family visits</span></span></a>
+        <a class="nav-visa-item" onclick="goPage('student',null);closeVisaNavDrop()"><span class="nvi-icon">🎓</span><span class="nvi-text"><span class="nvi-title">Student Visa</span><span class="nvi-sub">Study abroad programs</span></span></a>
+        <a class="nav-visa-item" onclick="goPage('work',null);closeVisaNavDrop()"><span class="nvi-icon">💼</span><span class="nvi-text"><span class="nvi-title">Work Visa</span><span class="nvi-sub">Global employment visas</span></span></a>
+      </div>
+    </li>
+    <li><a onclick="goPage('tickets',this)">Tours &amp; Packages</a></li>
+    <li><a onclick="goPage('success',this)">Success Stories</a></li>
+    <li><a class="nav-cta" onclick="goPage('contact',this)">Contact</a></li>
   </ul>
   <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -427,12 +449,14 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 </nav>
 <div class="mobile-menu" id="mobileMenu">
   <a class="active" id="mob-home" onclick="goPageMob('home')">Home</a>
-  <a id="mob-visitor" onclick="goPageMob('visitor')">Visitor Visa</a>
-  <a id="mob-student" onclick="goPageMob('student')">Student Visa</a>
-  <a id="mob-work" onclick="goPageMob('work')">Work Visa</a>
-  <a id="mob-tickets" onclick="goPageMob('tickets')">Packages</a>
-  <a id="mob-about" onclick="goPageMob('about')">About</a>
-  <a class="mob-cta" id="mob-contact" onclick="goPageMob('contact')">Contact Us</a>
+  <a id="mob-about" onclick="goPageMob('about')">About Us</a>
+  <a id="mob-visas-header" style="font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3);padding:10px 16px 4px;pointer-events:none">Visas</a>
+  <a id="mob-visitor" onclick="goPageMob('visitor')" style="padding-left:28px">↳ Visitor Visa</a>
+  <a id="mob-student" onclick="goPageMob('student')" style="padding-left:28px">↳ Student Visa</a>
+  <a id="mob-work" onclick="goPageMob('work')" style="padding-left:28px">↳ Work Visa</a>
+  <a id="mob-tickets" onclick="goPageMob('tickets')">Tours &amp; Packages</a>
+  <a id="mob-success" onclick="goPageMob('success')">Success Stories</a>
+  <a class="mob-cta" id="mob-contact" onclick="goPageMob('contact')">Contact</a>
 </div>
 
 <div class="page active" id="page-home">
@@ -458,7 +482,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <!-- UNIFIED SEARCH — same style as Packages page -->
     <div id="visitorSearchWrap" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
       <div style="position:relative">
-        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;z-index:1;display:flex;align-items:center"><svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg"><!-- Passport body --><rect x="1" y="0.5" width="18" height="21" rx="2" fill="#1a3a6b"/><rect x="1" y="0.5" width="18" height="21" rx="2" stroke="#0f2548" stroke-width="0.5"/><!-- Spine --><rect x="1" y="0.5" width="3" height="21" rx="1.5" fill="#162f5a"/><!-- Saffron stripe --><rect x="4" y="2" width="14" height="2.5" rx="0.5" fill="#FF9933" opacity="0.95"/><!-- White stripe --><rect x="4" y="4.5" width="14" height="2.5" fill="#f0f0f0" opacity="0.95"/><!-- Green stripe --><rect x="4" y="7" width="14" height="2.5" rx="0.5" fill="#138808" opacity="0.95"/><!-- Ashoka Chakra circle --><circle cx="11" cy="15" r="3.8" fill="#f0f0f0" opacity="0.15"/><!-- Chakra ring --><circle cx="11" cy="15" r="3.2" fill="none" stroke="#f0f0f0" stroke-width="0.7" opacity="0.9"/><!-- Chakra center --><circle cx="11" cy="15" r="0.7" fill="#1a3a6b" stroke="#f0f0f0" stroke-width="0.4"/><!-- Chakra spokes (24) --><g stroke="#f0f0f0" stroke-width="0.4" opacity="0.9"><line x1="11" y1="12.2" x2="11" y2="11.5"/><line x1="12.3" y1="12.5" x2="12.7" y2="12"/><line x1="13.5" y1="13.5" x2="14" y2="13.1"/><line x1="13.8" y1="15" x2="14.5" y2="15"/><line x1="13.5" y1="16.5" x2="14" y2="16.9"/><line x1="12.3" y1="17.5" x2="12.7" y2="18"/><line x1="11" y1="17.8" x2="11" y2="18.5"/><line x1="9.7" y1="17.5" x2="9.3" y2="18"/><line x1="8.5" y1="16.5" x2="8" y2="16.9"/><line x1="8.2" y1="15" x2="7.5" y2="15"/><line x1="8.5" y1="13.5" x2="8" y2="13.1"/><line x1="9.7" y1="12.5" x2="9.3" y2="12"/></g></svg></span>
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;z-index:1;display:flex;align-items:center"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="7.5" stroke="#C8102E" stroke-width="1.7"/><ellipse cx="9" cy="9" rx="3" ry="7.5" stroke="#C8102E" stroke-width="1.2" opacity="0.5"/><line x1="2" y1="6.5" x2="16" y2="6.5" stroke="#C8102E" stroke-width="1.2" opacity="0.5"/><line x1="2" y1="11.5" x2="16" y2="11.5" stroke="#C8102E" stroke-width="1.2" opacity="0.5"/><line x1="17" y1="17" x2="19.5" y2="19.5" stroke="#C8102E" stroke-width="1.8" stroke-linecap="round"/></svg></span>
         <input id="searchInput" type="search" placeholder="Search visitor destination…" autocomplete="off" spellcheck="false" inputmode="search"
           style="width:100%;padding:14px 48px 14px 46px;font-size:16px;font-family:'Outfit',sans-serif;font-weight:500;color:#111;background:rgba(255,255,255,0.97);border:1.5px solid rgba(255,255,255,0.3);border-radius:16px;outline:none;box-shadow:0 6px 32px rgba(0,0,0,0.28),0 1px 4px rgba(0,0,0,0.12);cursor:pointer;transition:all .25s;backdrop-filter:blur(20px)"
           onfocus="openVisitorDropdown()" onclick="openVisitorDropdown()">
@@ -778,6 +802,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
 <div class="page minimal-page" id="page-about"><div><div class="page-badge">About Visavera</div><h2>Our <span>Story</span></h2><p>Since 2016, helping Indian families unlock the world — one visa at a time.</p></div></div>
 <div class="page minimal-page" id="page-contact"><div><div class="page-badge">Get In Touch</div><h2>Contact <span>Us</span></h2><p>Reach our experts in Ahmedabad, Mumbai, or Delhi — or just WhatsApp us anytime.</p></div></div>
+<div class="page minimal-page" id="page-success"><div><div class="page-badge">Success Stories</div><h2>Happy <span>Travellers</span></h2><p>Over 12,000 visas approved. Real stories from real families who trusted Visavera to open doors across the globe.</p></div></div>
 
 <script>
 // ── COUNTRIES WITH FULL VISA DETAILS (searchable + flyable) ────────────────
@@ -1025,7 +1050,32 @@ function goPage(name, el) {
   }
 }
 
-// ── MOBILE MENU ─────────────────────────────────────────────
+// ── VISAS NAV DROPDOWN ─────────────────────────────────────
+let visaNavDropOpen = false;
+function toggleVisaNavDrop(e) {
+  e.stopPropagation();
+  visaNavDropOpen ? closeVisaNavDrop() : openVisaNavDrop();
+}
+function openVisaNavDrop() {
+  visaNavDropOpen = true;
+  document.getElementById('navVisaDrop').classList.add('open');
+  document.getElementById('navVisaTrigger').classList.add('open');
+  const svg = document.getElementById('visaNavChevronSvg');
+  if (svg) svg.style.transform = 'rotate(180deg)';
+}
+function closeVisaNavDrop() {
+  visaNavDropOpen = false;
+  document.getElementById('navVisaDrop').classList.remove('open');
+  document.getElementById('navVisaTrigger').classList.remove('open');
+  const svg = document.getElementById('visaNavChevronSvg');
+  if (svg) svg.style.transform = 'rotate(0deg)';
+}
+window.toggleVisaNavDrop = toggleVisaNavDrop;
+window.closeVisaNavDrop = closeVisaNavDrop;
+document.addEventListener('mousedown', function(e) {
+  const li = document.getElementById('navVisaLi');
+  if (li && !li.contains(e.target) && visaNavDropOpen) closeVisaNavDrop();
+});
 function toggleMobileMenu() {
   const ham = document.getElementById('navHamburger');
   const menu = document.getElementById('mobileMenu');
@@ -1131,7 +1181,7 @@ makeMomentumScroll(document.getElementById('mobileMenu'), null);
 function goPageMob(name) {
   // Update desktop nav active state
   const desktopLinks = document.querySelectorAll('.nav-links a');
-  const names = ['home','visitor','student','work','tickets','about','contact'];
+  const names = ['home','visitor','student','work','tickets','about','contact','success'];
   desktopLinks.forEach((a,i) => a.classList.toggle('active', names[i] === name));
   // Update mobile nav active state
   document.querySelectorAll('.mobile-menu a').forEach(a => a.classList.remove('active'));
@@ -3126,5 +3176,171 @@ window.addEventListener('resize', () => {
 
 
 </script>
+
+<!-- ── CREATIVE FLOATING CONTACT BUTTONS ── -->
+<style>
+.float-contact-wrap {
+  position: fixed;
+  bottom: 28px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  pointer-events: none;
+}
+.float-btn {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 18px 0 14px;
+  height: 52px;
+  border-radius: 26px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #fff;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.22);
+  transition: transform .25s cubic-bezier(0.34,1.56,0.64,1), box-shadow .25s, width .35s cubic-bezier(0.4,0,0.2,1);
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 52px;
+  position: relative;
+}
+.float-btn:hover {
+  max-width: 220px;
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 12px 38px rgba(0,0,0,0.32);
+}
+.float-btn .fb-icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.float-btn .fb-label {
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity .2s .1s, transform .2s .1s;
+  letter-spacing: .3px;
+}
+.float-btn:hover .fb-label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* WhatsApp */
+.float-wa {
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+}
+.float-wa:hover { box-shadow: 0 12px 38px rgba(37,211,102,0.42); }
+
+/* Mail */
+.float-mail {
+  background: linear-gradient(135deg, #C8102E 0%, #7b0a1e 100%);
+}
+.float-mail:hover { box-shadow: 0 12px 38px rgba(200,16,46,0.42); }
+
+/* Pulse ring animation on the buttons */
+.float-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  box-shadow: 0 0 0 0 rgba(255,255,255,0.4);
+  animation: fbPulse 3s ease-in-out infinite;
+}
+.float-wa::after { animation-delay: 0s; }
+.float-mail::after { animation-delay: 1.5s; }
+@keyframes fbPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.35); }
+  60%  { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+}
+
+/* Tooltip label on first load (auto-shows once) */
+.float-nudge {
+  pointer-events: none;
+  position: absolute;
+  right: 60px;
+  background: rgba(10,10,10,0.82);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity .3s, transform .3s;
+  letter-spacing: .2px;
+}
+.float-nudge::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 5px solid transparent;
+  border-left-color: rgba(10,10,10,0.82);
+  border-right: none;
+}
+.float-btn:hover .float-nudge { display: none; }
+.float-contact-wrap.nudge-show .float-btn .float-nudge {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (max-width: 480px) {
+  .float-contact-wrap { bottom: 80px; right: 14px; }
+  .float-btn { height: 46px; padding: 0 14px 0 12px; }
+  .float-btn .fb-icon { width: 22px; height: 22px; }
+}
+</style>
+
+<div class="float-contact-wrap" id="floatContactWrap">
+  <!-- WhatsApp -->
+  <a href="https://wa.me/919876543210" target="_blank" rel="noopener" class="float-btn float-wa" title="Chat on WhatsApp">
+    <span class="fb-icon">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+    </span>
+    <span class="fb-label">Chat on WhatsApp</span>
+  </a>
+
+  <!-- Mail -->
+  <a href="mailto:hello@visavera.com" class="float-btn float-mail" title="Send us an Email">
+    <span class="fb-icon">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="4" width="20" height="16" rx="3"/>
+        <polyline points="2,4 12,13 22,4"/>
+      </svg>
+    </span>
+    <span class="fb-label">Email Us</span>
+  </a>
+</div>
+
+<script>
+// Auto-nudge: briefly show tooltip labels on first visit after 2.5s
+(function(){
+  const wrap = document.getElementById('floatContactWrap');
+  if (!wrap) return;
+  setTimeout(() => {
+    wrap.classList.add('nudge-show');
+    setTimeout(() => wrap.classList.remove('nudge-show'), 3500);
+  }, 2500);
+})();
+</script>
+
 </body>
 </html>

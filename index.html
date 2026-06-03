@@ -550,7 +550,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
           style="width:100%;padding:8px 14px;font-size:16px;font-family:'Outfit',sans-serif;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;outline:none;background:#f8f6f3;color:#1a1a1a;transition:border-color .2s"
           oninput="filterPkgDropdown(this.value)" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='rgba(0,0,0,0.1)'">
       </div>
-      <div id="pkgDropList" style="overflow-y:auto;max-height:280px;padding:6px 0;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y"></div>
+      <div id="pkgDropList" style="overflow-y:auto;max-height:300px;padding:6px 0;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y"></div>
     </div>
   </div>
 
@@ -2377,93 +2377,99 @@ window.pkgQuick = function(key) {
 // ── DROPDOWN LOGIC ────────────────────────────────────────────────────────
 let pkgDropOpen = false;
 
-function buildPkgDropdown() {
+function buildPkgDropdown(filterQ) {
   const list = document.getElementById('pkgDropList');
   if (!list) return;
-  list.innerHTML = Object.keys(PKG_DATA).map(key => {
-    const p = PKG_DATA[key];
-    return `<div class="pkg-drop-item" data-key="${key}" onmouseover="if(!this.classList.contains('active'))this.style.background='rgba(200,16,46,0.06)'" onmouseout="if(!this.classList.contains('active'))this.style.background='transparent'">
-      <span style="font-size:22px;line-height:1;flex-shrink:0">${p.flag}</span>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:13.5px;font-weight:600;color:#111;font-family:Outfit,sans-serif">${key}</div>
-        <div style="font-size:11px;color:#999;margin-top:1px;font-family:Outfit,sans-serif">${p.destinations ? p.destinations.map(d=>d.name).slice(0,3).join(' · ') : p.city}</div>
-      </div>
-    </div>`;
-  }).join('');
+  const q = (filterQ || '').trim().toLowerCase();
 
-  // Inject drop item style once
+  const keys = Object.keys(PKG_DATA).filter(key => {
+    if (!q) return true;
+    const p = PKG_DATA[key];
+    const text = (key + ' ' + p.city + ' ' + (p.destinations||[]).map(d=>d.name).join(' ')).toLowerCase();
+    return text.includes(q);
+  });
+
+  let html = '';
+  if (keys.length) {
+    keys.forEach(key => {
+      const p = PKG_DATA[key];
+      const sub = p.destinations ? p.destinations.map(d=>d.name).slice(0,3).join(' · ') : p.city;
+      html += `<div class="pkg-drop-item" data-key="${key}" style="display:flex;align-items:center;gap:13px;padding:10px 16px;cursor:pointer;transition:background .15s;border-left:3px solid transparent">
+        <span style="font-size:20px;line-height:1;flex-shrink:0">${p.flag}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13.5px;font-weight:600;color:#111;font-family:Outfit,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${key}</div>
+          <div style="font-size:11px;color:#999;margin-top:1px;font-family:Outfit,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${sub}</div>
+        </div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:20px;background:#fdeaed;color:#C8102E;flex-shrink:0">Explore</div>
+      </div>`;
+    });
+  } else {
+    html = `<div style="padding:22px;text-align:center;color:#999;font-size:13px"><span style="display:block;font-size:22px;margin-bottom:6px">✈️</span>No destination found</div>`;
+  }
+  list.innerHTML = html;
+
+  // Inject style once
   if (!document.getElementById('pkgDropStyle')) {
     const s = document.createElement('style');
     s.id = 'pkgDropStyle';
-    s.textContent = `.pkg-drop-item{display:flex;align-items:center;gap:13px;padding:10px 16px;cursor:pointer;transition:background .15s;border-left:3px solid transparent} .pkg-drop-item.active{background:rgba(200,16,46,0.08)!important;border-left-color:#C8102E}`;
+    s.textContent = `.pkg-drop-item:hover{background:rgba(200,16,46,0.06)!important;border-left-color:rgba(200,16,46,0.35)!important}.pkg-drop-item.active{background:#fdeaed!important;border-left-color:#C8102E!important}`;
     document.head.appendChild(s);
   }
 
-  // Attach mouse + touch handlers after rendering
+  // Attach mouse + touch handlers
   list.querySelectorAll('.pkg-drop-item').forEach(el => {
     const key = el.dataset.key;
-    // Mouse (desktop)
     el.addEventListener('mousedown', e => {
       e.preventDefault();
       selectPkgCountry(key);
     });
-    // Touch (mobile) — guard against scroll
     el.addEventListener('touchend', e => {
-      if (list._isScrolling) return; // user was scrolling, not tapping
+      if (list._isScrolling) return;
       e.preventDefault();
       selectPkgCountry(key);
     }, {passive: false});
   });
 
-  // Momentum scroll on list (sets list._isScrolling)
+  // Momentum scroll (sets list._isScrolling)
   makeMomentumScroll(list, null);
 }
 
-window.togglePkgDropdown = function() {
+function openPkgDropdown() {
+  pkgDropOpen = true;
+  buildPkgDropdown('');
   const dd = document.getElementById('pkgDropdown');
-  const chevron = document.getElementById('pkgChevron');
-  const filterInput = document.getElementById('pkgDropFilter');
-  pkgDropOpen = !pkgDropOpen;
-  if (pkgDropOpen) {
-    buildPkgDropdown();
-    dd.style.maxHeight = '360px';
-    dd.style.opacity = '1';
-    dd.style.transform = 'translateY(0)';
-    dd.style.pointerEvents = 'auto';
-    chevron.style.transform = 'translateY(-50%) rotate(180deg)';
-    chevron.style.color = '#C8102E';
-    if (filterInput) { filterInput.value = ''; setTimeout(()=>{ filterInput.focus(); filterInput.removeAttribute('readonly'); }, 80); }
-  } else {
-    closePkgDropdown();
-  }
-};
+  const chev = document.getElementById('pkgChevron');
+  dd.style.maxHeight = '360px';
+  dd.style.opacity = '1';
+  dd.style.transform = 'translateY(0)';
+  dd.style.pointerEvents = 'auto';
+  if (chev) { chev.style.transform = 'translateY(-50%) rotate(180deg)'; chev.style.color = '#C8102E'; }
+  const fi = document.getElementById('pkgDropFilter');
+  if (fi) { fi.value = ''; setTimeout(() => { fi.focus(); fi.removeAttribute('readonly'); }, 80); }
+}
 
 function closePkgDropdown() {
-  const dd = document.getElementById('pkgDropdown');
-  const chevron = document.getElementById('pkgChevron');
-  if (!dd) return;
   pkgDropOpen = false;
+  const dd = document.getElementById('pkgDropdown');
+  const chev = document.getElementById('pkgChevron');
+  if (!dd) return;
   dd.style.maxHeight = '0';
   dd.style.opacity = '0';
   dd.style.transform = 'translateY(-8px)';
   dd.style.pointerEvents = 'none';
-  chevron.style.transform = 'translateY(-50%) rotate(0deg)';
-  chevron.style.color = '#888';
-  // Dismiss keyboard
+  if (chev) { chev.style.transform = 'translateY(-50%) rotate(0deg)'; chev.style.color = '#888'; }
   const fi = document.getElementById('pkgDropFilter');
   if (fi) fi.blur();
   if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
 }
 
+window.togglePkgDropdown = function() {
+  if (pkgDropOpen) closePkgDropdown();
+  else openPkgDropdown();
+};
+
 window.filterPkgDropdown = function(q) {
-  const items = document.querySelectorAll('.pkg-drop-item');
-  const lq = q.trim().toLowerCase();
-  items.forEach(el => {
-    const key = el.dataset.key || '';
-    const p = PKG_DATA[key];
-    const text = (key + ' ' + (p ? p.city + ' ' + (p.destinations||[]).map(d=>d.name).join(' ') : '')).toLowerCase();
-    el.style.display = (!lq || text.includes(lq)) ? 'flex' : 'none';
-  });
+  buildPkgDropdown(q);
 };
 
 window.selectPkgCountry = function(key) {

@@ -510,22 +510,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="page" id="page-tickets" style="flex-direction:column;overflow:hidden;background:#060e1a;position:relative;clip-path:inset(0)">
 
   <!-- Mapbox container -->
-  <div id="pkgMap" style="position:absolute;inset:0;width:100%;height:100%;overflow:hidden;will-change:transform;transform:translateZ(0)">
-    <!-- Shown instantly while map SDK loads — gives the page content on first paint -->
-    <div id="pkgMapPlaceholder" style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%, #0d2340 0%, #060e1a 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:1">
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.6">
-        <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-        <path d="M4 24 Q12 8 24 4 Q36 0 44 24 Q36 48 24 44 Q12 48 4 24Z" stroke="rgba(255,255,255,0.15)" stroke-width="1" fill="none"/>
-        <path d="M4 24 Q24 16 44 24" stroke="rgba(255,255,255,0.15)" stroke-width="1" fill="none"/>
-        <path d="M4 24 Q24 32 44 24" stroke="rgba(255,255,255,0.15)" stroke-width="1" fill="none"/>
-        <circle cx="24" cy="24" r="3" fill="rgba(232,192,106,0.8)"/>
-      </svg>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="width:6px;height:6px;border-radius:50%;background:#e8c06a;animation:pls 1.2s ease-in-out infinite"></div>
-        <span style="font-size:13px;color:rgba(255,255,255,0.5);font-family:Outfit,sans-serif;letter-spacing:.5px">Loading map…</span>
-      </div>
-    </div>
-  </div>
+  <div id="pkgMap" style="position:absolute;inset:0;width:100%;height:100%;overflow:hidden;will-change:transform;transform:translateZ(0)"></div>
 
   <!-- Atmospheric overlay vignette -->
   <div style="position:absolute;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse 80% 60% at 50% 50%, transparent 40%, rgba(6,14,26,0.55) 100%)"></div>
@@ -886,13 +871,15 @@ function goPage(name, el) {
   if (el) el.classList.add('active');
   if (name === 'visitor' && !globeBuilt) { globeBuilt = true; setTimeout(initGlobe, 80); }
   if (name === 'tickets') {
-    // Init map immediately — placeholder covers the load gap
-    updateSVGSize();
-    if (!mapInited) {
-      initMap();
-    } else if (map) {
-      setTimeout(() => { try { map.resize(); } catch(e) {} }, 60);
-    }
+    setTimeout(() => {
+      updateSVGSize();
+      if (!mapInited) {
+        initMap();
+      } else if (map) {
+        // Force map to recalculate its size after page becomes visible
+        try { map.resize(); } catch(e) {}
+      }
+    }, 60);
   }
 }
 
@@ -1013,13 +1000,14 @@ function goPageMob(name) {
   document.getElementById('page-' + name).classList.add('active');
   if (name === 'visitor' && !globeBuilt) { globeBuilt = true; setTimeout(initGlobe, 80); }
   if (name === 'tickets') {
-    // Init map immediately — placeholder covers the load gap
-    updateSVGSize();
-    if (!mapInited) {
-      initMap();
-    } else if (map) {
-      setTimeout(() => { try { map.resize(); } catch(e) {} }, 60);
-    }
+    setTimeout(() => {
+      updateSVGSize();
+      if (!mapInited) {
+        initMap();
+      } else if (map) {
+        try { map.resize(); } catch(e) {}
+      }
+    }, 80);
   }
   // Close menu
   document.getElementById('navHamburger').classList.remove('open');
@@ -1658,13 +1646,11 @@ function setupMap() {
   map.on('load', () => {
     mapReady = true;
 
-    // Hide the placeholder now that the real map is painted
-    const ph = document.getElementById('pkgMapPlaceholder');
-    if (ph) ph.style.display = 'none';
-
-    // Force resize to ensure map fills container (especially important on mobile)
+    // Force resize to ensure map fills container (especially important on mobile
+    // where the packages page may still be display:none during map initialisation)
     setTimeout(() => { try { map.resize(); } catch(e) {} }, 50);
     setTimeout(() => { try { map.resize(); } catch(e) {} }, 300);
+    setTimeout(() => { try { map.resize(); } catch(e) {} }, 800);
 
     // ── Nuke all map UI controls from the DOM ──
     setTimeout(() => {
@@ -1688,6 +1674,7 @@ function setupMap() {
     }, 500);
 
     addOriginMarker();
+    addCityDots();
     startIdleRotation();
 
     // Redraw SVG overlay whenever map moves/zooms — throttled via rAF.
@@ -2560,21 +2547,28 @@ const _origGoPage = window.goPage;
 window.goPage = function(name, el) {
   _origGoPage(name, el);
   if (name === 'tickets') {
-    setTimeout(() => {
+    if (!mapInited) {
+      initMap();
+    }
+    // Multiple resize passes to ensure map fills its container on mobile
+    // (page was display:none before, so the map container had zero dimensions)
+    const doResize = () => {
       updateSVGSize();
-      if (!mapInited) initMap();
-      else if (map && mapReady && !activePkg) startIdleRotation();
-    }, 80);
+      if (map) { try { map.resize(); } catch(e) {} }
+      if (map && mapReady && !activePkg) startIdleRotation();
+    };
+    setTimeout(doResize, 50);
+    setTimeout(doResize, 200);
+    setTimeout(doResize, 500);
   } else {
     stopIdleRotation();
   }
 };
 
 window.addEventListener('load', () => {
-  const ticketsPage = document.getElementById('page-tickets');
-  if (ticketsPage && ticketsPage.classList.contains('active')) {
-    setTimeout(initMap, 100);
-  }
+  // Pre-initialise the map so it loads in the background and is
+  // ready immediately when the user opens the Packages page
+  setTimeout(initMap, 150);
 });
 
 window.addEventListener('resize', () => {

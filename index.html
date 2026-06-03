@@ -75,6 +75,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 .country-card.visible{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
 .card-flag-banner{width:100%;height:130px;overflow:hidden;display:block;flex-shrink:0}
 .card-flag-img-big{width:100%;height:100%;object-fit:cover;display:block}
+.card-name-row{display:flex;align-items:center;gap:8px}
+.card-flag-small{display:none;width:28px;height:19px;object-fit:cover;border-radius:3px;border:1px solid rgba(0,0,0,0.1);flex-shrink:0}
 .card-body{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px 18px 14px}
 .card-body-left{flex:1;min-width:0}
 .card-country-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--black);line-height:1.2}
@@ -174,7 +176,8 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   .vm-flag-img{width:34px;height:22px;border-radius:3px}
   .vm-name{font-size:9.5px;letter-spacing:.5px}
   .country-card{bottom:84px;right:10px;left:10px;min-width:0;max-width:none;border-radius:16px}
-  .card-flag-banner{height:110px}
+  .card-flag-banner{display:none!important}
+  .card-flag-small{display:block!important}
   .card-country-name{font-size:16px}
   .card-body{padding:12px 14px 12px}
   .card-meta{flex-direction:row;gap:6px}
@@ -219,7 +222,6 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   .vm-flag-img{width:30px;height:20px}
   .vm-name{font-size:9px}
   .country-card{bottom:78px;left:8px;right:8px}
-  .card-flag-banner{height:90px}
   .card-body{padding:10px 12px 10px}
   .card-meta{flex-direction:row;gap:5px}
   .card-meta-item{min-width:0;flex:1;padding:6px 8px}
@@ -268,7 +270,6 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   .vm-flag-img{width:28px;height:18px}
   .vm-name{font-size:8.5px}
   .country-card{bottom:66px;left:auto;right:10px;max-width:260px;min-width:0}
-  .card-flag-banner{height:80px}
   .card-body{padding:8px 12px 8px}
   .card-meta{flex-direction:row;gap:5px}
   .card-meta-item{min-width:0;flex:1;padding:6px 8px}
@@ -467,14 +468,18 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <div id="cesiumContainer"></div>
     <div class="country-card" id="countryCard">
       <button class="card-close" onclick="closeCard()">✕</button>
-      <!-- Full-width flag banner -->
+      <!-- Full-width flag banner (desktop only) -->
       <div class="card-flag-banner">
         <img id="cardFlag" src="" alt="" class="card-flag-img-big">
       </div>
       <!-- Country name + visa type row -->
       <div class="card-body">
         <div class="card-body-left">
-          <div class="card-country-name" id="cardName">United States</div>
+          <!-- Small inline flag shown only on mobile -->
+          <div class="card-name-row">
+            <img id="cardFlagSmall" src="" alt="" class="card-flag-small">
+            <div class="card-country-name" id="cardName">United States</div>
+          </div>
           <div class="card-visa-type" id="cardType"></div>
         </div>
         <div class="card-meta">
@@ -1321,8 +1326,10 @@ function flyTo(c) {
 function showCard(c) {
   const code = (ISO2[c.iso] || c.iso.toLowerCase().slice(0,2));
   const flagEl = document.getElementById('cardFlag');
-  flagEl.src = `https://flagcdn.com/w80/${code}.png`;
+  flagEl.src = `https://flagcdn.com/w640/${code}.png`;
   flagEl.alt = c.name + ' flag';
+  const flagSmall = document.getElementById('cardFlagSmall');
+  if (flagSmall) { flagSmall.src = `https://flagcdn.com/w80/${code}.png`; flagSmall.alt = c.name + ' flag'; }
   document.getElementById('cardName').textContent = c.name;
   document.getElementById('cardType').textContent = c.type;
   document.getElementById('cardProc').textContent = c.proc;

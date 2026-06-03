@@ -1643,22 +1643,32 @@ function setupMap() {
     addOriginMarker();
     startIdleRotation();
 
-    // Redraw SVG overlay whenever map moves/zooms so coordinates stay in sync
+    // Redraw SVG overlay whenever map moves/zooms — throttled via rAF.
+    // _zoomingIn flag lets phase-3 mobile zoom suppress all SVG work so the
+    // WebGL map gets the full GPU budget during zoom-in.
+    let _globalMoveRAF = null;
+    let _zoomingIn = false;
     map.on('move', () => {
       clipMarkersToMapBounds();
-      if (!activePkg) return;
-      const pkg = PKG_DATA[activePkg];
-      if (!pkg) return;
-      updateSVGSize();
-      const srcXY = lngLatToXY([INDIA_LNG, INDIA_LAT]);
-      const dstXY = lngLatToXY([pkg.lng, pkg.lat]);
-      const pathD = bezierPath(srcXY, dstXY);
-      ['pkgGhostPath','pkgGlowPath','pkgMainPath'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el && el.getAttribute('d')) el.setAttribute('d', pathD);
+      if (!activePkg || _zoomingIn) return;
+      if (_globalMoveRAF) return;
+      _globalMoveRAF = requestAnimationFrame(() => {
+        _globalMoveRAF = null;
+        if (!activePkg || _zoomingIn) return;
+        const pkg = PKG_DATA[activePkg];
+        if (!pkg) return;
+        updateSVGSize();
+        const srcXY = lngLatToXY([INDIA_LNG, INDIA_LAT]);
+        const dstXY = lngLatToXY([pkg.lng, pkg.lat]);
+        const pathD = bezierPath(srcXY, dstXY);
+        ['pkgGhostPath','pkgGlowPath','pkgMainPath'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el && el.getAttribute('d')) el.setAttribute('d', pathD);
+        });
+        drawRelatedRoutes(pkg);
       });
-      drawRelatedRoutes(pkg);
     });
+    window._setZoomingIn = (v) => { _zoomingIn = v; };
 
     // If a search was triggered before map was ready
     if (pendingFly) { const p = pendingFly; pendingFly = null; doFlight(p); }
@@ -2124,11 +2134,13 @@ function doFlight(pkg) {
     // Hide plane icon during zoom-in — dest dot shows instead
     if (plane) plane.style.display = 'none';
 
-    // On mobile: hide SVG overlay entirely during zoom-in so the GPU only has
-    // to render the WebGL map — no per-frame SVG redraws competing with it.
-    // On desktop: keep live updates (hardware is fast enough).
+    // On mobile: hide SVG overlay AND block the global move listener so the
+    // WebGL map gets 100% of the GPU during zoom-in. Redraw once at moveend.
     const svgOverlay = document.getElementById('pkgFlightSVG');
-    if (isMobile && svgOverlay) svgOverlay.style.visibility = 'hidden';
+    if (isMobile) {
+      if (svgOverlay) svgOverlay.style.visibility = 'hidden';
+      if (window._setZoomingIn) window._setZoomingIn(true);
+    }
 
     const zoomInDuration = isMobile ? 700 : 1400;
 
@@ -2171,11 +2183,13 @@ function doFlight(pkg) {
         if (activePkg) drawRelatedRoutes(PKG_DATA[activePkg]);
       });
     } else {
-      // Mobile: redraw SVG only once after zoom fully settles, then fade it back in
+      // Mobile: redraw SVG only once after zoom fully settles, then restore
       map.once('moveend', () => {
-        if (!activePkg) return;
+        // Re-enable global move listener first
+        if (window._setZoomingIn) window._setZoomingIn(false);
+        if (!activePkg) { if (svgOverlay) svgOverlay.style.visibility = ''; return; }
         const pkg2 = PKG_DATA[activePkg];
-        if (!pkg2) return;
+        if (!pkg2) { if (svgOverlay) svgOverlay.style.visibility = ''; return; }
         const dpt = lngLatToXY([pkg2.lng, pkg2.lat]);
         const spt = lngLatToXY([INDIA_LNG, INDIA_LAT]);
         const newD = bezierPath(spt, dpt);
@@ -2196,7 +2210,7 @@ function doFlight(pkg) {
           `;
         }
         drawRelatedRoutes(pkg2);
-        // Fade SVG back in after redraw is committed
+        // Show SVG again after redraw is committed to DOM
         requestAnimationFrame(() => {
           if (svgOverlay) svgOverlay.style.visibility = '';
         });

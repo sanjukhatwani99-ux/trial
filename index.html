@@ -191,7 +191,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
   /* ── Packages page ── */
   #page-tickets{overflow:hidden}
-  #pkgSearchWrap{top:60px!important;width:calc(100% - 20px)!important;left:10px!important;right:10px!important;transform:none!important}
+  #pkgSearchWrap{top:12px!important;width:calc(100% - 20px)!important;left:10px!important;right:10px!important;transform:none!important}
   #pkgDropList{max-height:40vh!important}
   #pkgPanel{border-radius:20px 20px 0 0}
   #pkgHUD{padding:10px 14px}
@@ -229,7 +229,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   .globe-coords{bottom:78px;left:8px}
 
   #visitorSearchWrap{top:6px!important;width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
-  #pkgSearchWrap{top:56px!important;width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
+  #pkgSearchWrap{top:8px!important;width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
   #pkgDropList{max-height:38vh!important}
   #pkgHUD{padding:8px 12px}
   .minimal-page h2{font-size:28px}
@@ -518,11 +518,6 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   <!-- Top HUD bar -->
   <div id="pkgHUD" style="position:absolute;top:0;left:0;right:0;z-index:20;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(6,14,26,0.92) 0%,transparent 100%);pointer-events:none">
     <div style="display:flex;align-items:center;gap:14px">
-      <div>
-        <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;font-weight:700;color:#C8102E;margin-bottom:3px;opacity:0.9">✦ VISAVERA ROUTES</div>
-        <div style="font-family:'Playfair Display',serif;font-size:clamp(15px,2vw,22px);font-weight:700;color:#fff;line-height:1.1">Aviation <em style="color:#e8c06a;font-style:italic">Route</em> Explorer</div>
-      </div>
-      <div style="width:1px;height:32px;background:rgba(255,255,255,0.12);margin:0 4px"></div>
       <div id="pkgFlightInfo" style="opacity:0;transition:opacity .4s">
         <div style="font-size:9px;color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase">Active Route</div>
         <div id="pkgFlightRoute" style="font-size:13px;font-weight:600;color:#fff;margin-top:1px">DEL → TYO</div>
@@ -533,15 +528,11 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
         <div style="font-size:9px;color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase">Cruising Alt.</div>
         <div style="font-size:13px;font-weight:700;color:#e8c06a;font-family:monospace" id="pkgAltVal">38,000 ft</div>
       </div>
-      <div style="display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:5px 14px;backdrop-filter:blur(10px)">
-        <div style="width:6px;height:6px;background:#22c55e;border-radius:50%;box-shadow:0 0 6px #22c55e;animation:pls 2s ease-in-out infinite"></div>
-        <span style="font-size:10px;color:rgba(255,255,255,0.7);font-weight:600;letter-spacing:.8px">LIVE ROUTES</span>
-      </div>
     </div>
   </div>
 
   <!-- Search bar with dropdown -->
-  <div id="pkgSearchWrap" style="position:absolute;top:72px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
+  <div id="pkgSearchWrap" style="position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
     <div style="position:relative">
       <div style="position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:15px;z-index:1;pointer-events:none">✈️</div>
       <input id="pkgSearch" type="search" placeholder="Search destination…" autocomplete="off" spellcheck="false" inputmode="search"

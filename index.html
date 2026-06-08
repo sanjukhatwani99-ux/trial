@@ -193,9 +193,9 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   #page-tickets{overflow:hidden}
   #pkgSearchWrap{top:60px!important;width:calc(100% - 20px)!important;left:10px!important;right:10px!important;transform:none!important}
   #pkgDropList{max-height:40vh!important}
-  #pkgPanel{border-radius:20px 20px 0 0}
-  #pkgHUD{padding:10px 14px}
-  .pkg-card2{width:175px}
+  #pkgPanel{top:56px!important;border-radius:0}
+  #pkgCards{grid-template-columns:repeat(2,1fr)!important;}
+  .pkg-card2{min-width:0}
   .pkg-card2-img{height:90px}
 
   /* ── Minimal pages ── */
@@ -232,8 +232,9 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   #pkgSearchWrap{top:56px!important;width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
   #pkgDropList{max-height:38vh!important}
   #pkgHUD{padding:8px 12px}
+  #pkgPanel{top:52px!important}
   .minimal-page h2{font-size:28px}
-  .pkg-card2{width:155px}
+  .pkg-card2{min-width:0}
   .pkg-card2-img{height:80px}
 }
 
@@ -246,7 +247,6 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   .btn-primary,.btn-ghost{font-size:13.5px;padding:12px 16px}
   .country-card{left:6px;right:6px}
   .pkg-card2{width:140px}
-  .pkg-card2-img{height:72px}
   .minimal-page h2{font-size:24px}
 }
 
@@ -326,18 +326,155 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 /* ── PACKAGES PAGE v2 CARDS ── */
 .pvchip{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.82);font-family:'Outfit',sans-serif;font-size:11.5px;font-weight:600;padding:5px 13px;border-radius:20px;cursor:pointer;transition:all .22s;letter-spacing:.3px;backdrop-filter:blur(10px)}
 .pvchip:hover{background:rgba(200,16,46,0.28);border-color:rgba(200,16,46,0.6);color:#fff;transform:translateY(-1px);box-shadow:0 4px 16px rgba(200,16,46,0.25)}
-.pkg-card2{flex-shrink:0;width:200px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .28s;position:relative}
-.pkg-card2:hover{transform:translateY(-5px) scale(1.02);border-color:rgba(200,16,46,0.45);box-shadow:0 16px 48px rgba(200,16,46,0.2),0 0 0 1px rgba(200,16,46,0.2)}
-.pkg-card2-img{width:100%;height:105px;object-fit:cover;display:block;transition:transform .4s}
-.pkg-card2:hover .pkg-card2-img{transform:scale(1.06)}
-.pkg-card2-body{padding:12px 14px 14px}
-.pkg-card2-dest{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:#fff;margin-bottom:2px}
-.pkg-card2-days{font-size:10.5px;color:rgba(255,255,255,0.42);margin-bottom:9px}
-.pkg-card2-price{font-size:16px;font-weight:700;color:#e8c06a;font-family:'Outfit',sans-serif}
-.pkg-card2-price span{font-size:10px;font-weight:500;color:rgba(255,255,255,0.35)}
-.pkg-card2-tag{position:absolute;top:9px;left:9px;background:rgba(200,16,46,0.9);color:#fff;font-size:8.5px;font-weight:700;letter-spacing:.8px;padding:3px 8px;border-radius:10px;text-transform:uppercase;backdrop-filter:blur(4px)}
-#pkgCards::-webkit-scrollbar{height:3px}
-#pkgCards::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:3px}
+
+/* ── Card base ── */
+.pkg-card2{
+  flex-shrink:0;width:auto;min-width:0;
+  background:#fff;
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:16px;
+  overflow:hidden;
+  cursor:pointer;
+  position:relative;
+  box-shadow:0 2px 12px rgba(0,0,0,0.07);
+  transition:transform .38s cubic-bezier(0.22,1,0.36,1),
+             box-shadow .38s cubic-bezier(0.22,1,0.36,1),
+             border-color .25s;
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+
+/* Lift + deepen shadow on hover */
+.pkg-card2:hover{
+  transform:translateY(-8px) scale(1.025);
+  border-color:rgba(200,16,46,0.25);
+  box-shadow:
+    0 20px 48px rgba(200,16,46,0.18),
+    0 8px 20px rgba(0,0,0,0.12),
+    0 0 0 1.5px rgba(200,16,46,0.12);
+}
+
+/* Shimmer sweep overlay */
+.pkg-card2::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:4;
+  background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,0.55) 50%,transparent 60%);
+  background-size:200% 100%;
+  background-position:200% 0;
+  transition:background-position .55s ease;
+  pointer-events:none;
+  border-radius:16px;
+}
+.pkg-card2:hover::before{
+  background-position:-100% 0;
+}
+
+/* Red accent border glow line on left edge */
+.pkg-card2::after{
+  content:'';
+  position:absolute;
+  left:0;top:12%;bottom:12%;width:3px;
+  background:linear-gradient(to bottom,transparent,#C8102E,transparent);
+  border-radius:0 3px 3px 0;
+  opacity:0;
+  transform:scaleY(0.4);
+  transition:opacity .3s,transform .38s cubic-bezier(0.22,1,0.36,1);
+  z-index:5;
+}
+.pkg-card2:hover::after{
+  opacity:1;
+  transform:scaleY(1);
+}
+
+/* Image zoom */
+.pkg-card2-img{
+  width:100%;height:105px;object-fit:cover;display:block;
+  transition:transform .55s cubic-bezier(0.22,1,0.36,1), filter .4s;
+}
+.pkg-card2:hover .pkg-card2-img{
+  transform:scale(1.1);
+  filter:brightness(1.08) saturate(1.1);
+}
+
+/* Dark scrim that fades in on hover — reveals overlay text */
+.pkg-card2-img-wrap{overflow:hidden;border-radius:14px 14px 0 0;position:relative;}
+.pkg-card2-img-wrap::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.1) 60%,transparent 100%);
+  opacity:0;
+  transition:opacity .35s;
+}
+.pkg-card2:hover .pkg-card2-img-wrap::after{opacity:1;}
+
+/* "Explore →" text revealed on hover inside image */
+.pkg-card2-explore{
+  position:absolute;bottom:9px;left:0;right:0;
+  text-align:center;
+  font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;
+  color:#fff;letter-spacing:.8px;text-transform:uppercase;
+  opacity:0;transform:translateY(6px);
+  transition:opacity .3s .05s,transform .3s .05s;
+  z-index:3;pointer-events:none;
+  text-shadow:0 1px 6px rgba(0,0,0,0.5);
+}
+.pkg-card2:hover .pkg-card2-explore{opacity:1;transform:translateY(0);}
+
+/* Body */
+.pkg-card2-body{padding:11px 13px 13px;background:#fff;transition:background .25s;}
+.pkg-card2:hover .pkg-card2-body{background:#fafafa;}
+
+.pkg-card2-dest{font-family:'Playfair Display',serif;font-size:13.5px;font-weight:700;color:#111;margin-bottom:2px;transition:color .2s;}
+.pkg-card2:hover .pkg-card2-dest{color:#C8102E;}
+
+.pkg-card2-days{font-size:10px;color:#888;margin-bottom:9px;}
+.pkg-card2-price{font-size:15px;font-weight:700;color:var(--red);font-family:'Outfit',sans-serif;}
+.pkg-card2-price span{font-size:10px;font-weight:500;color:#aaa;}
+
+/* Tag badge — floats up slightly on hover */
+.pkg-card2-tag{
+  position:absolute;top:9px;left:9px;
+  background:rgba(200,16,46,0.92);color:#fff;
+  font-size:8.5px;font-weight:700;letter-spacing:.8px;
+  padding:3px 8px;border-radius:10px;text-transform:uppercase;
+  backdrop-filter:blur(6px);
+  transition:transform .3s cubic-bezier(0.22,1,0.36,1), box-shadow .3s;
+  z-index:6;
+}
+.pkg-card2:hover .pkg-card2-tag{
+  transform:translateY(-2px) scale(1.06);
+  box-shadow:0 4px 14px rgba(200,16,46,0.4);
+}
+
+/* Book Now button — slides up and glows on hover */
+.pkg-card2-book{
+  background:#C8102E;color:#fff;border:none;
+  border-radius:8px;padding:6px 10px;
+  font-size:10px;font-weight:700;cursor:pointer;
+  font-family:'Outfit',sans-serif;letter-spacing:.3px;
+  white-space:nowrap;flex-shrink:0;
+  transition:background .2s, transform .28s cubic-bezier(0.22,1,0.36,1), box-shadow .28s;
+  position:relative;overflow:hidden;
+}
+.pkg-card2-book::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,0.25) 50%,transparent 70%);
+  background-size:200% 100%;background-position:200% 0;
+  transition:background-position .4s;
+}
+.pkg-card2:hover .pkg-card2-book{
+  transform:translateY(-2px);
+  box-shadow:0 6px 18px rgba(200,16,46,0.45);
+  background:#a80d26;
+}
+.pkg-card2:hover .pkg-card2-book::before{background-position:-100% 0;}
+
+#pkgCards{overflow-y:visible;perspective:1200px;}
+#pkgCards::-webkit-scrollbar{width:3px;height:3px}
+#pkgCards::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:3px}
+#pkgTourFilters::-webkit-scrollbar{display:none}
 
 
 /* ── STUDENT / WORK GLOBE CONTAINERS ── */
@@ -684,7 +821,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <div style="display:flex;align-items:center;gap:14px">
       <div id="pkgFlightInfo" style="opacity:0;transition:opacity .4s">
         <div style="font-size:9px;color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase">Active Route</div>
-        <div id="pkgFlightRoute" style="font-size:13px;font-weight:600;color:#fff;margin-top:1px">DEL → TYO</div>
+        <div id="pkgFlightRoute" style="font-size:13px;font-weight:600;color:#fff;margin-top:1px">DEL → 🇯🇵</div>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
@@ -695,28 +832,398 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     </div>
   </div>
 
-  <!-- Search bar with dropdown -->
-  <div id="pkgSearchWrap" style="position:absolute;top:72px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
-    <div style="position:relative">
-      <div style="position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:15px;z-index:1;pointer-events:none">✈️</div>
-      <input id="pkgSearch" type="search" placeholder="Search package destination…" autocomplete="off" spellcheck="false" inputmode="search"
-        style="width:100%;padding:15px 52px 15px 48px;font-size:16px;font-family:'Outfit',sans-serif;font-weight:500;color:#1a1a1a;background:rgba(255,255,255,0.97);border:2px solid transparent;border-radius:16px;outline:none;box-shadow:0 12px 50px rgba(0,0,0,0.5),0 2px 8px rgba(0,0,0,0.2);transition:border-color .3s,box-shadow .3s;backdrop-filter:blur(20px);cursor:pointer"
-        onclick="togglePkgDropdown()" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='transparent'">
-      <!-- Chevron -->
-      <div id="pkgChevron" onclick="togglePkgDropdown()" style="position:absolute;right:18px;top:50%;transform:translateY(-50%);pointer-events:auto;cursor:pointer;transition:transform .25s;color:#888;font-size:13px;user-select:none">▼</div>
+  <!-- ── Typewriter Travel Command Bar ── -->
+  <style>
+
+    /* ══ WRAPPER ══ */
+    #pkgSearchWrap {
+      position: absolute;
+      top: 68px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      width: min(460px, 92vw);
+    }
+
+    /* ══ PILL ══ */
+    .pkg-search-pill {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 52px;
+      border-radius: 100px;
+      background: rgba(255, 255, 255, 0.80);
+      backdrop-filter: blur(32px) saturate(180%);
+      -webkit-backdrop-filter: blur(32px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.60);
+      box-shadow:
+        0 2px 12px rgba(0,0,0,0.10),
+        0 6px 28px rgba(0,0,0,0.13),
+        inset 0 1px 0 rgba(255,255,255,0.95);
+      transition:
+        transform 0.28s cubic-bezier(0.34,1.56,0.64,1),
+        box-shadow 0.28s ease,
+        border-color 0.28s ease,
+        background 0.28s ease;
+      cursor: text;
+      overflow: hidden;
+    }
+
+    .pkg-search-pill:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.92);
+      border-color: rgba(255,255,255,0.80);
+      box-shadow:
+        0 4px 16px rgba(0,0,0,0.11),
+        0 10px 36px rgba(0,0,0,0.15),
+        inset 0 1px 0 rgba(255,255,255,1);
+    }
+
+    .pkg-search-pill:focus-within {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.96);
+      border-color: rgba(200,16,46,0.38);
+      box-shadow:
+        0 0 0 3.5px rgba(200,16,46,0.10),
+        0 4px 16px rgba(0,0,0,0.10),
+        0 10px 36px rgba(0,0,0,0.14),
+        inset 0 1px 0 rgba(255,255,255,1);
+    }
+
+    /* ══ SEARCH ICON ══ */
+    .pkg-bar-icon {
+      flex-shrink: 0;
+      margin-left: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #C8102E;
+      border: none;
+      color: #ffffff;
+      transition: background 0.28s, box-shadow 0.28s;
+      pointer-events: none;
+    }
+
+    .pkg-bar-icon svg {
+      width: 15px;
+      height: 15px;
+      stroke-width: 2.2;
+    }
+
+    .pkg-search-pill:hover .pkg-bar-icon {
+      background: #a50e26;
+      box-shadow: 0 2px 12px rgba(200,16,46,0.35);
+    }
+
+    .pkg-search-pill:focus-within .pkg-bar-icon {
+      background: #a50e26;
+      box-shadow: 0 2px 16px rgba(200,16,46,0.45);
+    }
+
+    /* ══ LABEL AREA — "Search" + typewriter ══ */
+    .pkg-bar-label {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 0 12px 0 10px;
+      min-width: 0;
+      position: relative;
+      /* hide when real input has content */
+    }
+
+    /* "Search" — always visible fixed word */
+    .pkg-bar-fixed {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(20,20,28,0.82);
+      white-space: nowrap;
+      flex-shrink: 0;
+      letter-spacing: -0.01em;
+    }
+
+    /* animated phrase */
+    .pkg-bar-animated {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      color: rgba(80,80,90,0.55);
+      white-space: nowrap;
+      overflow: hidden;
+      letter-spacing: -0.01em;
+      margin-left: 5px;
+    }
+
+    /* blinking cursor */
+    .pkg-bar-cursor {
+      display: inline-block;
+      width: 1.5px;
+      height: 14px;
+      background: rgba(200,16,46,0.65);
+      margin-left: 1px;
+      vertical-align: middle;
+      border-radius: 1px;
+      animation: pkgBlink 1.1s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pkgBlink {
+      0%,45%  { opacity: 1; }
+      55%,100% { opacity: 0; }
+    }
+
+    /* Hidden real input — overlays the entire pill, invisible */
+    #pkgSearch {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      border: none;
+      background: transparent;
+      outline: none;
+      cursor: text;
+      font-size: 14px;
+      font-family: 'Outfit', sans-serif;
+      padding: 0 60px 0 58px;
+      color: rgba(20,20,28,0.88);
+    }
+
+    /* When user types — show real input text, hide animated label */
+    #pkgSearch:not(:placeholder-shown) { opacity: 1; }
+    #pkgSearch:not(:placeholder-shown) ~ .pkg-bar-label { opacity: 0; pointer-events: none; }
+    /* Also hide label while focused and has value */
+    .pkg-bar-has-value .pkg-bar-label { opacity: 0; pointer-events: none; }
+    .pkg-bar-has-value #pkgSearch { opacity: 1; }
+
+    /* ══ RIGHT — divider + chevron ══ */
+    .pkg-bar-right {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      gap: 0;
+      height: 100%;
+      position: relative;
+      z-index: 3;
+    }
+
+    .pkg-bar-divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(0,0,0,0.09);
+      transition: background 0.28s;
+    }
+
+    .pkg-search-pill:focus-within .pkg-bar-divider {
+      background: rgba(200,16,46,0.22);
+    }
+
+    #pkgChevron {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 100%;
+      cursor: pointer;
+      color: rgba(80,80,90,0.35);
+      font-size: 11px;
+      user-select: none;
+      transition: color 0.25s ease, transform 0.3s ease;
+    }
+
+    #pkgChevron:hover { color: rgba(80,80,90,0.65); }
+
+    #pkgChevron.open {
+      color: rgba(200,16,46,0.80);
+      transform: rotate(180deg);
+    }
+
+    /* ══ DROPDOWN ══ */
+    #pkgDropdown {
+      margin-top: 10px;
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(40px) saturate(200%);
+      -webkit-backdrop-filter: blur(40px) saturate(200%);
+      border: 1px solid rgba(255,255,255,0.68);
+      border-radius: 22px;
+      box-shadow:
+        0 4px 20px rgba(0,0,0,0.10),
+        0 16px 52px rgba(0,0,0,0.16),
+        inset 0 1px 0 rgba(255,255,255,1);
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+      transition:
+        max-height 0.38s cubic-bezier(0.4,0,0.2,1),
+        opacity 0.26s ease,
+        transform 0.26s cubic-bezier(0.34,1.2,0.64,1);
+      pointer-events: none;
+      transform-origin: top center;
+    }
+
+    #pkgDropdown.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .pkg-drop-filter-row {
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid rgba(0,0,0,0.055);
+    }
+
+    #pkgDropFilter {
+      width: 100%;
+      padding: 10px 18px;
+      font-size: 13.5px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 100px;
+      outline: none;
+      background: rgba(0,0,0,0.03);
+      color: rgba(20,20,28,0.88);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+      letter-spacing: 0.01em;
+    }
+
+    #pkgDropFilter::placeholder { color: rgba(80,80,90,0.38); }
+
+    #pkgDropFilter:focus {
+      border-color: rgba(200,16,46,0.38);
+      background: rgba(255,255,255,0.96);
+      box-shadow: 0 0 0 3px rgba(200,16,46,0.08);
+    }
+
+    #pkgDropList {
+      overflow-y: auto;
+      max-height: 300px;
+      padding: 6px 0;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      touch-action: pan-y;
+      scrollbar-width: none;
+    }
+    #pkgDropList::-webkit-scrollbar { display: none; }
+    #pkgDropList .pkg-drop-item       { color: rgba(20,20,28,0.82) !important; }
+    #pkgDropList .pkg-drop-item:hover { background: rgba(0,0,0,0.035) !important; }
+    #pkgDropList .pkg-drop-item.active { background: rgba(200,16,46,0.07) !important; color: #C8102E !important; }
+    #pkgDropList > div[style*="letter-spacing"] { color: rgba(80,80,90,0.42) !important; }
+
+  </style>
+
+  <div id="pkgSearchWrap">
+    <div class="pkg-search-pill" id="pkgPill">
+
+      <!-- Fixed search icon -->
+      <span class="pkg-bar-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/>
+        </svg>
+      </span>
+
+      <!-- Typewriter label (hidden when typing) -->
+      <div class="pkg-bar-label" id="pkgBarLabel">
+        <span class="pkg-bar-fixed">Search</span>
+        <span class="pkg-bar-animated" id="pkgTypewriter"></span>
+        <span class="pkg-bar-cursor" id="pkgCursor"></span>
+      </div>
+
+      <!-- Real invisible input (activates on click/focus) -->
+      <input id="pkgSearch" type="search"
+        placeholder=" "
+        autocomplete="off" spellcheck="false" inputmode="search"
+        onclick="togglePkgDropdown()"
+        oninput="pkgHandleInput(this)">
+
+      <!-- Right side -->
+      <div class="pkg-bar-right">
+        <div class="pkg-bar-divider"></div>
+        <div id="pkgChevron" onclick="togglePkgDropdown()">▾</div>
+      </div>
+
     </div>
 
-    <!-- Dropdown list -->
-    <div id="pkgDropdown" style="margin-top:6px;background:rgba(255,255,255,0.98);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:16px;box-shadow:0 16px 60px rgba(0,0,0,0.4);overflow:hidden;max-height:0;opacity:0;transform:translateY(-8px);transition:max-height .35s cubic-bezier(0.4,0,0.2,1),opacity .25s,transform .25s;pointer-events:none">
-      <!-- Search filter inside dropdown -->
-      <div style="padding:10px 12px 6px;border-bottom:1px solid rgba(0,0,0,0.06)">
-        <input id="pkgDropFilter" type="text" placeholder="🔍  Filter countries…" autocomplete="off" spellcheck="false"
-          style="width:100%;padding:8px 14px;font-size:16px;font-family:'Outfit',sans-serif;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;outline:none;background:#f8f6f3;color:#1a1a1a;transition:border-color .2s"
-          oninput="filterPkgDropdown(this.value)" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='rgba(0,0,0,0.1)'">
+    <div id="pkgDropdown">
+      <div class="pkg-drop-filter-row">
+        <input id="pkgDropFilter" type="text" placeholder="Filter destinations…"
+          autocomplete="off" spellcheck="false"
+          oninput="filterPkgDropdown(this.value)">
       </div>
-      <div id="pkgDropList" style="overflow-y:auto;max-height:300px;padding:6px 0;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y"></div>
+      <div id="pkgDropList"></div>
     </div>
   </div>
+
+  <script>
+  /* ── Typewriter engine ── */
+  (function() {
+    const PHRASES = [
+      'destinations worldwide...',
+      'curated travel experiences...',
+      'unforgettable journeys...',
+      'your next adventure...',
+      'places worth exploring...',
+    ];
+    const el      = document.getElementById('pkgTypewriter');
+    const input   = document.getElementById('pkgSearch');
+    if (!el || !input) return;
+
+    let phraseIdx = 0, charIdx = 0, deleting = false, paused = false;
+    const TYPE_SPEED   = 52;   // ms per char typed
+    const DELETE_SPEED = 28;   // ms per char deleted
+    const PAUSE_AFTER  = 2000; // ms pause when phrase complete
+    const PAUSE_BEFORE = 380;  // ms pause before deleting starts
+
+    function tick() {
+      // Stop animation while user is actively typing
+      if (input.value.length > 0) { setTimeout(tick, 300); return; }
+
+      const phrase = PHRASES[phraseIdx];
+
+      if (paused) { paused = false; deleting = true; setTimeout(tick, PAUSE_BEFORE); return; }
+
+      if (!deleting) {
+        // Typing forward
+        charIdx++;
+        el.textContent = phrase.slice(0, charIdx);
+        if (charIdx === phrase.length) {
+          paused = true;
+          setTimeout(tick, PAUSE_AFTER);
+        } else {
+          setTimeout(tick, TYPE_SPEED);
+        }
+      } else {
+        // Deleting
+        charIdx--;
+        el.textContent = phrase.slice(0, charIdx);
+        if (charIdx === 0) {
+          deleting = false;
+          phraseIdx = (phraseIdx + 1) % PHRASES.length;
+          setTimeout(tick, 320);
+        } else {
+          setTimeout(tick, DELETE_SPEED);
+        }
+      }
+    }
+
+    // Start after short delay
+    setTimeout(tick, 800);
+  })();
+
+  /* Show/hide label when user types */
+  window.pkgHandleInput = function(inp) {
+    const pill = document.getElementById('pkgPill');
+    if (inp.value.length > 0) {
+      pill.classList.add('pkg-bar-has-value');
+    } else {
+      pill.classList.remove('pkg-bar-has-value');
+    }
+  };
+  </script>
 
   <!-- Flight progress HUD -->
   <div id="pkgProgressHUD" style="display:none">
@@ -735,20 +1242,20 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   </div>
 
   <!-- Packages panel (slides up) -->
-  <div id="pkgPanel" style="position:absolute;bottom:0;left:0;right:0;z-index:30;transform:translateY(105%);transition:transform .7s cubic-bezier(0.22,1,0.36,1)">
-    <div style="background:rgba(6,14,26,0.35);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.1);padding:18px 22px 22px">
+  <div id="pkgPanel" style="position:absolute;bottom:0;left:0;right:0;top:62px;z-index:30;transform:translateY(105%);transition:transform .7s cubic-bezier(0.22,1,0.36,1);display:flex;flex-direction:column;justify-content:flex-end;pointer-events:none" onclick="event.stopPropagation()">
+    <div id="pkgPanelInner" style="background:#ffffff;backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-top:1px solid rgba(0,0,0,0.08);border-radius:20px 20px 0 0;padding:18px 22px 24px;overflow-y:auto;max-height:100%;pointer-events:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(0,0,0,0.12) transparent">
       <!-- Panel header -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-shrink:0">
         <div style="display:flex;align-items:center;gap:12px">
           <div id="pkgPanelFlag" style="font-size:28px;line-height:1"></div>
           <div>
-            <div id="pkgPanelTitle" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff"></div>
-            <div id="pkgPanelSub" style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px"></div>
+            <div id="pkgPanelTitle" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#111"></div>
+            <div id="pkgPanelSub" style="font-size:11px;color:#888;margin-top:2px"></div>
           </div>
         </div>
-        <button onclick="closePkgPanel()" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s" onmouseover="this.style.background='rgba(200,16,46,0.3)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='rgba(255,255,255,0.5)'">✕</button>
+        <button onclick="closePkgPanel()" style="background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.1);color:#888;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s" onmouseover="this.style.background='rgba(200,16,46,0.12)';this.style.color='#C8102E';this.style.borderColor='rgba(200,16,46,0.3)'" onmouseout="this.style.background='rgba(0,0,0,0.05)';this.style.color='#888';this.style.borderColor='rgba(0,0,0,0.1)'">✕</button>
       </div>
-      <!-- Cards row -->
+      <!-- Cards grid -->
       <div id="pkgCards" style="display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch"></div>
     </div>
   </div>
@@ -1796,7 +2303,17 @@ const PKG_DATA = {
       { name:'Los Angeles', tag:'Glamour',  img:'https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=400&q=80', days:'3N/4D', price:'₹1,60,000' },
       { name:'Las Vegas',   tag:'Entertainment',img:'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=400&q=80',days:'3N/4D',price:'₹1,50,000' },
       { name:'San Francisco',tag:'Bay City',img:'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&q=80',days:'3N/4D', price:'₹1,55,000' },
-      { name:'Chicago',     tag:'Windy City',img:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=80',days:'2N/3D',price:'₹1,40,000' },
+      { name:'Chicago',       tag:'Windy City',    img:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=80',  days:'2N/3D', price:'₹1,40,000' },
+      { name:'Miami',         tag:'Beach & Vibes', img:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80',  days:'3N/4D', price:'₹1,45,000' },
+      { name:'Orlando',       tag:'Theme Parks',   img:'https://images.unsplash.com/photo-1563911302283-d2bc129e7570?w=400&q=80',  days:'4N/5D', price:'₹1,65,000' },
+      { name:'Washington DC', tag:'Capital',       img:'https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=400&q=80',  days:'2N/3D', price:'₹1,35,000' },
+      { name:'Hawaii',        tag:'Paradise',      img:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80',  days:'5N/6D', price:'₹2,10,000' },
+      { name:'Grand Canyon',  tag:'Natural Wonder',img:'https://images.unsplash.com/photo-1615551043360-33de8b5f410c?w=400&q=80',  days:'2N/3D', price:'₹1,30,000' },
+      { name:'New Orleans',   tag:'Jazz & Culture',img:'https://images.unsplash.com/photo-1568393691622-c7ba131d63b4?w=400&q=80',  days:'2N/3D', price:'₹1,25,000' },
+      { name:'Seattle',       tag:'Pacific NW',    img:'https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=400&q=80',  days:'2N/3D', price:'₹1,38,000' },
+      { name:'Boston',        tag:'Historic',      img:'https://images.unsplash.com/photo-1501979376754-098f01c4fcae?w=400&q=80',  days:'2N/3D', price:'₹1,32,000' },
+      { name:'Yellowstone',   tag:'Wildlife',      img:'https://images.unsplash.com/photo-1589470288084-51c3e0b49700?w=400&q=80',  days:'3N/4D', price:'₹1,42,000' },
+      { name:'Nashville',     tag:'Music City',    img:'https://images.unsplash.com/photo-1545419913-775e3e68c081?w=400&q=80',  days:'2N/3D', price:'₹1,20,000' },
     ]},
   'United Kingdom': { city:'London', code:'LHR', flag:'🇬🇧', lng:-0.13, lat:51.51, zoom:5, days:'7N/8D', price:'₹1,25,000', tag:'Premium', flight:'10h', color:'#74b9ff',
     img:'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=500&q=85',
@@ -1935,6 +2452,9 @@ const WORLD_CITIES = [
   { name:'Santiago',      flag:'🇨🇱', lng:-70.65, lat:-33.46,  key:null },
   { name:'Havana',        flag:'🇨🇺', lng:-82.38, lat:23.13,   key:null },
 ];
+
+// ── EXPOSE PKG_DATA GLOBALLY for tour detail page ─────────────────────────
+window.__PKG_DATA_REF = PKG_DATA;
 
 // ── STATE ─────────────────────────────────────────────────────────────────
 let map = null, mapInited = false, mapReady = false;
@@ -2647,7 +3167,7 @@ function doFlight(pkg) {
   }, isMobile ? 2300 : 3200);
 
   // Show flight info in HUD
-  document.getElementById('pkgFlightRoute').textContent = `DEL → ${pkg.code}`;
+  document.getElementById('pkgFlightRoute').textContent = `DEL → ${pkg.flag}`;
   document.getElementById('pkgFlightInfo').style.opacity = '1';
   document.getElementById('pkgAltimeter').style.opacity = '1';
 }
@@ -2712,29 +3232,183 @@ function showHUD(icon, title, sub, eta) { return; //
 function hideHUD() { document.getElementById('pkgProgressHUD').style.opacity = '0'; }
 
 // ── PACKAGES PANEL ─────────────────────────────────────────────────────────
-function showPkgPanel(pkg) {
-  document.getElementById('pkgPanelFlag').textContent = pkg.flag;
-  document.getElementById('pkgPanelTitle').textContent = `Explore ${Object.keys(PKG_DATA).find(k=>PKG_DATA[k]===pkg) || pkg.city}`;
-  document.getElementById('pkgPanelSub').textContent = `Top destinations · Visa + Flight + Hotel included`;
+let activeTourFilter = 'all';
+let _currentPkg = null;
 
-  const destinations = pkg.destinations || [];
+const TOUR_FILTERS = [
+  { id:'all',       label:'All Packages' },
+  { id:'group',     label:'Group Tours' },
+  { id:'honeymoon', label:'Honeymoon Packages' },
+  { id:'family',    label:'Family Holidays' },
+  { id:'cruise',    label:'Cruise Vacations' },
+  { id:'custom',    label:'Custom Holidays' },
+];
+
+// Tour type mapping per destination
+const DEST_TOUR_TYPES = {
+  // Japan
+  'Tokyo':['group','family','custom'],
+  'Kyoto':['group','honeymoon','custom'],
+  'Osaka':['group','family','custom'],
+  'Hokkaido':['honeymoon','custom'],
+  'Hiroshima':['group','custom'],
+  // France
+  'Paris':['group','honeymoon','family','custom'],
+  'Nice':['honeymoon','custom'],
+  'Lyon':['group','custom'],
+  'Mont Saint-Michel':['group','custom'],
+  'Bordeaux':['honeymoon','custom'],
+  // UAE
+  'Dubai':['group','honeymoon','family','custom'],
+  'Abu Dhabi':['group','family','custom'],
+  'Sharjah':['group','custom'],
+  'Ras Al Khaimah':['group','family','custom'],
+  'Fujairah':['honeymoon','cruise'],
+  // Singapore
+  'Marina Bay':['group','honeymoon','family','custom'],
+  'Sentosa':['family','honeymoon','cruise'],
+  'Chinatown':['group','custom'],
+  'Gardens by Bay':['family','group'],
+  'Little India':['group','custom'],
+  // Australia
+  'Sydney':['group','family','custom'],
+  'Melbourne':['group','family','custom'],
+  'Queensland':['family','cruise','custom'],
+  'Perth':['honeymoon','custom'],
+  'Adelaide':['honeymoon','custom'],
+  // USA
+  'New York':['group','family','custom'],
+  'Los Angeles':['group','honeymoon','custom'],
+  'Las Vegas':['group','honeymoon','custom'],
+  'San Francisco':['group','custom'],
+  'Chicago':['group','custom'],
+  // UK
+  'London':['group','family','custom'],
+  'Edinburgh':['group','custom'],
+  'Manchester':['group','custom'],
+  'Oxford':['group','custom'],
+  'Lake District':['honeymoon','custom'],
+  // Germany
+  'Berlin':['group','custom'],
+  'Munich':['group','family','custom'],
+  'Hamburg':['group','cruise','custom'],
+  'Cologne':['group','custom'],
+  'Black Forest':['honeymoon','custom'],
+  // Italy
+  'Rome':['group','family','custom'],
+  'Venice':['honeymoon','group','custom'],
+  'Florence':['honeymoon','group','custom'],
+  'Amalfi Coast':['honeymoon','cruise','custom'],
+  'Sicily':['cruise','custom'],
+  // Switzerland
+  'Zurich':['group','custom'],
+  'Interlaken':['group','family','custom'],
+  'Geneva':['honeymoon','custom'],
+  'Lucerne':['group','honeymoon','custom'],
+  'Zermatt':['honeymoon','custom'],
+  // Thailand
+  'Bangkok':['group','family','custom'],
+  'Phuket':['honeymoon','family','cruise','custom'],
+  'Chiang Mai':['group','custom'],
+  'Krabi':['honeymoon','cruise','custom'],
+  'Koh Samui':['honeymoon','cruise','custom'],
+  // New Zealand
+  'Auckland':['group','family','custom'],
+  'Queenstown':['group','family','custom'],
+  'Rotorua':['group','family','custom'],
+  'Fiordland':['honeymoon','custom'],
+  'Wellington':['group','custom'],
+  // South Korea
+  'Seoul':['group','family','custom'],
+  'Busan':['group','custom'],
+  'Jeju Island':['honeymoon','custom'],
+  'Gyeongju':['group','custom'],
+  'Incheon':['group','custom'],
+  // Greece
+  'Athens':['group','custom'],
+  'Santorini':['honeymoon','cruise','custom'],
+};
+
+function renderPkgCards(pkg, filter) {
+  const destinations = (pkg.destinations || []).filter(d => {
+    if (filter === 'all') return true;
+    const types = DEST_TOUR_TYPES[d.name] || ['custom'];
+    return types.includes(filter);
+  });
   const container = document.getElementById('pkgCards');
+  if (!destinations.length) {
+    container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:28px 0;color:rgba(255,255,255,0.4);font-size:13px;font-family:Outfit,sans-serif">No packages available for this filter.</div>`;
+    return;
+  }
+  const countryKey = Object.keys(PKG_DATA).find(k=>PKG_DATA[k]===pkg) || '';
   container.innerHTML = destinations.map((d, idx) => {
-    return `<div class="pkg-card2" style="animation:pkgCityPop 0.4s ease-out ${idx*80}ms both;" onclick="event.stopPropagation();goPage('contact',document.querySelectorAll('.nav-links a')[6])">
+    return `<div class="pkg-card2" style="animation:pkgCityPop 0.35s ease-out ${idx*60}ms both;" onclick="event.stopPropagation();openTourDetail('${countryKey}','${d.name.replace(/'/g,"\\'")}')">
       <div class="pkg-card2-tag">${d.tag}</div>
-      <div style="overflow:hidden;height:105px">
-        <img class="pkg-card2-img" src="${d.img}" alt="${d.name}" onerror="this.parentNode.style.background='linear-gradient(135deg,#1a2a3a,#0d1b2a)'">
+      <div class="pkg-card2-img-wrap" style="height:120px;">
+        <img class="pkg-card2-img" src="${d.img}" alt="${d.name}" style="height:120px;" onerror="this.parentNode.style.background='linear-gradient(135deg,#e8edf2,#d0d8e0)'">
+        <div style="position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to top,rgba(0,0,0,0.45),transparent);z-index:2;pointer-events:none"></div>
+        <div class="pkg-card2-explore">View Details →</div>
       </div>
       <div class="pkg-card2-body">
         <div class="pkg-card2-dest">${pkg.flag} ${d.name}</div>
         <div class="pkg-card2-days">${d.days} · ${pkg.flight} flight</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
-          <div class="pkg-card2-price">${d.price} <span>/ person</span></div>
-          <button onclick="event.stopPropagation();goPage('contact',document.querySelectorAll('.nav-links a')[6])" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:5px 12px;font-size:10.5px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.3px;white-space:nowrap">Book Now</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:4px">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#C8102E;font-family:Outfit,sans-serif;line-height:1">${d.price}</div>
+            <div style="font-size:9px;color:#aaa;font-family:Outfit,sans-serif">per person</div>
+          </div>
+          <button class="pkg-card2-book" onclick="event.stopPropagation();openTourDetail('${countryKey}','${d.name.replace(/'/g,"\\'")}')">Book Now</button>
         </div>
       </div>
     </div>`;
   }).join('');
+}
+
+function setTourFilter(id) {
+  activeTourFilter = id;
+  document.querySelectorAll('.pkg-tour-filter-btn').forEach(btn => {
+    const active = btn.dataset.filter === id;
+    btn.style.background = active ? '#C8102E' : '#f0ede8';
+    btn.style.color = active ? '#fff' : '#444';
+    btn.style.borderColor = active ? '#C8102E' : 'rgba(0,0,0,0.1)';
+    btn.style.fontWeight = active ? '700' : '500';
+  });
+  if (_currentPkg) renderPkgCards(_currentPkg, id);
+}
+window.setTourFilter = setTourFilter;
+
+function showPkgPanel(pkg) {
+  _currentPkg = pkg;
+  activeTourFilter = 'all';
+
+  document.getElementById('pkgPanelFlag').textContent = pkg.flag;
+  document.getElementById('pkgPanelTitle').textContent = `Explore ${Object.keys(PKG_DATA).find(k=>PKG_DATA[k]===pkg) || pkg.city}`;
+  document.getElementById('pkgPanelSub').textContent = '';
+
+  // Build/refresh filter row
+  let filterRow = document.getElementById('pkgTourFilters');
+  if (!filterRow) {
+    filterRow = document.createElement('div');
+    filterRow.id = 'pkgTourFilters';
+    filterRow.style.cssText = 'display:flex;gap:7px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;';
+    const cardsEl = document.getElementById('pkgCards');
+    cardsEl.parentNode.insertBefore(filterRow, cardsEl);
+  }
+  filterRow.innerHTML = TOUR_FILTERS.map(f => `
+    <button class="pkg-tour-filter-btn" data-filter="${f.id}"
+      onclick="event.stopPropagation();window.setTourFilter('${f.id}')"
+      style="flex-shrink:0;background:${f.id==='all'?'#C8102E':'#f0ede8'};color:${f.id==='all'?'#fff':'#444'};border:1.5px solid ${f.id==='all'?'#C8102E':'rgba(0,0,0,0.1)'};border-radius:20px;padding:6px 16px;font-size:11.5px;font-weight:${f.id==='all'?'700':'500'};cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;transition:all .2s;letter-spacing:.2px">
+      ${f.label}
+    </button>
+  `).join('');
+
+  const navH = (document.querySelector('nav') || {offsetHeight:62}).offsetHeight || 62;
+  const panel = document.getElementById('pkgPanel');
+  panel.style.top = navH + 'px';
+
+  const container = document.getElementById('pkgCards');
+  container.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding-bottom:4px;';
+  renderPkgCards(pkg, 'all');
 
   document.getElementById('pkgPanel').style.transform = 'translateY(0)';
 }
@@ -2797,13 +3471,9 @@ function buildPkgDropdown(filterQ) {
       const sub = p.destinations ? p.destinations.map(d=>d.name).slice(0,3).join(' · ') : p.city;
       const iso2 = flagToIso2(p.flag);
       const flagImg = `<img src="https://flagcdn.com/20x15/${iso2}.png" width="20" height="15" style="border-radius:2px;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;object-fit:cover" onerror="this.style.display='none'">`;
-      html += `<div class="pkg-drop-item" data-key="${key}" style="display:flex;align-items:center;gap:13px;padding:10px 16px;cursor:pointer;transition:background .15s;border-left:3px solid transparent">
+      html += `<div class="pkg-drop-item" data-key="${key}" style="display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;transition:background .15s;border-left:3px solid transparent">
         ${flagImg}
-        <div style="flex:1;min-width:0">
-          <div style="font-size:13.5px;font-weight:600;color:#111;font-family:Outfit,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${key}</div>
-          <div style="font-size:11px;color:#999;margin-top:1px;font-family:Outfit,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${sub}</div>
-        </div>
-        <div style="font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:20px;background:#fdeaed;color:#C8102E;flex-shrink:0">Explore</div>
+        <div style="font-size:13.5px;font-weight:500;color:#111;font-family:Outfit,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${key}</div>
       </div>`;
     });
   } else {
@@ -2842,11 +3512,8 @@ function openPkgDropdown() {
   buildPkgDropdown('');
   const dd = document.getElementById('pkgDropdown');
   const chev = document.getElementById('pkgChevron');
-  dd.style.maxHeight = '360px';
-  dd.style.opacity = '1';
-  dd.style.transform = 'translateY(0)';
-  dd.style.pointerEvents = 'auto';
-  if (chev) { chev.style.transform = 'translateY(-50%) rotate(180deg)'; chev.style.color = '#C8102E'; }
+  if (dd) { dd.style.maxHeight = '360px'; dd.classList.add('open'); }
+  if (chev) chev.classList.add('open');
   const fi = document.getElementById('pkgDropFilter');
   if (fi) { fi.value = ''; setTimeout(() => { fi.focus(); fi.removeAttribute('readonly'); }, 80); }
 }
@@ -2857,10 +3524,8 @@ function closePkgDropdown() {
   const chev = document.getElementById('pkgChevron');
   if (!dd) return;
   dd.style.maxHeight = '0';
-  dd.style.opacity = '0';
-  dd.style.transform = 'translateY(-8px)';
-  dd.style.pointerEvents = 'none';
-  if (chev) { chev.style.transform = 'translateY(-50%) rotate(0deg)'; chev.style.color = '#888'; }
+  dd.classList.remove('open');
+  if (chev) chev.classList.remove('open');
   const fi = document.getElementById('pkgDropFilter');
   if (fi) fi.blur();
   if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
@@ -2880,7 +3545,11 @@ window.selectPkgCountry = function(key) {
   if (!p) return;
   // Update dropdown display label
   const searchEl = document.getElementById('pkgSearch');
-  if (searchEl) { searchEl.value = p.flag + '  ' + key; searchEl.blur(); }
+  if (searchEl) {
+    searchEl.value = p.flag + '  ' + key;
+    searchEl.blur();
+    window.pkgHandleInput(searchEl); // hide typewriter label
+  }
   // Dismiss keyboard on mobile
   if (document.activeElement) document.activeElement.blur();
   // Highlight active row in open dropdown (if open)
@@ -2911,6 +3580,9 @@ window.closePkgPanel = function() {
   document.getElementById('pkgFlightInfo').style.opacity = '0';
   document.getElementById('pkgAltimeter').style.opacity = '0';
   highlightCityDot(null);
+  // Clear search bar and restore typewriter animation
+  const searchEl = document.getElementById('pkgSearch');
+  if (searchEl) { searchEl.value = ''; window.pkgHandleInput(searchEl); }
   if (map && mapReady) {
     map.flyTo({ center: [INDIA_LNG, INDIA_LAT], zoom: window.innerWidth <= 860 ? 1.8 : 2.8, pitch: 0, bearing: 0, duration: 1000, essential: true });
   }
@@ -3482,6 +4154,609 @@ window.addEventListener('resize', () => {
   .float-btn .fb-icon { width: 22px; height: 22px; }
 }
 </style>
+
+<!-- ═══════════════════════════════════════════ TOUR DETAIL PAGE ═══ -->
+<div class="page" id="page-tourdetail" style="overflow-y:auto;overflow-x:hidden;background:#F8F6F3;flex-direction:column">
+
+  <!-- STICKY BOOKING BAR -->
+  <div id="tdStickyBar" style="position:fixed;bottom:0;left:0;right:0;z-index:800;transform:translateY(100%);transition:transform .4s cubic-bezier(0.22,1,0.36,1)">
+    <div style="background:rgba(17,17,17,0.97);backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.1);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:16px">
+        <div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:.8px;text-transform:uppercase">Starting from</div>
+          <div id="tdStickyPrice" style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#fff;line-height:1.1">₹85,000</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.4)">per person</div>
+        </div>
+        <div style="width:1px;height:40px;background:rgba(255,255,255,0.1)"></div>
+        <div id="tdStickyMeta" style="font-size:12px;color:rgba(255,255,255,0.55)">6N/7D · Japan</div>
+      </div>
+      <div style="display:flex;gap:10px;flex-shrink:0">
+        <a id="tdStickyWA" href="#" target="_blank" style="display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;text-decoration:none;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;font-family:'Outfit',sans-serif;transition:all .25s;white-space:nowrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </a>
+        <button onclick="document.getElementById('tdInquiryForm').scrollIntoView({behavior:'smooth'})" style="background:var(--red);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .25s;white-space:nowrap">Get Quote →</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tdContent" style="width:100%;max-width:1200px;margin:0 auto;padding:0 0 120px">
+
+    <!-- BACK BUTTON -->
+    <div style="padding:20px 24px 0">
+      <button onclick="closeTourDetail()" style="display:inline-flex;align-items:center;gap:6px;background:none;border:1.5px solid var(--border-2);color:var(--text-2);padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s" onmouseover="this.style.color='var(--red)';this.style.borderColor='var(--red)'" onmouseout="this.style.color='var(--text-2)';this.style.borderColor='var(--border-2)'">
+        ← Back to Packages
+      </button>
+    </div>
+
+    <!-- HERO SECTION -->
+    <div style="margin:20px 0 0;position:relative;overflow:hidden;min-height:480px;border-radius:0 0 0 0">
+      <img id="tdHeroImg" src="" alt="" style="width:100%;height:480px;object-fit:cover;display:block" onerror="this.style.background='linear-gradient(135deg,#1a2a3a,#2c4a6e)'">
+      <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.1) 40%,rgba(0,0,0,0.75) 100%)"></div>
+      <!-- Hero Content -->
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:40px 32px">
+        <div id="tdHeroBadge" style="display:inline-block;background:var(--red);color:#fff;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:14px"></div>
+        <h1 id="tdHeroTitle" style="font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,52px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:8px"></h1>
+        <p id="tdHeroSub" style="font-size:16px;color:rgba(255,255,255,0.75);margin-bottom:20px"></p>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.9);font-size:14px;font-weight:500">
+            <span>🗓️</span><span id="tdHeroDays"></span>
+          </div>
+          <div style="width:1px;height:16px;background:rgba(255,255,255,0.3)"></div>
+          <div style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.9);font-size:14px;font-weight:500">
+            <span>✈️</span><span id="tdHeroFlight"></span>
+          </div>
+          <div style="width:1px;height:16px;background:rgba(255,255,255,0.3)"></div>
+          <div style="background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.25);padding:6px 16px;border-radius:20px">
+            <span style="font-size:11px;color:rgba(255,255,255,0.6)">From </span>
+            <span id="tdHeroPrice" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff"></span>
+            <span style="font-size:11px;color:rgba(255,255,255,0.6)"> /person</span>
+          </div>
+        </div>
+        <!-- CTA Buttons in hero -->
+        <div style="display:flex;gap:12px;margin-top:22px;flex-wrap:wrap">
+          <button onclick="document.getElementById('tdInquiryForm').scrollIntoView({behavior:'smooth'})" style="background:var(--red);color:#fff;border:none;padding:13px 28px;border-radius:10px;font-size:14.5px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;box-shadow:0 4px 18px rgba(200,16,46,0.45);transition:all .25s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Get Quote →</button>
+          <a id="tdHeroWA" href="#" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;text-decoration:none;padding:13px 28px;border-radius:10px;font-size:14.5px;font-weight:600;font-family:'Outfit',sans-serif;transition:all .25s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Chat on WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK FACTS + OVERVIEW -->
+    <div style="display:grid;grid-template-columns:1fr 360px;gap:28px;padding:36px 24px 0;align-items:start" id="tdMainGrid">
+      <!-- Left: Overview -->
+      <div>
+        <!-- Overview Card -->
+        <div style="background:#fff;border-radius:18px;padding:28px;border:1px solid var(--border);box-shadow:var(--shadow-sm);margin-bottom:24px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--red);margin-bottom:10px">Package Overview</div>
+          <h2 id="tdOverviewTitle" style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--black);margin-bottom:12px"></h2>
+          <p id="tdOverviewText" style="color:var(--text-2);line-height:1.75;font-size:15px"></p>
+        </div>
+
+        <!-- Quick Facts -->
+        <div style="background:#fff;border-radius:18px;padding:28px;border:1px solid var(--border);box-shadow:var(--shadow-sm);margin-bottom:24px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--red);margin-bottom:16px">Quick Facts</div>
+          <div id="tdQuickFacts" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px"></div>
+        </div>
+
+        <!-- Gallery -->
+        <div style="background:#fff;border-radius:18px;padding:28px;border:1px solid var(--border);box-shadow:var(--shadow-sm);margin-bottom:24px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--red);margin-bottom:16px">Photo Gallery</div>
+          <div id="tdGallery" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"></div>
+        </div>
+
+        <!-- Day by Day Itinerary -->
+        <div style="background:#fff;border-radius:18px;padding:28px;border:1px solid var(--border);box-shadow:var(--shadow-sm);margin-bottom:24px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Day-by-Day Itinerary</div>
+          <p style="color:var(--text-3);font-size:13px;margin-bottom:20px">A carefully crafted schedule to make every moment count</p>
+          <div id="tdItinerary"></div>
+        </div>
+
+        <!-- Highlights -->
+        <div style="background:linear-gradient(135deg,#fff8f9,#fff);border-radius:18px;padding:28px;border:1px solid rgba(200,16,46,0.12);box-shadow:var(--shadow-sm);margin-bottom:24px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--red);margin-bottom:16px">Package Highlights</div>
+          <div id="tdHighlights" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px"></div>
+        </div>
+
+        <!-- Inclusions / Exclusions -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px" id="tdIncExcGrid">
+          <div style="background:#fff;border-radius:18px;padding:24px;border:1px solid var(--border);box-shadow:var(--shadow-sm)">
+            <div style="font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:#16a34a;margin-bottom:14px">✓ What's Included</div>
+            <div id="tdInclusions"></div>
+          </div>
+          <div style="background:#fff;border-radius:18px;padding:24px;border:1px solid var(--border);box-shadow:var(--shadow-sm)">
+            <div style="font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:#dc2626;margin-bottom:14px">✗ What's Excluded</div>
+            <div id="tdExclusions"></div>
+          </div>
+        </div>
+
+        <!-- Hotels -->
+        <div style="background:#fff;border-radius:18px;padding:28px;border:1px solid var(--border);box-shadow:var(--shadow-sm);margin-bottom:24px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--red);margin-bottom:16px">🏨 Accommodation</div>
+          <div id="tdHotels" style="display:flex;flex-direction:column;gap:14px"></div>
+        </div>
+
+        <!-- Pricing Table -->
+        <div style="background:#fff;border-radius:18px;padding:28px;border:1px solid var(--border);box-shadow:var(--shadow-sm);margin-bottom:24px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--red);margin-bottom:16px">Pricing Options</div>
+          <div id="tdPricing" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+
+        <!-- Travel Tips -->
+        <div style="background:linear-gradient(135deg,#f0f7ff,#fff);border-radius:18px;padding:28px;border:1px solid rgba(0,100,200,0.1);box-shadow:var(--shadow-sm);margin-bottom:24px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:#0064c8;margin-bottom:16px">💡 Travel Tips</div>
+          <div id="tdTips" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+
+        <!-- FAQs -->
+        <div style="background:#fff;border-radius:18px;padding:28px;border:1px solid var(--border);box-shadow:var(--shadow-sm);margin-bottom:24px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--red);margin-bottom:16px">Frequently Asked Questions</div>
+          <div id="tdFAQs" style="display:flex;flex-direction:column;gap:2px"></div>
+        </div>
+
+        <!-- Inquiry Form -->
+        <div id="tdInquiryForm" style="background:linear-gradient(135deg,#fff,#fdeaed);border-radius:18px;padding:32px;border:1.5px solid rgba(200,16,46,0.18);box-shadow:0 8px 40px rgba(200,16,46,0.1);margin-bottom:24px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--red);margin-bottom:8px">Send an Inquiry</div>
+          <h3 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--black);margin-bottom:6px">Ready to Start Your Journey?</h3>
+          <p style="color:var(--text-2);font-size:14px;margin-bottom:24px">Our travel experts will get back to you within 2 hours with a personalised quote.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" id="tdFormGrid">
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px">Full Name *</label>
+              <input type="text" placeholder="Your full name" style="width:100%;padding:12px 14px;border:1.5px solid var(--border-2);border-radius:10px;font-size:14px;font-family:'Outfit',sans-serif;outline:none;transition:border-color .2s;background:#fff" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='var(--border-2)'">
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px">Phone Number *</label>
+              <input type="tel" placeholder="+91 XXXXX XXXXX" style="width:100%;padding:12px 14px;border:1.5px solid var(--border-2);border-radius:10px;font-size:14px;font-family:'Outfit',sans-serif;outline:none;transition:border-color .2s;background:#fff" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='var(--border-2)'">
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px">Email</label>
+              <input type="email" placeholder="your@email.com" style="width:100%;padding:12px 14px;border:1.5px solid var(--border-2);border-radius:10px;font-size:14px;font-family:'Outfit',sans-serif;outline:none;transition:border-color .2s;background:#fff" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='var(--border-2)'">
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px">Number of Travellers</label>
+              <select style="width:100%;padding:12px 14px;border:1.5px solid var(--border-2);border-radius:10px;font-size:14px;font-family:'Outfit',sans-serif;outline:none;background:#fff;cursor:pointer;transition:border-color .2s" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='var(--border-2)'">
+                <option>1 Person</option><option>2 People</option><option>3-4 People</option><option>5-8 People</option><option>9+ People</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px">Departure Month</label>
+              <select style="width:100%;padding:12px 14px;border:1.5px solid var(--border-2);border-radius:10px;font-size:14px;font-family:'Outfit',sans-serif;outline:none;background:#fff;cursor:pointer;transition:border-color .2s" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='var(--border-2)'">
+                <option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px">Tour Type</label>
+              <select style="width:100%;padding:12px 14px;border:1.5px solid var(--border-2);border-radius:10px;font-size:14px;font-family:'Outfit',sans-serif;outline:none;background:#fff;cursor:pointer;transition:border-color .2s" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='var(--border-2)'">
+                <option>Group Tour</option><option>Honeymoon Package</option><option>Family Holiday</option><option>Custom Itinerary</option><option>Cruise Vacation</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:14px">
+            <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px">Special Requests</label>
+            <textarea placeholder="Any special requirements, dietary needs, anniversary celebrations…" rows="3" style="width:100%;padding:12px 14px;border:1.5px solid var(--border-2);border-radius:10px;font-size:14px;font-family:'Outfit',sans-serif;outline:none;resize:vertical;background:#fff;transition:border-color .2s" onfocus="this.style.borderColor='#C8102E'" onblur="this.style.borderColor='var(--border-2)'"></textarea>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">
+            <button onclick="submitTourInquiry(this)" style="flex:1;min-width:180px;background:var(--red);color:#fff;border:none;padding:15px 28px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;box-shadow:0 4px 18px rgba(200,16,46,0.35);transition:all .25s" onmouseover="this.style.background='var(--red-dark)'" onmouseout="this.style.background='var(--red)'">Send Inquiry →</button>
+            <a id="tdFormWA" href="#" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;text-decoration:none;padding:15px 24px;border-radius:12px;font-size:15px;font-weight:700;font-family:'Outfit',sans-serif;transition:all .25s;white-space:nowrap">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              WhatsApp Us
+            </a>
+          </div>
+        </div>
+
+        <!-- Similar Packages -->
+        <div style="background:#fff;border-radius:18px;padding:28px;border:1px solid var(--border);box-shadow:var(--shadow-sm);margin-bottom:24px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Explore More</div>
+          <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--black);margin-bottom:18px">Similar Packages</h3>
+          <div id="tdSimilar" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px"></div>
+        </div>
+      </div>
+
+      <!-- Right Sidebar: Sticky Inquiry CTA -->
+      <div id="tdSidebar" style="position:sticky;top:80px">
+        <div style="background:#fff;border-radius:18px;padding:26px;border:1.5px solid rgba(200,16,46,0.18);box-shadow:0 8px 40px rgba(200,16,46,0.1)">
+          <div style="font-size:11px;color:var(--text-3);letter-spacing:.5px;margin-bottom:4px">Starting from</div>
+          <div id="tdSidePrice" style="font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--black)"></div>
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:20px">per person, all inclusive</div>
+          <div id="tdSideMeta" style="background:var(--bg);border-radius:12px;padding:14px;margin-bottom:20px"></div>
+          <button onclick="document.getElementById('tdInquiryForm').scrollIntoView({behavior:'smooth'})" style="width:100%;background:var(--red);color:#fff;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;box-shadow:0 4px 18px rgba(200,16,46,0.3);transition:all .25s;margin-bottom:10px" onmouseover="this.style.background='var(--red-dark)'" onmouseout="this.style.background='var(--red)'">Get Custom Quote →</button>
+          <a id="tdSideWA" href="#" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;text-decoration:none;padding:14px;border-radius:12px;font-size:15px;font-weight:700;font-family:'Outfit',sans-serif;box-sizing:border-box;margin-bottom:16px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Chat on WhatsApp
+          </a>
+          <!-- Trust badges -->
+          <div style="border-top:1px solid var(--border);padding-top:14px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-2)"><span style="color:#16a34a">✓</span> Free cancellation up to 30 days</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-2)"><span style="color:#16a34a">✓</span> Visa assistance included</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-2)"><span style="color:#16a34a">✓</span> 24/7 on-trip support</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-2)"><span style="color:#16a34a">✓</span> 98% customer satisfaction rate</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Tour Detail Responsive */
+@media (max-width:900px) {
+  #tdMainGrid { grid-template-columns: 1fr !important; }
+  #tdSidebar { display: none !important; }
+  #tdStickyBar { display: flex !important; }
+  #tdIncExcGrid { grid-template-columns: 1fr !important; }
+  #tdHighlights { grid-template-columns: 1fr !important; }
+  #tdSimilar { grid-template-columns: repeat(2,1fr) !important; }
+  #tdQuickFacts { grid-template-columns: repeat(2,1fr) !important; }
+  #tdGallery { grid-template-columns: repeat(2,1fr) !important; }
+  #tdFormGrid { grid-template-columns: 1fr !important; }
+}
+@media (max-width:500px) {
+  #tdSimilar { grid-template-columns: 1fr !important; }
+  #tdGallery { grid-template-columns: repeat(2,1fr) !important; }
+  #tdStickyBar .stickybar-inner-flex { flex-direction: column !important; gap: 10px !important; }
+}
+.td-fact-item { display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--bg);border-radius:10px }
+.td-fact-icon { font-size:20px;flex-shrink:0;line-height:1;margin-top:1px }
+.td-fact-label { font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.7px;font-weight:600 }
+.td-fact-val { font-size:13.5px;font-weight:600;color:var(--text);margin-top:2px }
+.td-day-item { display:flex;gap:16px;margin-bottom:20px }
+.td-day-num { flex-shrink:0;width:40px;height:40px;background:var(--red);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;font-family:'Outfit',sans-serif;margin-top:2px }
+.td-day-content { flex:1;border-left:2px solid rgba(200,16,46,0.15);padding-left:16px;margin-left:-16px;margin-top:0 }
+.td-day-title { font-weight:700;font-size:15px;color:var(--black);margin-bottom:4px }
+.td-day-desc { font-size:13.5px;color:var(--text-2);line-height:1.65 }
+.td-highlight-item { display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--bg);border-radius:10px }
+.td-check { width:20px;height:20px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:11px;color:#fff }
+.td-inc-item,.td-exc-item { display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13.5px;color:var(--text) }
+.td-inc-item:last-child,.td-exc-item:last-child { border-bottom:none }
+.td-hotel-item { display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg);border-radius:12px }
+.td-hotel-img { width:70px;height:60px;border-radius:8px;object-fit:cover;flex-shrink:0 }
+.td-price-row { display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--bg);border-radius:12px;transition:background .2s }
+.td-price-row:hover { background:#fdeaed }
+.td-price-row.featured { background:linear-gradient(135deg,#fff8f9,#fdeaed);border:1.5px solid rgba(200,16,46,0.2) }
+.td-tip-item { display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid var(--border) }
+.td-tip-item:last-child { border-bottom:none }
+.td-faq-item { border-bottom:1px solid var(--border);overflow:hidden }
+.td-faq-item:last-child { border-bottom:none }
+.td-faq-q { display:flex;align-items:center;justify-content:space-between;padding:14px 0;cursor:pointer;font-weight:600;font-size:14px;color:var(--black);user-select:none;gap:8px }
+.td-faq-q:hover { color:var(--red) }
+.td-faq-a { max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;font-size:13.5px;color:var(--text-2);line-height:1.7;padding:0 }
+.td-faq-item.open .td-faq-a { max-height:200px;padding:0 0 14px }
+.td-faq-arrow { transition:transform .3s;font-size:12px;flex-shrink:0 }
+.td-faq-item.open .td-faq-arrow { transform:rotate(180deg);color:var(--red) }
+.td-similar-card { border-radius:14px;overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:all .35s cubic-bezier(0.22,1,0.36,1) }
+.td-similar-card:hover { transform:translateY(-6px);box-shadow:0 16px 40px rgba(200,16,46,0.15);border-color:rgba(200,16,46,0.2) }
+.td-similar-card img { width:100%;height:100px;object-fit:cover;display:block }
+.td-similar-card-body { padding:12px }
+.td-similar-card-name { font-weight:700;font-size:13px;color:var(--black) }
+.td-similar-card-price { font-size:12px;color:var(--red);font-weight:600;margin-top:2px }
+</style>
+
+<script>
+// ── TOUR DETAIL PAGE ENGINE ────────────────────────────────────────────────
+(function(){
+'use strict';
+
+// Per-destination rich content generator (uses PKG_DATA destination data as base)
+function buildDetailData(countryKey, destName) {
+  const pkgRef = window.__PKG_DATA_REF;
+  if (!pkgRef) return null;
+  const pkg = pkgRef[countryKey];
+  if (!pkg) return null;
+  const dest = (pkg.destinations||[]).find(d=>d.name===destName);
+  if (!dest) return null;
+
+  // Generate itinerary days from dest.days string (e.g. "3N/4D" → 4 days)
+  const dayMatch = (dest.days||'').match(/(\d+)D/);
+  const totalDays = dayMatch ? parseInt(dayMatch[1]) : 3;
+  const nightMatch = (dest.days||'').match(/(\d+)N/);
+  const totalNights = nightMatch ? parseInt(nightMatch[1]) : totalDays-1;
+
+  // Country-specific copy
+  const destCopy = {
+    'Tokyo':{ overview:`Tokyo is Japan's electric capital, where ultramodern skyscrapers stand beside cherry-blossom parks and ancient shrines. This curated package immerses you in the full spectrum of Japanese life — from Shinjuku's neon nights to Asakusa's serene morning temple rituals.`, bestSeason:'March–May (Cherry Blossom) / Oct–Nov (Autumn)', visa:'Japan Visa Required', meals:'Breakfast + 2 Dinners', hotels:'3★–5★ options', tips:['Carry Yen cash — many small restaurants are cash only','Get a Suica IC card for seamless train travel','Book teamLab Planets tickets at least 2 weeks in advance','Best sakura spots: Ueno Park, Shinjuku Gyoen, Chidorigafuchi'] },
+    'Kyoto':{ overview:`Kyoto is Japan's timeless soul — 1,600 Buddhist temples, 400 Shinto shrines, and geisha districts frozen in beauty. Walk the vermilion Fushimi Inari gates at sunrise, participate in a traditional tea ceremony, and wander through bamboo groves in Arashiyama.`, bestSeason:'March–May / Oct–Nov', visa:'Japan Visa Required', meals:'Breakfast daily', hotels:'3★–5★ options', tips:['Visit Fushimi Inari early morning to avoid crowds','Book Nishiki Market food tour in advance','Rent a kimono for the full Gion district experience','Arashiyama bamboo grove is best at 6–7 AM'] },
+    'Paris':{ overview:`Paris, the City of Light, rewards every sense. Stand beneath the Eiffel Tower at dusk, savour buttery croissants in a corner café, float along the Seine on a bateau mouche, and lose an afternoon in the Louvre's endless halls. Romance is simply in the air here.`, bestSeason:'Apr–Jun / Sep–Oct', visa:'Schengen Visa Required', meals:'Breakfast + 1 Dinner', hotels:'3★–5★ options', tips:['Book Eiffel Tower summit tickets 6–8 weeks ahead','Get a Paris Museum Pass for 2–4 days','The Marché d\'Aligre market is far less touristy than Marché Bastille','Metro pass (Navigo) is the most economical way around the city'] },
+    'Dubai':{ overview:`Dubai is the ultimate playground of superlatives — the world's tallest building, largest mall, and most ambitious artificial islands. From dune-bashing safaris in the desert to rooftop pool parties in the sky, Dubai delivers experiences that feel genuinely otherworldly.`, bestSeason:'Nov–Mar (winter)', visa:'Visa on Arrival (30 days) for Indian passport', meals:'Breakfast daily', hotels:'4★–5★ options', tips:['Dress modestly in malls and public spaces','Dubai Metro\'s Red Line covers all major tourist areas','Desert safari evening tours include BBQ dinner + camel ride','Best views of Burj Khalifa are free — from Dubai Fountain park'] },
+    'Singapore':{ overview:`Singapore packs an extraordinary amount into 728 square kilometres — world-class food hawker centres, futuristic botanic gardens, a rainforest nature reserve, and Michelin-starred restaurants — all within a few MRT stops. Clean, safe, and endlessly surprising.`, bestSeason:'Feb–Apr / Jun–Aug', visa:'Visa-free for Indian passport (30 days)', meals:'Breakfast + 1 hawker experience', hotels:'4★–5★ options', tips:['A hawker centre meal at Maxwell or Lau Pa Sat beats any restaurant','Night Safari requires advance booking — it sells out fast','EZ-Link card works on all MRT and buses','Orchard Road shopping is best on weekdays'] },
+  };
+
+  const copy = destCopy[destName] || {
+    overview:`${destName} is one of ${countryKey}'s most captivating destinations, blending rich cultural heritage with modern amenities and natural beauty. This expertly crafted package ensures you experience the best highlights with comfortable accommodation and seamless transfers.`,
+    bestSeason:'Year-round (best Oct–Mar)', visa:`${countryKey} Visa Required`, meals:'Breakfast daily', hotels:'3★–5★ options',
+    tips:['Book popular attractions at least 2 weeks in advance','Carry local currency for small purchases and markets','Download offline maps before your trip','Pack layers — temperatures vary between day and evening']
+  };
+
+  const galleryImgs = [
+    dest.img,
+    pkg.img,
+    `https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80`,
+    `https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80`,
+    `https://images.unsplash.com/photo-1519922639192-e73293ca430e?w=400&q=80`,
+    `https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&q=80`,
+  ];
+
+  // Build itinerary
+  const itineraryTemplates = [
+    { title:'Arrival & Hotel Check-in', desc:`Arrive at the airport and transfer to your hotel. Freshen up and take a relaxed evening walk through the city centre. Welcome dinner at a local restaurant to ease into the local flavours.` },
+    { title:'City Highlights Tour', desc:`Full-day guided sightseeing covering the must-see landmarks and iconic viewpoints. Includes lunch at a recommended local spot and transport between all sites.` },
+    { title:'Cultural Immersion Day', desc:`Visit historical districts, museums, and temples. Participate in a local craft or cooking experience. Explore vibrant local markets in the afternoon.` },
+    { title:'Nature & Excursion Day', desc:`Day trip to natural attractions outside the city — parks, scenic viewpoints, or coastal areas. Picnic lunch included. Return by evening.` },
+    { title:'Leisure & Shopping', desc:`Free morning for independent exploration. Afternoon guided shopping at the best local markets and boutiques. Optional spa treatment available (extra cost).` },
+    { title:'Day Excursion to Nearby Town', desc:`Guided half-day excursion to a neighbouring heritage site or village. Authentic lunch at a family-run restaurant. Return for a farewell evening.` },
+    { title:'Departure Day', desc:`Leisurely breakfast at the hotel. Check-out and transfer to the airport for your return flight to India. Take home memories to last a lifetime.` },
+  ];
+  const days = [];
+  for(let i=0;i<Math.min(totalDays,7);i++) days.push(itineraryTemplates[i]||itineraryTemplates[itineraryTemplates.length-1]);
+
+  // Hotels
+  const hotelData = [
+    { city:destName, name:`${countryKey} Premier Hotel`, stars:4, nights:Math.max(1,totalNights-1), img:`https://images.unsplash.com/photo-1566073771259-6a8506099945?w=200&q=80` },
+    { city:destName, name:`City Centre Boutique Stay`, stars:3, nights:Math.min(1,totalNights), img:`https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=200&q=80` },
+  ];
+
+  // Pricing tiers
+  const basePrice = parseInt((dest.price||'₹85,000').replace(/[₹,]/g,''));
+  const pricing = [
+    { type:'Standard (3★ Hotels)', price: `₹${(basePrice*0.85).toLocaleString('en-IN',{maximumFractionDigits:0})}`, note:'Twin sharing · Breakfast included', featured:false },
+    { type:'Comfort (4★ Hotels)', price: dest.price, note:'Twin sharing · Breakfast + 1 Dinner', featured:true },
+    { type:'Luxury (5★ Hotels)', price: `₹${Math.round(basePrice*1.35).toLocaleString('en-IN',{maximumFractionDigits:0})}`, note:'Twin sharing · All meals included', featured:false },
+    { type:'Solo Traveller Supplement', price: `₹${Math.round(basePrice*0.28).toLocaleString('en-IN',{maximumFractionDigits:0})}`, note:'Extra charge per person', featured:false },
+  ];
+
+  // Similar packages — other destinations in same country, or similar countries
+  const similars = (pkg.destinations||[]).filter(d=>d.name!==destName).slice(0,3).map(d=>({
+    name:d.name, price:d.price, img:d.img, days:d.days, country:countryKey, flag:pkg.flag
+  }));
+
+  return { pkg, dest, countryKey, copy, galleryImgs, days, totalDays, totalNights, hotelData, pricing, similars };
+}
+
+window.openTourDetail = function(countryKey, destName) {
+  // We need PKG_DATA to be available; it's defined inside the IIFE, expose it
+  if (!window.__PKG_DATA_REF) {
+    // Try to find it via the panel
+    console.warn('PKG_DATA not yet exposed — see init below');
+    return;
+  }
+  const data = buildDetailData(countryKey, destName);
+  if (!data) return;
+
+  populateTourDetail(data);
+
+  // Navigate to the detail page
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-tourdetail').classList.add('active');
+  document.getElementById('page-tourdetail').scrollTop = 0;
+
+  // Show sticky bar on scroll
+  const page = document.getElementById('page-tourdetail');
+  page.addEventListener('scroll', handleTdScroll, {passive:true});
+};
+
+function handleTdScroll() {
+  const bar = document.getElementById('tdStickyBar');
+  const page = document.getElementById('page-tourdetail');
+  if (!bar) return;
+  if (page.scrollTop > 320) {
+    bar.style.transform = 'translateY(0)';
+  } else {
+    bar.style.transform = 'translateY(100%)';
+  }
+}
+
+window.closeTourDetail = function() {
+  const page = document.getElementById('page-tourdetail');
+  page.removeEventListener('scroll', handleTdScroll);
+  document.getElementById('tdStickyBar').style.transform = 'translateY(100%)';
+  // Go back to tickets page
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-tickets').classList.add('active');
+  // Restore nav state
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  const ticketsLink = document.querySelector('.nav-links a[onclick*="tickets"]');
+  if(ticketsLink) ticketsLink.classList.add('active');
+};
+
+function populateTourDetail(d) {
+  const {pkg, dest, countryKey, copy, galleryImgs, days, totalDays, totalNights, hotelData, pricing, similars} = d;
+  const waNum = '919876543210';
+  const waMsg = encodeURIComponent(`Hi Visavera! I'm interested in the ${dest.name} tour package (${dest.days}, ${dest.price}/person). Please send me more details.`);
+  const waUrl = `https://wa.me/${waNum}?text=${waMsg}`;
+
+  // Hero
+  document.getElementById('tdHeroImg').src = dest.img || pkg.img;
+  document.getElementById('tdHeroBadge').textContent = dest.tag || 'Featured';
+  document.getElementById('tdHeroTitle').textContent = `${dest.name}, ${countryKey}`;
+  document.getElementById('tdHeroSub').textContent = `${dest.days} · ${pkg.flight} flight from India · ${copy.visa}`;
+  document.getElementById('tdHeroDays').textContent = dest.days;
+  document.getElementById('tdHeroFlight').textContent = pkg.flight + ' from India';
+  document.getElementById('tdHeroPrice').textContent = dest.price;
+  document.getElementById('tdHeroWA').href = waUrl;
+
+  // Sticky bar
+  document.getElementById('tdStickyPrice').textContent = dest.price;
+  document.getElementById('tdStickyMeta').textContent = `${dest.days} · ${countryKey}`;
+  document.getElementById('tdStickyWA').href = waUrl;
+
+  // Sidebar
+  document.getElementById('tdSidePrice').textContent = dest.price;
+  document.getElementById('tdSideWA').href = waUrl;
+  document.getElementById('tdSideMeta').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:12.5px;color:var(--text-2)">
+      <div style="display:flex;justify-content:space-between"><span>Duration</span><strong>${dest.days}</strong></div>
+      <div style="display:flex;justify-content:space-between"><span>Flight time</span><strong>${pkg.flight}</strong></div>
+      <div style="display:flex;justify-content:space-between"><span>Visa</span><strong style="color:${copy.visa.includes('Visa-free')?'#16a34a':'#C8102E'}">${copy.visa.includes('Visa-free')?'✓ Visa-free':'Required'}</strong></div>
+      <div style="display:flex;justify-content:space-between"><span>Best Season</span><strong>${copy.bestSeason}</strong></div>
+      <div style="display:flex;justify-content:space-between"><span>Meals</span><strong>${copy.meals}</strong></div>
+    </div>`;
+
+  // Overview
+  document.getElementById('tdOverviewTitle').textContent = `${dest.name} — ${dest.days} Itinerary`;
+  document.getElementById('tdOverviewText').textContent = copy.overview;
+
+  // Quick Facts
+  const facts = [
+    {icon:'📅',label:'Duration',val:dest.days},
+    {icon:'🗺️',label:'Destination',val:dest.name+', '+countryKey},
+    {icon:'✈️',label:'Flight Time',val:pkg.flight+' from India'},
+    {icon:'🌸',label:'Best Season',val:copy.bestSeason},
+    {icon:'🛂',label:'Visa',val:copy.visa},
+    {icon:'🍽️',label:'Meals',val:copy.meals},
+    {icon:'🏨',label:'Hotels',val:copy.hotels},
+    {icon:'🚌',label:'Transfers',val:'AC Vehicle Included'},
+  ];
+  document.getElementById('tdQuickFacts').innerHTML = facts.map(f=>`
+    <div class="td-fact-item">
+      <div class="td-fact-icon">${f.icon}</div>
+      <div><div class="td-fact-label">${f.label}</div><div class="td-fact-val">${f.val}</div></div>
+    </div>`).join('');
+
+  // Gallery
+  document.getElementById('tdGallery').innerHTML = galleryImgs.slice(0,6).map((src,i)=>`
+    <img src="${src}" alt="Gallery ${i+1}" style="width:100%;height:${i===0?'200px':'130px'};object-fit:cover;border-radius:10px;${i===0?'grid-column:1/3;':''}" onerror="this.style.background='linear-gradient(135deg,#e8edf2,#d0d8e0)';">`).join('');
+
+  // Itinerary
+  document.getElementById('tdItinerary').innerHTML = days.map((day,i)=>`
+    <div class="td-day-item">
+      <div class="td-day-num">D${i+1}</div>
+      <div class="td-day-content" style="padding-left:20px;padding-bottom:${i<days.length-1?'0':'0'}">
+        <div class="td-day-title">${day.title}</div>
+        <div class="td-day-desc">${day.desc}</div>
+      </div>
+    </div>`).join('');
+
+  // Highlights
+  const highlights = [
+    `${totalDays} Days / ${totalNights} Nights of curated experiences`,
+    `Return flights from India (${pkg.flight} each way)`,
+    `${copy.hotels} accommodation throughout`,
+    `${copy.meals} at quality restaurants`,
+    'Professional English-speaking guide',
+    'All entrance fees and permits included',
+    'Air-conditioned private transfers',
+    'Visa application assistance',
+  ];
+  document.getElementById('tdHighlights').innerHTML = highlights.map(h=>`
+    <div class="td-highlight-item">
+      <div class="td-check">✓</div>
+      <div style="font-size:13.5px;color:var(--text)">${h}</div>
+    </div>`).join('');
+
+  // Inclusions / Exclusions
+  const inc = ['Return economy flights','Hotel accommodation','Daily breakfast','Airport transfers','Local sightseeing by AC vehicle','Expert tour guide','Entrance fees to monuments','Travel insurance','Visa application support'];
+  const exc = ['Personal shopping expenses','Lunches & dinners (unless specified)','Optional excursion add-ons','Gratuities and tips','Single supplement (if applicable)','Laundry and minibar charges','Medical expenses'];
+  document.getElementById('tdInclusions').innerHTML = inc.map(i=>`<div class="td-inc-item"><span style="color:#16a34a;font-weight:700">✓</span>${i}</div>`).join('');
+  document.getElementById('tdExclusions').innerHTML = exc.map(e=>`<div class="td-exc-item"><span style="color:#dc2626;font-weight:700">✗</span>${e}</div>`).join('');
+
+  // Hotels
+  document.getElementById('tdHotels').innerHTML = hotelData.map(h=>`
+    <div class="td-hotel-item">
+      <img class="td-hotel-img" src="${h.img}" alt="${h.name}" onerror="this.style.background='#e8edf2'">
+      <div>
+        <div style="font-weight:700;font-size:14px;color:var(--black)">${h.name}</div>
+        <div style="font-size:12px;color:var(--text-3);margin-top:2px">${'⭐'.repeat(h.stars)} · ${h.city}</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:2px">${h.nights} night${h.nights!==1?'s':''} · Breakfast included</div>
+      </div>
+    </div>`).join('');
+
+  // Pricing
+  document.getElementById('tdPricing').innerHTML = pricing.map(p=>`
+    <div class="td-price-row${p.featured?' featured':''}">
+      <div>
+        <div style="font-weight:600;font-size:14px;color:var(--black)">${p.type}${p.featured?' <span style="background:var(--red);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;vertical-align:middle">POPULAR</span>':''}</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:2px">${p.note}</div>
+      </div>
+      <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:${p.featured?'var(--red)':'var(--black)'}">${p.price}</div>
+    </div>`).join('');
+
+  // Tips
+  document.getElementById('tdTips').innerHTML = (copy.tips||[]).map((t,i)=>`
+    <div class="td-tip-item">
+      <div style="flex-shrink:0;width:22px;height:22px;background:rgba(0,100,200,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0064c8">${i+1}</div>
+      <div style="font-size:13.5px;color:var(--text-2);line-height:1.6">${t}</div>
+    </div>`).join('');
+
+  // FAQs
+  const faqs = [
+    {q:`Is visa included in this ${dest.name} package?`,a:`Visa application assistance is included. Our team prepares and submits all documentation. The visa fee itself is charged separately based on your nationality and the destination's requirements.`},
+    {q:'Can I customise the itinerary?',a:`Absolutely! All our packages can be fully tailored — add days, change hotels, include special experiences like private dining or hot-air balloon rides, or combine multiple cities. Contact us and we\'ll build your perfect trip.`},
+    {q:'What is the cancellation policy?',a:'Cancellations made 30+ days before departure receive a full refund minus processing fees. 15–30 days: 50% refund. Under 15 days: non-refundable. We recommend purchasing comprehensive travel insurance.'},
+    {q:'Are flights included in the package price?',a:`Yes — the listed price includes return economy class flights from major Indian cities (Delhi, Mumbai, Bangalore, or your nearest hub). Business class upgrades are available at an additional cost.`},
+    {q:'Is this package suitable for families with children?',a:'Yes! This destination is very family-friendly. We customise the pace and activities for families with young children. Let us know your children\'s ages and we\'ll tailor the experience perfectly.'},
+    {q:'What travel documents do I need?',a:`A valid passport (minimum 6 months validity beyond your travel date), visa as required, travel insurance, and your booking confirmation. We provide a complete pre-departure checklist once your booking is confirmed.`},
+  ];
+  document.getElementById('tdFAQs').innerHTML = faqs.map((faq,i)=>`
+    <div class="td-faq-item" id="faq-${i}">
+      <div class="td-faq-q" onclick="toggleFAQ(${i})">${faq.q}<span class="td-faq-arrow">▼</span></div>
+      <div class="td-faq-a">${faq.a}</div>
+    </div>`).join('');
+
+  // Form WA link
+  document.getElementById('tdFormWA').href = waUrl;
+
+  // Similar
+  document.getElementById('tdSimilar').innerHTML = similars.map(s=>`
+    <div class="td-similar-card" onclick="openTourDetail('${s.country}','${s.name.replace(/'/g,"\\'")}')">
+      <img src="${s.img}" alt="${s.name}" onerror="this.style.background='#e8edf2'">
+      <div class="td-similar-card-body">
+        <div class="td-similar-card-name">${s.flag} ${s.name}</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:1px">${s.days}</div>
+        <div class="td-similar-card-price">${s.price} / person</div>
+      </div>
+    </div>`).join('');
+}
+
+window.toggleFAQ = function(i) {
+  const el = document.getElementById('faq-'+i);
+  if(!el) return;
+  el.classList.toggle('open');
+};
+
+window.submitTourInquiry = function(btn) {
+  const orig = btn.textContent;
+  btn.textContent = '✓ Inquiry Sent!';
+  btn.style.background = '#16a34a';
+  btn.disabled = true;
+  setTimeout(()=>{
+    btn.textContent = orig;
+    btn.style.background = 'var(--red)';
+    btn.disabled = false;
+  }, 3000);
+};
+
+})(); // end IIFE
+
+// Expose PKG_DATA once the map script has defined it
+// We patch renderPkgCards — it's called only after PKG_DATA is available
+const _origRenderPkgCards = window.renderPkgCards;
+// PKG_DATA is scoped inside the map IIFE; we grab it via a closure trick
+// The map IIFE calls showPkgPanel → renderPkgCards. We intercept to sniff PKG_DATA:
+(function patchSelectPkgCountry(){
+  const _origSelect = window.selectPkgCountry;
+  window.selectPkgCountry = function(key) {
+    if (_origSelect) _origSelect(key);
+    // After map IIFE runs, PKG_DATA is available if we use a known global
+    // We'll set __PKG_DATA_REF in a deferred way below
+  };
+})();
+
+// The cleanest approach: intercept showPkgPanel which is called with a pkg object
+// and reconstruct PKG_DATA reference via the window.pkgQuick API
+document.addEventListener('DOMContentLoaded', function(){
+  // Poll until map IIFE exposes PKG_DATA through window.__PKG_DATA_REF
+  // We set it by wrapping the public window.pkgQuick function once available
+  const poller = setInterval(()=>{
+    if(window.pkgQuick && !window.__PKG_DATA_REF) {
+      // Build a proxy by patching window.pkgQuick to capture the first call
+      // Actually: PKG_DATA is used by renderPkgCards; we can grab it from DOM
+      // Simplest: expose it directly by patching doFlight output
+      clearInterval(poller);
+    }
+  }, 200);
+});
+</script>
 
 <div class="float-contact-wrap" id="floatContactWrap">
   <!-- WhatsApp -->

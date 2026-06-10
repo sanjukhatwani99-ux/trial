@@ -1126,6 +1126,12 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
         </svg>
       </span>
 
+      <!-- Selected country flag + name display (shown after selection) -->
+      <div id="pkgSelectedDisplay" style="display:none;align-items:center;gap:8px;padding:0 12px 0 10px;flex:1;min-width:0;pointer-events:none">
+        <img id="pkgSelectedFlag" src="" width="22" height="16" style="border-radius:3px;border:1px solid rgba(0,0,0,0.12);object-fit:cover;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.08)" alt="">
+        <span id="pkgSelectedName" style="font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;color:rgba(20,20,28,0.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></span>
+      </div>
+
       <!-- Typewriter label (hidden when typing) -->
       <div class="pkg-bar-label" id="pkgBarLabel">
         <span class="pkg-bar-fixed">Search</span>
@@ -1247,7 +1253,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <!-- Panel header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-shrink:0">
         <div style="display:flex;align-items:center;gap:12px">
-          <div id="pkgPanelFlag" style="font-size:28px;line-height:1"></div>
+          <img id="pkgPanelFlag" src="" width="44" height="30" style="border-radius:5px;border:1px solid rgba(0,0,0,0.1);object-fit:cover;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.12)" alt="">
           <div>
             <div id="pkgPanelTitle" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#111"></div>
             <div id="pkgPanelSub" style="font-size:11px;color:#888;margin-top:2px"></div>
@@ -2251,206 +2257,324 @@ const INDIA_LNG = 78.96, INDIA_LAT = 20.59;
 
 // ── PACKAGE DATA ──────────────────────────────────────────────────────────
 const PKG_DATA = {
-  'Japan': { city:'Tokyo', code:'TYO', flag:'🇯🇵', lng:139.69, lat:35.68, zoom:5, days:'6N/7D', price:'₹85,000', tag:'Popular', flight:'8h 30m', color:'#ff6b6b',
-    img:'https://images.unsplash.com/photo-1492571350019-22de08371fd3?w=500&q=85',
+  'Japan': { city:"Tokyo", code:"TYO", flag:"🇯🇵", lng:139.69, lat:35.68, zoom:5, days:"3N/4D", price:"₹85,000", tag:"Popular", color:"#ff6b6b", img:"https://images.unsplash.com/photo-1492571350019-22de08371fd3?w=500&q=85",
     destinations:[
-      { name:'Tokyo',   tag:'Capital',   img:'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400&q=80', days:'3N/4D', price:'₹85,000' },
-      { name:'Kyoto',   tag:'Heritage',  img:'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&q=80', days:'2N/3D', price:'₹72,000' },
-      { name:'Osaka',   tag:'Foodie',    img:'https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=400&q=80', days:'2N/3D', price:'₹68,000' },
-      { name:'Hokkaido',tag:'Nature',    img:'https://images.unsplash.com/photo-1601823984263-b87b59798b70?w=400&q=80', days:'3N/4D', price:'₹78,000' },
-      { name:'Hiroshima',tag:'Historic', img:'https://images.unsplash.com/photo-1597937664918-6fcf9b4e2a38?w=400&q=80', days:'1N/2D', price:'₹58,000' },
+      { name:"Tokyo", tag:"Capital", img:"https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400&q=80", days:"3N/4D", price:"₹85,000", types:["group"] },
+      { name:"Tokyo (New)", tag:"New", img:"https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400&q=80", days:"3N/4D", price:"₹85,000", types:["custom","group","honeymoon","family","cruise"] },
+      { name:"Kyoto", tag:"Heritage", img:"https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&q=80", days:"2N/3D", price:"₹72,000", types:["group"] },
+      { name:"Osaka", tag:"Foodie", img:"https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=400&q=80", days:"2N/3D", price:"₹68,000", types:["group"] },
+      { name:"Hokkaido", tag:"Nature", img:"https://images.unsplash.com/photo-1601823984263-b87b59798b70?w=400&q=80", days:"3N/4D", price:"₹78,000", types:["family"] },
+      { name:"Hiroshima", tag:"Historic", img:"https://images.unsplash.com/photo-1597937664918-6fcf9b4e2a38?w=400&q=80", days:"1N/2D", price:"₹58,000", types:["group"] },
     ]},
-  'France': { city:'Paris', code:'CDG', flag:'🇫🇷', lng:2.35, lat:48.86, zoom:5, days:'7N/8D', price:'₹1,10,000', tag:'Trending', flight:'9h 45m', color:'#74b9ff',
-    img:'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=500&q=85',
+  'France': { city:"Paris", code:"CDG", flag:"🇫🇷", lng:2.35, lat:48.86, zoom:5, days:"4N/5D", price:"₹1,10,000", tag:"Popular", color:"#74b9ff", img:"https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=500&q=85",
     destinations:[
-      { name:'Paris',       tag:'Capital',  img:'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=80', days:'4N/5D', price:'₹1,10,000' },
-      { name:'Nice',        tag:'Riviera',  img:'https://images.unsplash.com/photo-1491166617655-0723a0258d16?w=400&q=80', days:'2N/3D', price:'₹90,000' },
-      { name:'Lyon',        tag:'Gastronomy',img:'https://images.unsplash.com/photo-1557409518-691ebcd96038?w=400&q=80',days:'2N/3D', price:'₹85,000' },
-      { name:'Mont Saint-Michel',tag:'Iconic',img:'https://images.unsplash.com/photo-1559598467-f8b76c8155d0?w=400&q=80',days:'1N/2D',price:'₹75,000' },
-      { name:'Bordeaux',    tag:'Wine',     img:'https://images.unsplash.com/photo-1568430462989-44163eb1752f?w=400&q=80', days:'2N/3D', price:'₹80,000' },
+      { name:"Paris", tag:"Capital", img:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=80", days:"4N/5D", price:"₹1,10,000", types:["group"] },
+      { name:"Nice", tag:"Riviera", img:"https://images.unsplash.com/photo-1491166617655-0723a0258d16?w=400&q=80", days:"2N/3D", price:"₹90,000", types:["honeymoon"] },
+      { name:"Lyon", tag:"Gastronomy", img:"https://images.unsplash.com/photo-1557409518-691ebcd96038?w=400&q=80", days:"2N/3D", price:"₹85,000", types:["custom"] },
+      { name:"Mont Saint-Michel", tag:"Iconic", img:"https://images.unsplash.com/photo-1559598467-f8b76c8155d0?w=400&q=80", days:"1N/2D", price:"₹75,000", types:["group"] },
+      { name:"Bordeaux", tag:"Wine", img:"https://images.unsplash.com/photo-1568430462989-44163eb1752f?w=400&q=80", days:"2N/3D", price:"₹80,000", types:["honeymoon"] },
     ]},
-  'UAE': { city:'Dubai', code:'DXB', flag:'🇦🇪', lng:55.27, lat:25.20, zoom:7, days:'4N/5D', price:'₹45,000', tag:'Best Value', flight:'3h 30m', color:'#fdcb6e',
-    img:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=500&q=85',
+  'UAE': { city:"Dubai", code:"DXB", flag:"🇦🇪", lng:55.27, lat:25.2, zoom:7, days:"3N/4D/", price:"₹4,000", tag:"Popular", color:"#fdcb6e", img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=500&q=85",
     destinations:[
-      { name:'Dubai',       tag:'Iconic',   img:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=80', days:'3N/4D', price:'₹45,000' },
-      { name:'Abu Dhabi',   tag:'Capital',  img:'https://images.unsplash.com/photo-1512632578888-169bbbc64f33?w=400&q=80', days:'2N/3D', price:'₹38,000' },
-      { name:'Sharjah',     tag:'Culture',  img:'https://images.unsplash.com/photo-1580674684081-7617fbf3d745?w=400&q=80', days:'1N/2D', price:'₹28,000' },
-      { name:'Ras Al Khaimah',tag:'Adventure',img:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80',days:'2N/3D',price:'₹35,000' },
-      { name:'Fujairah',    tag:'Beach',    img:'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=400&q=80', days:'1N/2D', price:'₹30,000' },
+      { name:"Dubai", tag:"Iconic", img:"https://res.cloudinary.com/dq2nrpky0/image/upload/v1779983858/MH_1_1_exys0k.jpg", days:"3N/4D/", price:"₹4,000", types:["group","honeymoon","family","cruise","custom"] },
+      { name:"Abu Dhabi", tag:"Capital", img:"https://images.unsplash.com/photo-1512632578888-169bbbc64f33?w=400&q=80", days:"2N/3D", price:"₹38,000", types:["group"] },
+      { name:"Sharjah", tag:"Culture", img:"https://images.unsplash.com/photo-1580674684081-7617fbf3d745?w=400&q=80", days:"1N/2D", price:"₹28,000", types:["group"] },
+      { name:"Ras Al Khaimah", tag:"Adventure", img:"https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80", days:"2N/3D", price:"₹35,000", types:["family"] },
+      { name:"Fujairah", tag:"Beach", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=400&q=80", days:"1N/2D", price:"₹30,000", types:["honeymoon"] },
     ]},
-  'Singapore': { city:'Singapore', code:'SIN', flag:'🇸🇬', lng:103.82, lat:1.35, zoom:8, days:'4N/5D', price:'₹55,000', tag:'Popular', flight:'5h 45m', color:'#00cec9',
-    img:'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=500&q=85',
+  'United States': { city:"New York", code:"JFK", flag:"🇺🇸", lng:-74.01, lat:40.71, zoom:5, days:"4N/5D", price:"₹1,75,000", tag:"Popular", color:"#a29bfe", img:"https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=500&q=85",
     destinations:[
-      { name:'Marina Bay',  tag:'Iconic',   img:'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400&q=80', days:'2N/3D', price:'₹55,000' },
-      { name:'Sentosa',     tag:'Beach',    img:'https://images.unsplash.com/photo-1510414696678-2415ad8474aa?w=400&q=80', days:'1N/2D', price:'₹45,000' },
-      { name:'Chinatown',   tag:'Culture',  img:'https://images.unsplash.com/photo-1565967511849-76a60a516170?w=400&q=80', days:'1N/2D', price:'₹40,000' },
-      { name:'Gardens by Bay',tag:'Nature', img:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80',days:'1N',    price:'₹38,000' },
-      { name:'Little India', tag:'Vibrant', img:'https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=400&q=80', days:'1N',   price:'₹35,000' },
+      { name:"New York", tag:"Iconic", img:"https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=400&q=80", days:"4N/5D", price:"₹1,75,000", types:["group"] },
+      { name:"Los Angeles", tag:"Glamour", img:"https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=400&q=80", days:"3N/4D", price:"₹1,60,000", types:["group"] },
+      { name:"Las Vegas", tag:"Entertainment", img:"https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=400&q=80", days:"3N/4D", price:"₹1,50,000", types:["group"] },
+      { name:"San Francisco", tag:"Bay City", img:"https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&q=80", days:"3N/4D", price:"₹1,55,000", types:["group"] },
+      { name:"Chicago", tag:"Windy City", img:"https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=80", days:"2N/3D", price:"₹1,40,000", types:["group"] },
+      { name:"Miami", tag:"Beach & Vibes", img:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80", days:"3N/4D", price:"₹1,45,000", types:["honeymoon"] },
+      { name:"Orlando", tag:"Theme Parks", img:"https://images.unsplash.com/photo-1563911302283-d2bc129e7570?w=400&q=80", days:"4N/5D", price:"₹1,65,000", types:["family"] },
+      { name:"Washington DC", tag:"Capital", img:"https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=400&q=80", days:"2N/3D", price:"₹1,35,000", types:["group"] },
+      { name:"Hawaii", tag:"Paradise", img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80", days:"5N/6D", price:"₹2,10,000", types:["honeymoon"] },
+      { name:"Grand Canyon", tag:"Natural Wonder", img:"https://images.unsplash.com/photo-1615551043360-33de8b5f410c?w=400&q=80", days:"2N/3D", price:"₹1,30,000", types:["group"] },
+      { name:"New Orleans", tag:"Jazz & Culture", img:"https://images.unsplash.com/photo-1568393691622-c7ba131d63b4?w=400&q=80", days:"2N/3D", price:"₹1,25,000", types:["group"] },
+      { name:"Seattle", tag:"Pacific NW", img:"https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=400&q=80", days:"2N/3D", price:"₹1,38,000", types:["group"] },
+      { name:"Boston", tag:"Historic", img:"https://images.unsplash.com/photo-1501979376754-098f01c4fcae?w=400&q=80", days:"2N/3D", price:"₹1,32,000", types:["group"] },
+      { name:"Yellowstone", tag:"Wildlife", img:"https://images.unsplash.com/photo-1589470288084-51c3e0b49700?w=400&q=80", days:"3N/4D", price:"₹1,42,000", types:["family"] },
+      { name:"Nashville", tag:"Music City", img:"https://images.unsplash.com/photo-1545419913-775e3e68c081?w=400&q=80", days:"2N/3D", price:"₹1,20,000", types:["group"] },
     ]},
-  'Australia': { city:'Sydney', code:'SYD', flag:'🇦🇺', lng:151.21, lat:-33.87, zoom:5, days:'8N/9D', price:'₹1,40,000', tag:'Trending', flight:'12h', color:'#55efc4',
-    img:'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=500&q=85',
+  'United Kingdom': { city:"London", code:"LHR", flag:"🇬🇧", lng:-0.13, lat:51.51, zoom:5, days:"4N/5D", price:"₹1,25,000", tag:"Popular", color:"#74b9ff", img:"https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=500&q=85",
     destinations:[
-      { name:'Sydney',      tag:'Iconic',   img:'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=400&q=80', days:'3N/4D', price:'₹1,40,000' },
-      { name:'Melbourne',   tag:'Culture',  img:'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&q=80', days:'3N/4D', price:'₹1,30,000' },
-      { name:'Queensland',  tag:'Adventure',img:'https://images.unsplash.com/photo-1589474831079-9fc5f6c34e2f?w=400&q=80', days:'3N/4D', price:'₹1,20,000' },
-      { name:'Perth',       tag:'Sunshine', img:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=80', days:'2N/3D', price:'₹1,10,000' },
-      { name:'Adelaide',    tag:'Wine',     img:'https://images.unsplash.com/photo-1589474831079-9fc5f6c34e2f?w=400&q=80', days:'2N/3D', price:'₹1,05,000' },
+      { name:"London", tag:"Capital", img:"https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&q=80", days:"4N/5D", price:"₹1,25,000", types:["group"] },
+      { name:"Edinburgh", tag:"Historic", img:"https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&q=80", days:"2N/3D", price:"₹1,00,000", types:["group"] },
+      { name:"Manchester", tag:"Vibrant", img:"https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80", days:"2N/3D", price:"₹95,000", types:["group"] },
+      { name:"Oxford", tag:"Academia", img:"https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=400&q=80", days:"1N/2D", price:"₹85,000", types:["group"] },
+      { name:"Lake District", tag:"Nature", img:"https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=400&q=80", days:"2N/3D", price:"₹90,000", types:["cruise","family"] },
     ]},
-  'United States': { city:'New York', code:'JFK', flag:'🇺🇸', lng:-74.01, lat:40.71, zoom:5, days:'9N/10D', price:'₹1,75,000', tag:'Luxury', flight:'16h', color:'#a29bfe',
-    img:'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=500&q=85',
+  'Italy': { city:"Rome", code:"FCO", flag:"🇮🇹", lng:12.5, lat:41.9, zoom:5, days:"3N/4D", price:"₹90,000", tag:"Popular", color:"#e17055", img:"https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=500&q=85",
     destinations:[
-      { name:'New York',    tag:'Iconic',   img:'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=400&q=80', days:'4N/5D', price:'₹1,75,000' },
-      { name:'Los Angeles', tag:'Glamour',  img:'https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=400&q=80', days:'3N/4D', price:'₹1,60,000' },
-      { name:'Las Vegas',   tag:'Entertainment',img:'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=400&q=80',days:'3N/4D',price:'₹1,50,000' },
-      { name:'San Francisco',tag:'Bay City',img:'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&q=80',days:'3N/4D', price:'₹1,55,000' },
-      { name:'Chicago',       tag:'Windy City',    img:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=80',  days:'2N/3D', price:'₹1,40,000' },
-      { name:'Miami',         tag:'Beach & Vibes', img:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80',  days:'3N/4D', price:'₹1,45,000' },
-      { name:'Orlando',       tag:'Theme Parks',   img:'https://images.unsplash.com/photo-1563911302283-d2bc129e7570?w=400&q=80',  days:'4N/5D', price:'₹1,65,000' },
-      { name:'Washington DC', tag:'Capital',       img:'https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=400&q=80',  days:'2N/3D', price:'₹1,35,000' },
-      { name:'Hawaii',        tag:'Paradise',      img:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80',  days:'5N/6D', price:'₹2,10,000' },
-      { name:'Grand Canyon',  tag:'Natural Wonder',img:'https://images.unsplash.com/photo-1615551043360-33de8b5f410c?w=400&q=80',  days:'2N/3D', price:'₹1,30,000' },
-      { name:'New Orleans',   tag:'Jazz & Culture',img:'https://images.unsplash.com/photo-1568393691622-c7ba131d63b4?w=400&q=80',  days:'2N/3D', price:'₹1,25,000' },
-      { name:'Seattle',       tag:'Pacific NW',    img:'https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=400&q=80',  days:'2N/3D', price:'₹1,38,000' },
-      { name:'Boston',        tag:'Historic',      img:'https://images.unsplash.com/photo-1501979376754-098f01c4fcae?w=400&q=80',  days:'2N/3D', price:'₹1,32,000' },
-      { name:'Yellowstone',   tag:'Wildlife',      img:'https://images.unsplash.com/photo-1589470288084-51c3e0b49700?w=400&q=80',  days:'3N/4D', price:'₹1,42,000' },
-      { name:'Nashville',     tag:'Music City',    img:'https://images.unsplash.com/photo-1545419913-775e3e68c081?w=400&q=80',  days:'2N/3D', price:'₹1,20,000' },
+      { name:"Rome", tag:"Eternal City", img:"https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=400&q=80", days:"3N/4D", price:"₹90,000", types:["group"] },
+      { name:"Venice", tag:"Romantic", img:"https://images.unsplash.com/photo-1534113414509-0eec2bfb493f?w=400&q=80", days:"2N/3D", price:"₹85,000", types:["honeymoon"] },
+      { name:"Florence", tag:"Renaissance", img:"https://images.unsplash.com/photo-1543429257-3eb0b65d9c58?w=400&q=80", days:"2N/3D", price:"₹80,000", types:["group"] },
+      { name:"Amalfi Coast", tag:"Scenic", img:"https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=400&q=80", days:"2N/3D", price:"₹78,000", types:["group"] },
+      { name:"Sicily", tag:"Island", img:"https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&q=80", days:"3N/4D", price:"₹82,000", types:["honeymoon"] },
     ]},
-  'United Kingdom': { city:'London', code:'LHR', flag:'🇬🇧', lng:-0.13, lat:51.51, zoom:5, days:'7N/8D', price:'₹1,25,000', tag:'Premium', flight:'10h', color:'#74b9ff',
-    img:'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=500&q=85',
+  'Spain': { city:"Madrid", code:"MAD", flag:"🇪🇸", lng:-3.7, lat:40.42, zoom:5, days:"3N/4D", price:"₹95,000", tag:"Popular", color:"#e17055", img:"https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=500&q=85",
     destinations:[
-      { name:'London',      tag:'Capital',  img:'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&q=80', days:'4N/5D', price:'₹1,25,000' },
-      { name:'Edinburgh',   tag:'Historic', img:'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&q=80', days:'2N/3D', price:'₹1,00,000' },
-      { name:'Manchester',  tag:'Vibrant',  img:'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80', days:'2N/3D', price:'₹95,000' },
-      { name:'Oxford',      tag:'Academia', img:'https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=400&q=80', days:'1N/2D', price:'₹85,000' },
-      { name:'Lake District',tag:'Nature',  img:'https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=400&q=80', days:'2N/3D', price:'₹90,000' },
+      { name:"Madrid", tag:"Capital", img:"https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&q=80", days:"3N/4D", price:"₹95,000", types:["group"] },
+      { name:"Barcelona", tag:"Gaudi", img:"https://images.unsplash.com/photo-1523531294919-4bcd7c65e216?w=400&q=80", days:"3N/4D", price:"₹92,000", types:["group"] },
+      { name:"Seville", tag:"Flamenco", img:"https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?w=400&q=80", days:"2N/3D", price:"₹80,000", types:["group"] },
+      { name:"Granada", tag:"Alhambra", img:"https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&q=80", days:"2N/3D", price:"₹78,000", types:["group"] },
+      { name:"Ibiza", tag:"Party", img:"https://images.unsplash.com/photo-1551966775-a4ddc8df052b?w=400&q=80", days:"3N/4D", price:"₹90,000", types:["group"] },
     ]},
-  'Germany': { city:'Berlin', code:'BER', flag:'🇩🇪', lng:13.40, lat:52.52, zoom:5, days:'6N/7D', price:'₹95,000', tag:'Popular', flight:'9h 30m', color:'#fd79a8',
-    img:'https://images.unsplash.com/photo-1587330979470-3595ac045ab0?w=500&q=85',
+  'Germany': { city:"Berlin", code:"BER", flag:"🇩🇪", lng:13.4, lat:52.52, zoom:6, days:"3N/4D", price:"₹95,000", tag:"Popular", color:"#636e72", img:"https://images.unsplash.com/photo-1546726747-421c6d69c929?w=500&q=85",
     destinations:[
-      { name:'Berlin',      tag:'Capital',  img:'https://images.unsplash.com/photo-1587330979470-3595ac045ab0?w=400&q=80', days:'3N/4D', price:'₹95,000' },
-      { name:'Munich',      tag:'Bavaria',  img:'https://images.unsplash.com/photo-1595867818082-083862f3d630?w=400&q=80', days:'2N/3D', price:'₹85,000' },
-      { name:'Hamburg',     tag:'Port City',img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80', days:'2N/3D', price:'₹80,000' },
-      { name:'Cologne',     tag:'Cathedral',img:'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&q=80', days:'1N/2D', price:'₹72,000' },
-      { name:'Black Forest', tag:'Nature',  img:'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=400&q=80', days:'2N/3D', price:'₹78,000' },
+      { name:"Berlin", tag:"Capital", img:"https://images.unsplash.com/photo-1587330979470-3595ac045ab0?w=400&q=80", days:"3N/4D", price:"₹95,000", types:["group"] },
+      { name:"Munich", tag:"Bavaria", img:"https://images.unsplash.com/photo-1595867818082-083862f3d630?w=400&q=80", days:"2N/3D", price:"₹85,000", types:["group"] },
+      { name:"Hamburg", tag:"Port City", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", days:"2N/3D", price:"₹80,000", types:["group"] },
+      { name:"Cologne", tag:"Cathedral", img:"https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&q=80", days:"1N/2D", price:"₹72,000", types:["group"] },
+      { name:"Black Forest", tag:"Nature", img:"https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=400&q=80", days:"2N/3D", price:"₹78,000", types:["family"] },
     ]},
-  'Italy': { city:'Rome', code:'FCO', flag:'🇮🇹', lng:12.50, lat:41.90, zoom:5, days:'6N/7D', price:'₹90,000', tag:'Popular', flight:'9h', color:'#e17055',
-    img:'https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=500&q=85',
+  'Portugal': { city:"Lisbon", code:"LIS", flag:"🇵🇹", lng:-9.14, lat:38.72, zoom:6, days:"3N/4D", price:"₹88,000", tag:"Popular", color:"#55efc4", img:"https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=500&q=85",
     destinations:[
-      { name:'Rome',        tag:'Eternal City',img:'https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=400&q=80',days:'3N/4D',price:'₹90,000' },
-      { name:'Venice',      tag:'Romantic', img:'https://images.unsplash.com/photo-1534113414509-0eec2bfb493f?w=400&q=80', days:'2N/3D', price:'₹85,000' },
-      { name:'Florence',    tag:'Renaissance',img:'https://images.unsplash.com/photo-1543429257-3eb0b65d9c58?w=400&q=80',days:'2N/3D',price:'₹80,000' },
-      { name:'Amalfi Coast',tag:'Scenic',   img:'https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=400&q=80', days:'2N/3D', price:'₹78,000' },
-      { name:'Sicily',      tag:'Island',   img:'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&q=80', days:'3N/4D', price:'₹82,000' },
+      { name:"Lisbon", tag:"Hills", img:"https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=400&q=80", days:"3N/4D", price:"₹88,000", types:["group"] },
+      { name:"Porto", tag:"Wine", img:"https://images.unsplash.com/photo-1588681664899-f142ff2dc9b1?w=400&q=80", days:"2N/3D", price:"₹78,000", types:["honeymoon"] },
+      { name:"Algarve", tag:"Beaches", img:"https://images.unsplash.com/photo-1563911302283-d2bc129e7570?w=400&q=80", days:"3N/4D", price:"₹82,000", types:["honeymoon"] },
+      { name:"Sintra", tag:"Palaces", img:"https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=400&q=80", days:"1N/2D", price:"₹70,000", types:["group"] },
     ]},
-  'Switzerland': { city:'Zurich', code:'ZRH', flag:'🇨🇭', lng:8.55, lat:47.37, zoom:6, days:'7N/8D', price:'₹1,30,000', tag:'Luxury', flight:'9h 20m', color:'#b2bec3',
-    img:'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=500&q=85',
+  'Greece': { city:"Athens", code:"ATH", flag:"🇬🇷", lng:23.73, lat:37.98, zoom:6, days:"3N/4D", price:"₹95,000", tag:"Popular", color:"#74b9ff", img:"https://images.unsplash.com/photo-1555993539-1732b0258235?w=500&q=85",
     destinations:[
-      { name:'Zurich',      tag:'Financial Hub',img:'https://images.unsplash.com/photo-1515488764276-beab7607c1e6?w=400&q=80',days:'2N/3D',price:'₹1,30,000' },
-      { name:'Interlaken',  tag:'Adventure', img:'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80', days:'3N/4D', price:'₹1,25,000' },
-      { name:'Geneva',      tag:'Diplomatic',img:'https://images.unsplash.com/photo-1620276885447-4ea834617bff?w=400&q=80',days:'2N/3D',price:'₹1,20,000' },
-      { name:'Lucerne',     tag:'Scenic',   img:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80', days:'2N/3D', price:'₹1,15,000' },
-      { name:'Zermatt',     tag:'Alpine',   img:'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80', days:'2N/3D', price:'₹1,35,000' },
+      { name:"Athens", tag:"Capital", img:"https://images.unsplash.com/photo-1555993539-1732b0258235?w=400&q=80", days:"3N/4D", price:"₹95,000", types:["group"] },
+      { name:"Santorini", tag:"Iconic", img:"https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400&q=80", days:"3N/4D", price:"₹1,05,000", types:["group"] },
+      { name:"Mykonos", tag:"Party", img:"https://images.unsplash.com/photo-1601823984263-b87b59798b70?w=400&q=80", days:"2N/3D", price:"₹90,000", types:["group"] },
+      { name:"Crete", tag:"Island", img:"https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=400&q=80", days:"3N/4D", price:"₹88,000", types:["honeymoon"] },
+      { name:"Rhodes", tag:"Medieval", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=400&q=80", days:"2N/3D", price:"₹82,000", types:["group"] },
     ]},
-  'Thailand': { city:'Bangkok', code:'BKK', flag:'🇹🇭', lng:100.50, lat:13.76, zoom:6, days:'5N/6D', price:'₹38,000', tag:'Budget Pick', flight:'4h', color:'#00cec9',
-    img:'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=500&q=85',
+  'Austria': { city:"Vienna", code:"VIE", flag:"🇦🇹", lng:16.37, lat:48.21, zoom:6, days:"3N/4D", price:"₹92,000", tag:"Popular", color:"#b2bec3", img:"https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=500&q=85",
     destinations:[
-      { name:'Bangkok',     tag:'Capital',  img:'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400&q=80', days:'3N/4D', price:'₹38,000' },
-      { name:'Phuket',      tag:'Beach',    img:'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400&q=80', days:'3N/4D', price:'₹35,000' },
-      { name:'Chiang Mai',  tag:'Cultural', img:'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&q=80', days:'2N/3D', price:'₹30,000' },
-      { name:'Krabi',       tag:'Island',   img:'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&q=80', days:'3N/4D', price:'₹33,000' },
-      { name:'Koh Samui',   tag:'Resort',   img:'https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&q=80', days:'3N/4D', price:'₹36,000' },
+      { name:"Vienna", tag:"Imperial", img:"https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=400&q=80", days:"3N/4D", price:"₹92,000", types:["group"] },
+      { name:"Salzburg", tag:"Mozart", img:"https://images.unsplash.com/photo-1527838832700-5059252407fa?w=400&q=80", days:"1N/2D", price:"₹80,000", types:["group"] },
+      { name:"Hallstatt", tag:"Lakeside", img:"https://images.unsplash.com/photo-1516306580123-e6e52b1b7b5f?w=400&q=80", days:"1N/2D", price:"₹78,000", types:["cruise"] },
+      { name:"Innsbruck", tag:"Alps", img:"https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80", days:"2N/3D", price:"₹82,000", types:["group"] },
     ]},
-  'New Zealand': { city:'Auckland', code:'AKL', flag:'🇳🇿', lng:174.77, lat:-36.86, zoom:6, days:'9N/10D', price:'₹1,55,000', tag:'Adventure', flight:'13h 30m', color:'#00b894',
-    img:'https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=500&q=85',
+  'Netherlands': { city:"Amsterdam", code:"AMS", flag:"🇳🇱", lng:4.9, lat:52.37, zoom:6, days:"3N/4D", price:"₹1,00,000", tag:"Popular", color:"#fd79a8", img:"https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=500&q=85",
     destinations:[
-      { name:'Auckland',    tag:'City',     img:'https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=400&q=80', days:'3N/4D', price:'₹1,55,000' },
-      { name:'Queenstown',  tag:'Adventure',img:'https://images.unsplash.com/photo-1589196728289-7bf17a4de289?w=400&q=80', days:'3N/4D', price:'₹1,50,000' },
-      { name:'Rotorua',     tag:'Geothermal',img:'https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=400&q=80',days:'2N/3D',price:'₹1,30,000' },
-      { name:'Fiordland',   tag:'Scenic',   img:'https://images.unsplash.com/photo-1438786657495-640937046d3c?w=400&q=80', days:'2N/3D', price:'₹1,40,000' },
-      { name:'Wellington',  tag:'Capital',  img:'https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=400&q=80', days:'2N/3D', price:'₹1,25,000' },
+      { name:"Amsterdam", tag:"Canals", img:"https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=400&q=80", days:"3N/4D", price:"₹1,00,000", types:["group"] },
+      { name:"Rotterdam", tag:"Modern", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", days:"1N/2D", price:"₹88,000", types:["group"] },
+      { name:"The Hague", tag:"Diplomatic", img:"https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=400&q=80", days:"1N/2D", price:"₹85,000", types:["group"] },
+      { name:"Keukenhof", tag:"Tulips", img:"https://images.unsplash.com/photo-1490274977107-7757b2a31e81?w=400&q=80", days:"1N", price:"₹80,000", types:["group"] },
     ]},
-  'South Korea': { city:'Seoul', code:'ICN', flag:'🇰🇷', lng:126.98, lat:37.56, zoom:6, days:'5N/6D', price:'₹70,000', tag:'Trending', flight:'7h 30m', color:'#ff7675',
-    img:'https://images.unsplash.com/photo-1517154421773-0855b7d44028?w=500&q=85',
+  'Norway': { city:"Oslo", code:"OSL", flag:"🇳🇴", lng:10.75, lat:59.91, zoom:6, days:"3N/4D", price:"₹1,15,000", tag:"Popular", color:"#a29bfe", img:"https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500&q=85",
     destinations:[
-      { name:'Seoul',       tag:'Capital',  img:'https://images.unsplash.com/photo-1517154421773-0855b7d44028?w=400&q=80', days:'3N/4D', price:'₹70,000' },
-      { name:'Busan',       tag:'Beach City',img:'https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=400&q=80',days:'2N/3D',price:'₹60,000' },
-      { name:'Jeju Island', tag:'Island',   img:'https://images.unsplash.com/photo-1567515004624-219c11d31f2e?w=400&q=80', days:'3N/4D', price:'₹65,000' },
-      { name:'Gyeongju',    tag:'Heritage', img:'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&q=80', days:'1N/2D', price:'₹52,000' },
-      { name:'Incheon',     tag:'Gateway',  img:'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400&q=80', days:'1N/2D', price:'₹48,000' },
+      { name:"Oslo", tag:"Capital", img:"https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&q=80", days:"3N/4D", price:"₹1,15,000", types:["group"] },
+      { name:"Bergen", tag:"Fjords", img:"https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=400&q=80", days:"2N/3D", price:"₹1,00,000", types:["cruise"] },
+      { name:"Tromsø", tag:"Aurora", img:"https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80", days:"3N/4D", price:"₹1,25,000", types:["group"] },
+      { name:"Lofoten", tag:"Scenic", img:"https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=400&q=80", days:"3N/4D", price:"₹1,10,000", types:["group"] },
     ]},
-  'Greece': { city:'Athens', code:'ATH', flag:'🇬🇷', lng:23.73, lat:37.98, zoom:6, days:'7N/8D', price:'₹95,000', tag:'Scenic', flight:'8h', color:'#74b9ff',
-    img:'https://images.unsplash.com/photo-1555993539-1732b0258235?w=500&q=85',
+  'Denmark': { city:"Copenhagen", code:"CPH", flag:"🇩🇰", lng:12.57, lat:55.68, zoom:6, days:"3N/4D", price:"₹1,00,000", tag:"Popular", color:"#fd79a8", img:"https://images.unsplash.com/photo-1531312268484-86f2a31b5f47?w=500&q=85",
     destinations:[
-      { name:'Athens',      tag:'Capital',  img:'https://images.unsplash.com/photo-1555993539-1732b0258235?w=400&q=80', days:'3N/4D', price:'₹95,000' },
-      { name:'Santorini',   tag:'Iconic',   img:'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400&q=80', days:'3N/4D', price:'₹1,05,000' },
-      { name:'Mykonos',     tag:'Party',    img:'https://images.unsplash.com/photo-1601823984263-b87b59798b70?w=400&q=80', days:'2N/3D', price:'₹90,000' },
-      { name:'Crete',       tag:'Island',   img:'https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=400&q=80', days:'3N/4D', price:'₹88,000' },
-      { name:'Rhodes',      tag:'Medieval', img:'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=400&q=80', days:'2N/3D', price:'₹82,000' },
+      { name:"Copenhagen", tag:"Hygge", img:"https://images.unsplash.com/photo-1531312268484-86f2a31b5f47?w=400&q=80", days:"3N/4D", price:"₹1,00,000", types:["group"] },
+      { name:"Aarhus", tag:"Cultural", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", days:"2N/3D", price:"₹88,000", types:["group"] },
+      { name:"Bornholm", tag:"Island", img:"https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?w=400&q=80", days:"2N/3D", price:"₹85,000", types:["honeymoon"] },
     ]},
+  'Poland': { city:"Warsaw", code:"WAW", flag:"🇵🇱", lng:21.01, lat:52.23, zoom:6, days:"3N/4D", price:"₹75,000", tag:"Popular", color:"#ff6b6b", img:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&q=85",
+    destinations:[
+      { name:"Warsaw", tag:"Capital", img:"https://images.unsplash.com/photo-1560969184-10fe8719e047?w=400&q=80", days:"3N/4D", price:"₹75,000", types:["group"] },
+      { name:"Kraków", tag:"Historic", img:"https://images.unsplash.com/photo-1569246913335-6b1a4278c4a3?w=400&q=80", days:"2N/3D", price:"₹65,000", types:["group"] },
+      { name:"Gdańsk", tag:"Coastal", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=400&q=80", days:"2N/3D", price:"₹62,000", types:["group"] },
+    ]},
+  'Hong Kong': { city:"Hong Kong", code:"HKG", flag:"🇭🇰", lng:114.17, lat:22.32, zoom:8, days:"2N/3D", price:"₹58,000", tag:"Popular", color:"#e17055", img:"https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=500&q=85",
+    destinations:[
+      { name:"Hong Kong Island", tag:"Skyline", img:"https://images.unsplash.com/photo-1536599424071-0b215a388ba7?w=400&q=80", days:"2N/3D", price:"₹58,000", types:["honeymoon"] },
+      { name:"Kowloon", tag:"Shopping", img:"https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=80", days:"2N/3D", price:"₹52,000", types:["group"] },
+      { name:"Victoria Peak", tag:"Views", img:"https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?w=400&q=80", days:"1N", price:"₹45,000", types:["group"] },
+    ]},
+  'China': { city:"Beijing", code:"PEK", flag:"🇨🇳", lng:116.4, lat:39.9, zoom:5, days:"3N/4D", price:"₹75,000", tag:"Popular", color:"#e17055", img:"https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=500&q=85",
+    destinations:[
+      { name:"Beijing", tag:"Capital", img:"https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=400&q=80", days:"3N/4D", price:"₹75,000", types:["group"] },
+      { name:"Shanghai", tag:"Skyline", img:"https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?w=400&q=80", days:"3N/4D", price:"₹70,000", types:["group"] },
+      { name:"Xi'an", tag:"Ancient", img:"https://images.unsplash.com/photo-1586523526719-01e2a64de3af?w=400&q=80", days:"2N/3D", price:"₹65,000", types:["group"] },
+      { name:"Guilin", tag:"Scenic", img:"https://images.unsplash.com/photo-1503066211613-c17ebc9daef0?w=400&q=80", days:"2N/3D", price:"₹60,000", types:["group"] },
+    ]},
+  'Maldives': { city:"Malé", code:"MLE", flag:"🇲🇻", lng:73.51, lat:4.18, zoom:8, days:"1N", price:"₹95,000", tag:"Popular", color:"#00cec9", img:"https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=500&q=85",
+    destinations:[
+      { name:"Malé", tag:"Capital", img:"https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=400&q=80", days:"1N", price:"₹95,000", types:["group"] },
+      { name:"North Malé Atoll", tag:"Resorts", img:"https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=400&q=80", days:"4N/5D", price:"₹1,20,000", types:["honeymoon"] },
+      { name:"Baa Atoll", tag:"UNESCO", img:"https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400&q=80", days:"3N/4D", price:"₹1,10,000", types:["group"] },
+      { name:"Ari Atoll", tag:"Diving", img:"https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&q=80", days:"3N/4D", price:"₹1,05,000", types:["group"] },
+    ]},
+  'Jordan': { city:"Amman", code:"AMM", flag:"🇯🇴", lng:35.93, lat:31.96, zoom:7, days:"2N/3D", price:"₹52,000", tag:"Popular", color:"#fd79a8", img:"https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500&q=85",
+    destinations:[
+      { name:"Amman", tag:"Capital", img:"https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&q=80", days:"2N/3D", price:"₹52,000", types:["group"] },
+      { name:"Petra", tag:"Wonder", img:"https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=400&q=80", days:"2N/3D", price:"₹60,000", types:["group"] },
+      { name:"Wadi Rum", tag:"Desert", img:"https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400&q=80", days:"1N/2D", price:"₹45,000", types:["group"] },
+      { name:"Dead Sea", tag:"Natural", img:"https://images.unsplash.com/photo-1563911302283-d2bc129e7570?w=400&q=80", days:"1N/2D", price:"₹40,000", types:["group"] },
+    ]},
+  'Morocco': { city:"Casablanca", code:"CMN", flag:"🇲🇦", lng:-7.59, lat:33.57, zoom:6, days:"2N/3D", price:"₹55,000", tag:"Popular", color:"#fd79a8", img:"https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=500&q=85",
+    destinations:[
+      { name:"Casablanca", tag:"Coastal", img:"https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=400&q=80", days:"2N/3D", price:"₹55,000", types:["group"] },
+      { name:"Marrakech", tag:"Souk", img:"https://images.unsplash.com/photo-1519659528534-7fd733a832a0?w=400&q=80", days:"3N/4D", price:"₹52,000", types:["group"] },
+      { name:"Fes", tag:"Medina", img:"https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80", days:"2N/3D", price:"₹48,000", types:["group"] },
+      { name:"Sahara Desert", tag:"Dunes", img:"https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400&q=80", days:"2N/3D", price:"₹50,000", types:["group"] },
+    ]},
+  'Kenya': { city:"Nairobi", code:"NBO", flag:"🇰🇪", lng:36.82, lat:-1.29, zoom:6, days:"2N/3D", price:"₹75,000", tag:"Popular", color:"#00b894", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=500&q=85",
+    destinations:[
+      { name:"Nairobi", tag:"Capital", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=400&q=80", days:"2N/3D", price:"₹75,000", types:["group"] },
+      { name:"Maasai Mara", tag:"Safari", img:"https://images.unsplash.com/photo-1516426122078-c23e76319801?w=400&q=80", days:"3N/4D", price:"₹90,000", types:["family"] },
+      { name:"Amboseli", tag:"Elephants", img:"https://images.unsplash.com/photo-1549366021-9f761d450615?w=400&q=80", days:"2N/3D", price:"₹80,000", types:["group"] },
+      { name:"Diani Beach", tag:"Coastal", img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80", days:"3N/4D", price:"₹70,000", types:["honeymoon"] },
+    ]},
+  'South Africa': { city:"Johannesburg", code:"JNB", flag:"🇿🇦", lng:28.04, lat:-26.2, zoom:6, days:"2N/3D", price:"₹1,10,000", tag:"Popular", color:"#e17055", img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=500&q=85",
+    destinations:[
+      { name:"Johannesburg", tag:"City of Gold", img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=80", days:"2N/3D", price:"₹1,10,000", types:["group"] },
+      { name:"Cape Town", tag:"Iconic", img:"https://images.unsplash.com/photo-1562440499-64c9a111f713?w=400&q=80", days:"4N/5D", price:"₹1,20,000", types:["group"] },
+      { name:"Kruger Park", tag:"Safari", img:"https://images.unsplash.com/photo-1516426122078-c23e76319801?w=400&q=80", days:"3N/4D", price:"₹1,00,000", types:["family"] },
+      { name:"Garden Route", tag:"Scenic", img:"https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&q=80", days:"3N/4D", price:"₹95,000", types:["group"] },
+    ]},
+  'Canada': { city:"Toronto", code:"YYZ", flag:"🇨🇦", lng:-79.38, lat:43.65, zoom:5, days:"3N/4D", price:"₹1,60,000", tag:"Popular", color:"#ff6b6b", img:"https://images.unsplash.com/photo-1517090504586-fde19ea6066f?w=500&q=85",
+    destinations:[
+      { name:"Toronto", tag:"Multicultural", img:"https://images.unsplash.com/photo-1517090504586-fde19ea6066f?w=400&q=80", days:"3N/4D", price:"₹1,60,000", types:["group"] },
+      { name:"Vancouver", tag:"Scenic", img:"https://images.unsplash.com/photo-1559494007-9f5847c49d94?w=400&q=80", days:"3N/4D", price:"₹1,55,000", types:["group"] },
+      { name:"Niagara Falls", tag:"Wonder", img:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80", days:"1N/2D", price:"₹1,30,000", types:["group"] },
+      { name:"Banff", tag:"National Park", img:"https://images.unsplash.com/photo-1440778303588-435521a205bc?w=400&q=80", days:"3N/4D", price:"₹1,50,000", types:["group"] },
+      { name:"Montreal", tag:"Bilingual", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", days:"2N/3D", price:"₹1,40,000", types:["group"] },
+    ]},
+  'New Zealand': { city:"Auckland", code:"AKL", flag:"🇳🇿", lng:174.77, lat:-36.86, zoom:6, days:"3N/4D", price:"₹1,55,000", tag:"Popular", color:"#00b894", img:"https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=500&q=85",
+    destinations:[
+      { name:"Auckland", tag:"City", img:"https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=400&q=80", days:"3N/4D", price:"₹1,55,000", types:["group"] },
+      { name:"Queenstown", tag:"Adventure", img:"https://images.unsplash.com/photo-1589196728289-7bf17a4de289?w=400&q=80", days:"3N/4D", price:"₹1,50,000", types:["family"] },
+      { name:"Rotorua", tag:"Geothermal", img:"https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=400&q=80", days:"2N/3D", price:"₹1,30,000", types:["group"] },
+      { name:"Fiordland", tag:"Scenic", img:"https://images.unsplash.com/photo-1438786657495-640937046d3c?w=400&q=80", days:"2N/3D", price:"₹1,40,000", types:["group"] },
+      { name:"Wellington", tag:"Capital", img:"https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=400&q=80", days:"2N/3D", price:"₹1,25,000", types:["group"] },
+    ]},
+  'Russia': { city:"Moscow", code:"SVO", flag:"🇷🇺", lng:37.62, lat:55.75, zoom:5, days:"4N/5D", price:"₹90,000", tag:"Popular", color:"#a29bfe", img:"https://images.unsplash.com/photo-1513326738677-b964603b136d?w=500&q=85",
+    destinations:[
+      { name:"Moscow", tag:"Capital", img:"https://images.unsplash.com/photo-1513326738677-b964603b136d?w=400&q=80", days:"4N/5D", price:"₹90,000", types:["group"] },
+      { name:"St. Petersburg", tag:"Cultural Hub", img:"https://images.unsplash.com/photo-1556610961-2fedf3384c79?w=400&q=80", days:"3N/4D", price:"₹80,000", types:["group"] },
+      { name:"Golden Ring", tag:"Historic", img:"https://images.unsplash.com/photo-1601883386099-4fab3813b52d?w=400&q=80", days:"2N/3D", price:"₹70,000", types:["group"] },
+    ]},
+  'Macau': { city:"Macau", code:"MFM", flag:"🇲🇴", lng:113.55, lat:22.2, zoom:9, days:"2N/3D", price:"₹55,000", tag:"Popular", color:"#fdcb6e", img:"https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=500&q=85",
+    destinations:[
+      { name:"Macau Peninsula", tag:"Historic", img:"https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=80", days:"2N/3D", price:"₹55,000", types:["group"] },
+      { name:"Cotai Strip", tag:"Entertainment", img:"https://images.unsplash.com/photo-1536599424071-0b215a388ba7?w=400&q=80", days:"1N/2D", price:"₹65,000", types:["group"] },
+    ]},
+  'Azerbaijan': { city:"Baku", code:"GYD", flag:"🇦🇿", lng:49.87, lat:40.41, zoom:7, days:"3N/4D", price:"₹40,000", tag:"Popular", color:"#00b894", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=500&q=85",
+    destinations:[
+      { name:"Baku", tag:"Flame Towers", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=400&q=80", days:"3N/4D", price:"₹40,000", types:["group"] },
+      { name:"Sheki", tag:"Silk Road", img:"https://images.unsplash.com/photo-1568430462989-44163eb1752f?w=400&q=80", days:"1N/2D", price:"₹35,000", types:["group"] },
+      { name:"Gobustan", tag:"Mud Volcanoes", img:"https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400&q=80", days:"1N/2D", price:"₹32,000", types:["group"] },
+    ]},
+  'Finland': { city:"Helsinki", code:"HEL", flag:"🇫🇮", lng:24.94, lat:60.17, zoom:6, days:"3N/4D", price:"₹1,10,000", tag:"Popular", color:"#74b9ff", img:"https://images.unsplash.com/photo-1509233725247-49e657c54213?w=500&q=85",
+    destinations:[
+      { name:"Helsinki", tag:"Capital", img:"https://images.unsplash.com/photo-1509233725247-49e657c54213?w=400&q=80", days:"3N/4D", price:"₹1,10,000", types:["group"] },
+      { name:"Rovaniemi", tag:"Santa Claus", img:"https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80", days:"3N/4D", price:"₹1,30,000", types:["group"] },
+      { name:"Lapland", tag:"Aurora", img:"https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80", days:"4N/5D", price:"₹1,40,000", types:["group"] },
+      { name:"Turku", tag:"Coastal", img:"https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=400&q=80", days:"2N/3D", price:"₹95,000", types:["group"] },
+    ]},
+  'Hungary': { city:"Budapest", code:"BUD", flag:"🇭🇺", lng:19.04, lat:47.5, zoom:6, days:"3N/4D", price:"₹78,000", tag:"Popular", color:"#fd79a8", img:"https://images.unsplash.com/photo-1541343672885-9be56236302a?w=500&q=85",
+    destinations:[
+      { name:"Budapest", tag:"Pearl of Danube", img:"https://images.unsplash.com/photo-1541343672885-9be56236302a?w=400&q=80", days:"3N/4D", price:"₹78,000", types:["group"] },
+      { name:"Debrecen", tag:"Cultural", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", days:"1N/2D", price:"₹65,000", types:["group"] },
+      { name:"Eger", tag:"Historic", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=400&q=80", days:"1N/2D", price:"₹62,000", types:["group"] },
+    ]},
+  'Romania': { city:"Bucharest", code:"OTP", flag:"🇷🇴", lng:26.1, lat:44.44, zoom:6, days:"3N/4D", price:"₹72,000", tag:"Popular", color:"#e17055", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=85",
+    destinations:[
+      { name:"Bucharest", tag:"Capital", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", days:"3N/4D", price:"₹72,000", types:["group"] },
+      { name:"Transylvania", tag:"Dracula", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=400&q=80", days:"2N/3D", price:"₹68,000", types:["group"] },
+      { name:"Sinaia", tag:"Mountain", img:"https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80", days:"2N/3D", price:"₹62,000", types:["group"] },
+    ]},
+  'Ireland': { city:"Dublin", code:"DUB", flag:"🇮🇪", lng:-6.26, lat:53.33, zoom:6, days:"3N/4D", price:"₹1,05,000", tag:"Popular", color:"#00b894", img:"https://images.unsplash.com/photo-1548438294-1ad5d5f4f063?w=500&q=85",
+    destinations:[
+      { name:"Dublin", tag:"Capital", img:"https://images.unsplash.com/photo-1548438294-1ad5d5f4f063?w=400&q=80", days:"3N/4D", price:"₹1,05,000", types:["group"] },
+      { name:"Galway", tag:"Wild Atlantic", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=400&q=80", days:"2N/3D", price:"₹92,000", types:["group"] },
+      { name:"Cliffs of Moher", tag:"Iconic", img:"https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&q=80", days:"1N/2D", price:"₹88,000", types:["group"] },
+      { name:"Ring of Kerry", tag:"Scenic", img:"https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=400&q=80", days:"2N/3D", price:"₹90,000", types:["group"] },
+    ]},
+  'Luxembourg': { city:"Luxembourg City", code:"LUX", flag:"🇱🇺", lng:6.13, lat:49.61, zoom:7, days:"2N/3D", price:"₹88,000", tag:"Popular", color:"#fdcb6e", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=85",
+    destinations:[
+      { name:"Luxembourg City", tag:"Capital", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", days:"2N/3D", price:"₹88,000", types:["group"] },
+      { name:"Vianden", tag:"Castle", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=400&q=80", days:"1N/2D", price:"₹75,000", types:["group"] },
+      { name:"Echternach", tag:"Nature", img:"https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&q=80", days:"1N/2D", price:"₹70,000", types:["family"] },
+    ]},
+  'Slovakia': { city:"Bratislava", code:"BTS", flag:"🇸🇰", lng:17.11, lat:48.15, zoom:7, days:"2N/3D", price:"₹70,000", tag:"Popular", color:"#b2bec3", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=500&q=85",
+    destinations:[
+      { name:"Bratislava", tag:"Capital", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=400&q=80", days:"2N/3D", price:"₹70,000", types:["group"] },
+      { name:"High Tatras", tag:"Mountains", img:"https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80", days:"2N/3D", price:"₹65,000", types:["group"] },
+      { name:"Košice", tag:"Gothic", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", days:"1N/2D", price:"₹58,000", types:["group"] },
+    ]},
+  'Slovenia': { city:"Ljubljana", code:"LJU", flag:"🇸🇮", lng:14.51, lat:46.05, zoom:8, days:"3N/4D", price:"₹72,000", tag:"Popular", color:"#00b894", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=85",
+    destinations:[
+      { name:"Ljubljana", tag:"Capital", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", days:"3N/4D", price:"₹72,000", types:["group"] },
+      { name:"Lake Bled", tag:"Scenic", img:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80", days:"1N/2D", price:"₹75,000", types:["cruise","group"] },
+    ]},
+  'Colombia': { city:"Bogotá", code:"BOG", flag:"🇨🇴", lng:-74.08, lat:4.71, zoom:6, days:"3N/4D", price:"₹1,55,000", tag:"Popular", color:"#e17055", img:"https://images.unsplash.com/photo-1536599424071-0b215a388ba7?w=500&q=85",
+    destinations:[
+      { name:"Bogotá", tag:"Capital", img:"https://images.unsplash.com/photo-1536599424071-0b215a388ba7?w=400&q=80", days:"3N/4D", price:"₹1,55,000", types:["group"] },
+      { name:"Cartagena", tag:"Colonial", img:"https://images.unsplash.com/photo-1568430462989-44163eb1752f?w=400&q=80", days:"3N/4D", price:"₹1,50,000", types:["group"] },
+      { name:"Medellín", tag:"Innovation", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", days:"3N/4D", price:"₹1,45,000", types:["group"] },
+    ]},
+  'Cuba': { city:"Havana", code:"HAV", flag:"🇨🇺", lng:-82.38, lat:23.13, zoom:7, days:"4N/5D", price:"₹1,45,000", tag:"Popular", color:"#fd79a8", img:"https://images.unsplash.com/photo-1536599424071-0b215a388ba7?w=500&q=85",
+    destinations:[
+      { name:"Havana", tag:"Classic", img:"https://images.unsplash.com/photo-1536599424071-0b215a388ba7?w=400&q=80", days:"4N/5D", price:"₹1,45,000", types:["group"] },
+      { name:"Varadero", tag:"Beach", img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80", days:"3N/4D", price:"₹1,35,000", types:["honeymoon"] },
+      { name:"Trinidad", tag:"Colonial", img:"https://images.unsplash.com/photo-1568430462989-44163eb1752f?w=400&q=80", days:"2N/3D", price:"₹1,25,000", types:["group"] },
+    ]},
+  'Bahamas': { city:"Nassau", code:"NAS", flag:"🇧🇸", lng:-77.35, lat:25.04, zoom:8, days:"3N/4D", price:"₹1,40,000", tag:"Popular", color:"#00cec9", img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=85",
+    destinations:[
+      { name:"Nassau", tag:"Capital", img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80", days:"3N/4D", price:"₹1,40,000", types:["group"] },
+      { name:"Exuma", tag:"Pigs Beach", img:"https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400&q=80", days:"2N/3D", price:"₹1,55,000", types:["honeymoon"] },
+    ]},
+  'Vatican City': { city:"Vatican City", code:"FCO", flag:"🇻🇦", lng:12.45, lat:41.9, zoom:13, days:"1N/2D", price:"₹80,000", tag:"Popular", color:"#fdcb6e", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=85",
+    destinations:[
+      { name:"St. Peter's Basilica", tag:"Landmark", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", days:"1N/2D", price:"₹80,000", types:["group"] },
+      { name:"Vatican Museums", tag:"Art", img:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80", days:"1N/2D", price:"₹82,000", types:["group"] },
+    ]},
+  'Cameroon': { city:"Yaoundé", code:"NSI", flag:"🇨🇲", lng:11.52, lat:3.87, zoom:7, days:"3N/4D", price:"₹72,000", tag:"Popular", color:"#fdcb6e", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=500&q=85",
+    destinations:[
+      { name:"Yaoundé", tag:"Capital", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=400&q=80", days:"3N/4D", price:"₹72,000", types:["group"] },
+      { name:"Douala", tag:"Economic Hub", img:"https://images.unsplash.com/photo-1503614472-8c93d56e92ce?w=400&q=80", days:"2N/3D", price:"₹75,000", types:["custom","group"] },
+      { name:"Mount Cameroon", tag:"Volcano", img:"https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&q=80", days:"2N/3D", price:"₹80,000", types:["group"] },
+    ]}
 };
 
 // Major world cities for idle city dots — 60 countries
 const WORLD_CITIES = [
-  { name:'Tokyo',         flag:'🇯🇵', lng:139.69, lat:35.68,   key:'Japan' },
-  { name:'Dubai',         flag:'🇦🇪', lng:55.27,  lat:25.20,   key:'UAE' },
-  { name:'London',        flag:'🇬🇧', lng:-0.13,  lat:51.51,   key:'United Kingdom' },
-  { name:'New York',      flag:'🇺🇸', lng:-74.01, lat:40.71,   key:'United States' },
-  { name:'Sydney',        flag:'🇦🇺', lng:151.21, lat:-33.87,  key:'Australia' },
-  { name:'Singapore',     flag:'🇸🇬', lng:103.82, lat:1.35,    key:'Singapore' },
-  { name:'Paris',         flag:'🇫🇷', lng:2.35,   lat:48.86,   key:'France' },
-  { name:'Bangkok',       flag:'🇹🇭', lng:100.50, lat:13.76,   key:'Thailand' },
-  { name:'Seoul',         flag:'🇰🇷', lng:126.98, lat:37.56,   key:'South Korea' },
-  { name:'Rome',          flag:'🇮🇹', lng:12.50,  lat:41.90,   key:'Italy' },
-  { name:'Berlin',        flag:'🇩🇪', lng:13.40,  lat:52.52,   key:'Germany' },
-  { name:'Auckland',      flag:'🇳🇿', lng:174.77, lat:-36.86,  key:'New Zealand' },
-  { name:'Zurich',        flag:'🇨🇭', lng:8.55,   lat:47.37,   key:'Switzerland' },
-  { name:'Athens',        flag:'🇬🇷', lng:23.73,  lat:37.98,   key:'Greece' },
-  { name:'Moscow',        flag:'🇷🇺', lng:37.62,  lat:55.75,   key:null },
-  { name:'Beijing',       flag:'🇨🇳', lng:116.40, lat:39.90,   key:null },
-  { name:'Mumbai',        flag:'🇮🇳', lng:72.87,  lat:19.07,   key:null },
-  { name:'Cairo',         flag:'🇪🇬', lng:31.24,  lat:30.04,   key:null },
-  { name:'Lagos',         flag:'🇳🇬', lng:3.38,   lat:6.45,    key:null },
-  { name:'São Paulo',     flag:'🇧🇷', lng:-46.63, lat:-23.55,  key:null },
-  { name:'Mexico City',   flag:'🇲🇽', lng:-99.13, lat:19.43,   key:null },
-  { name:'Toronto',       flag:'🇨🇦', lng:-79.38, lat:43.65,   key:null },
-  { name:'Buenos Aires',  flag:'🇦🇷', lng:-58.38, lat:-34.60,  key:null },
-  { name:'Istanbul',      flag:'🇹🇷', lng:28.97,  lat:41.01,   key:null },
-  { name:'Riyadh',        flag:'🇸🇦', lng:46.68,  lat:24.68,   key:null },
-  { name:'Kuala Lumpur',  flag:'🇲🇾', lng:101.69, lat:3.14,    key:null },
-  { name:'Jakarta',       flag:'🇮🇩', lng:106.82, lat:-6.21,   key:null },
-  { name:'Manila',        flag:'🇵🇭', lng:120.98, lat:14.60,   key:null },
-  { name:'Taipei',        flag:'🇹🇼', lng:121.56, lat:25.04,   key:null },
-  { name:'Hong Kong',     flag:'🇭🇰', lng:114.17, lat:22.32,   key:null },
-  { name:'Amsterdam',     flag:'🇳🇱', lng:4.90,   lat:52.37,   key:null },
-  { name:'Madrid',        flag:'🇪🇸', lng:-3.70,  lat:40.42,   key:null },
-  { name:'Lisbon',        flag:'🇵🇹', lng:-9.14,  lat:38.72,   key:null },
-  { name:'Vienna',        flag:'🇦🇹', lng:16.37,  lat:48.21,   key:null },
-  { name:'Prague',        flag:'🇨🇿', lng:14.42,  lat:50.08,   key:null },
-  { name:'Warsaw',        flag:'🇵🇱', lng:21.01,  lat:52.23,   key:null },
-  { name:'Stockholm',     flag:'🇸🇪', lng:18.07,  lat:59.33,   key:null },
-  { name:'Oslo',          flag:'🇳🇴', lng:10.75,  lat:59.91,   key:null },
-  { name:'Copenhagen',    flag:'🇩🇰', lng:12.57,  lat:55.68,   key:null },
-  { name:'Brussels',      flag:'🇧🇪', lng:4.35,   lat:50.85,   key:null },
-  { name:'Nairobi',       flag:'🇰🇪', lng:36.82,  lat:-1.29,   key:null },
-  { name:'Johannesburg',  flag:'🇿🇦', lng:28.04,  lat:-26.20,  key:null },
-  { name:'Casablanca',    flag:'🇲🇦', lng:-7.59,  lat:33.57,   key:null },
-  { name:'Accra',         flag:'🇬🇭', lng:-0.19,  lat:5.56,    key:null },
-  { name:'Karachi',       flag:'🇵🇰', lng:67.01,  lat:24.86,   key:null },
-  { name:'Dhaka',         flag:'🇧🇩', lng:90.40,  lat:23.72,   key:null },
-  { name:'Colombo',       flag:'🇱🇰', lng:79.86,  lat:6.93,    key:null },
-  { name:'Kathmandu',     flag:'🇳🇵', lng:85.31,  lat:27.71,   key:null },
-  { name:'Doha',          flag:'🇶🇦', lng:51.53,  lat:25.29,   key:null },
-  { name:'Muscat',        flag:'🇴🇲', lng:58.59,  lat:23.59,   key:null },
-  { name:'Amman',         flag:'🇯🇴', lng:35.93,  lat:31.96,   key:null },
-  { name:'Tehran',        flag:'🇮🇷', lng:51.42,  lat:35.69,   key:null },
-  { name:'Baghdad',       flag:'🇮🇶', lng:44.36,  lat:33.34,   key:null },
-  { name:'Tashkent',      flag:'🇺🇿', lng:69.24,  lat:41.30,   key:null },
-  { name:'Almaty',        flag:'🇰🇿', lng:76.95,  lat:43.25,   key:null },
-  { name:'Ulaanbaatar',   flag:'🇲🇳', lng:106.91, lat:47.89,   key:null },
-  { name:'Lima',          flag:'🇵🇪', lng:-77.04, lat:-12.05,  key:null },
-  { name:'Bogotá',        flag:'🇨🇴', lng:-74.08, lat:4.71,    key:null },
-  { name:'Santiago',      flag:'🇨🇱', lng:-70.65, lat:-33.46,  key:null },
-  { name:'Havana',        flag:'🇨🇺', lng:-82.38, lat:23.13,   key:null },
+  { name:"Tokyo", flag:"🇯🇵", lng:139.69, lat:35.68, key:"Japan" },
+  { name:"Paris", flag:"🇫🇷", lng:2.35, lat:48.86, key:"France" },
+  { name:"Dubai", flag:"🇦🇪", lng:55.27, lat:25.2, key:"UAE" },
+  { name:"New York", flag:"🇺🇸", lng:-74.01, lat:40.71, key:"United States" },
+  { name:"London", flag:"🇬🇧", lng:-0.13, lat:51.51, key:"United Kingdom" },
+  { name:"Rome", flag:"🇮🇹", lng:12.5, lat:41.9, key:"Italy" },
+  { name:"Madrid", flag:"🇪🇸", lng:-3.7, lat:40.42, key:"Spain" },
+  { name:"Berlin", flag:"🇩🇪", lng:13.4, lat:52.52, key:"Germany" },
+  { name:"Lisbon", flag:"🇵🇹", lng:-9.14, lat:38.72, key:"Portugal" },
+  { name:"Athens", flag:"🇬🇷", lng:23.73, lat:37.98, key:"Greece" },
+  { name:"Vienna", flag:"🇦🇹", lng:16.37, lat:48.21, key:"Austria" },
+  { name:"Amsterdam", flag:"🇳🇱", lng:4.9, lat:52.37, key:"Netherlands" },
+  { name:"Oslo", flag:"🇳🇴", lng:10.75, lat:59.91, key:"Norway" },
+  { name:"Copenhagen", flag:"🇩🇰", lng:12.57, lat:55.68, key:"Denmark" },
+  { name:"Warsaw", flag:"🇵🇱", lng:21.01, lat:52.23, key:"Poland" },
+  { name:"Hong Kong", flag:"🇭🇰", lng:114.17, lat:22.32, key:"Hong Kong" },
+  { name:"Beijing", flag:"🇨🇳", lng:116.4, lat:39.9, key:"China" },
+  { name:"Malé", flag:"🇲🇻", lng:73.51, lat:4.18, key:"Maldives" },
+  { name:"Amman", flag:"🇯🇴", lng:35.93, lat:31.96, key:"Jordan" },
+  { name:"Casablanca", flag:"🇲🇦", lng:-7.59, lat:33.57, key:"Morocco" },
+  { name:"Nairobi", flag:"🇰🇪", lng:36.82, lat:-1.29, key:"Kenya" },
+  { name:"Johannesburg", flag:"🇿🇦", lng:28.04, lat:-26.2, key:"South Africa" },
+  { name:"Toronto", flag:"🇨🇦", lng:-79.38, lat:43.65, key:"Canada" },
+  { name:"Auckland", flag:"🇳🇿", lng:174.77, lat:-36.86, key:"New Zealand" },
+  { name:"Moscow", flag:"🇷🇺", lng:37.62, lat:55.75, key:"Russia" },
+  { name:"Macau", flag:"🇲🇴", lng:113.55, lat:22.2, key:"Macau" },
+  { name:"Baku", flag:"🇦🇿", lng:49.87, lat:40.41, key:"Azerbaijan" },
+  { name:"Helsinki", flag:"🇫🇮", lng:24.94, lat:60.17, key:"Finland" },
+  { name:"Budapest", flag:"🇭🇺", lng:19.04, lat:47.5, key:"Hungary" },
+  { name:"Bucharest", flag:"🇷🇴", lng:26.1, lat:44.44, key:"Romania" },
+  { name:"Dublin", flag:"🇮🇪", lng:-6.26, lat:53.33, key:"Ireland" },
+  { name:"Luxembourg City", flag:"🇱🇺", lng:6.13, lat:49.61, key:"Luxembourg" },
+  { name:"Bratislava", flag:"🇸🇰", lng:17.11, lat:48.15, key:"Slovakia" },
+  { name:"Ljubljana", flag:"🇸🇮", lng:14.51, lat:46.05, key:"Slovenia" },
+  { name:"Bogotá", flag:"🇨🇴", lng:-74.08, lat:4.71, key:"Colombia" },
+  { name:"Havana", flag:"🇨🇺", lng:-82.38, lat:23.13, key:"Cuba" },
+  { name:"Nassau", flag:"🇧🇸", lng:-77.35, lat:25.04, key:"Bahamas" },
+  { name:"Vatican City", flag:"🇻🇦", lng:12.45, lat:41.9, key:"Vatican City" },
+  { name:"Yaoundé", flag:"🇨🇲", lng:11.52, lat:3.87, key:"Cameroon" }
 ];
 
 // ── EXPOSE PKG_DATA GLOBALLY for tour detail page ─────────────────────────
@@ -3332,7 +3456,7 @@ const DEST_TOUR_TYPES = {
 function renderPkgCards(pkg, filter) {
   const destinations = (pkg.destinations || []).filter(d => {
     if (filter === 'all') return true;
-    const types = DEST_TOUR_TYPES[d.name] || ['custom'];
+    const types = d.types || DEST_TOUR_TYPES[d.name] || ['custom'];
     return types.includes(filter);
   });
   const container = document.getElementById('pkgCards');
@@ -3342,7 +3466,7 @@ function renderPkgCards(pkg, filter) {
   }
   const countryKey = Object.keys(PKG_DATA).find(k=>PKG_DATA[k]===pkg) || '';
   container.innerHTML = destinations.map((d, idx) => {
-    return `<div class="pkg-card2" style="animation:pkgCityPop 0.35s ease-out ${idx*60}ms both;" onclick="event.stopPropagation();openTourDetail('${countryKey}','${d.name.replace(/'/g,"\\'")}')">
+    return `<div class="pkg-card2" style="animation:pkgCityPop 0.35s ease-out ${idx*60}ms both;" onclick="event.stopPropagation();${d.link ? `window.location.href='${d.link.replace(/'/g,"\\'")}'` : `window.location.href='TourDetails.html?country='+encodeURIComponent('${countryKey}')+'&dest='+encodeURIComponent('${d.name}')` }">
       <div class="pkg-card2-tag">${d.tag}</div>
       <div class="pkg-card2-img-wrap" style="height:120px;">
         <img class="pkg-card2-img" src="${d.img}" alt="${d.name}" style="height:120px;" onerror="this.parentNode.style.background='linear-gradient(135deg,#e8edf2,#d0d8e0)'">
@@ -3350,14 +3474,14 @@ function renderPkgCards(pkg, filter) {
         <div class="pkg-card2-explore">View Details →</div>
       </div>
       <div class="pkg-card2-body">
-        <div class="pkg-card2-dest">${pkg.flag} ${d.name}</div>
-        <div class="pkg-card2-days">${d.days} · ${pkg.flight} flight</div>
+        <div class="pkg-card2-dest" style="display:flex;align-items:center;gap:6px;">${(()=>{const chars=[...pkg.flag];if(chars.length<2)return'';const iso2=chars.map(c=>String.fromCharCode(c.codePointAt(0)-0x1F1E6+65)).join('').toLowerCase();return`<img src="https://flagcdn.com/20x15/${iso2}.png" width="20" height="15" style="border-radius:2px;border:1px solid rgba(0,0,0,0.1);object-fit:cover;flex-shrink:0;vertical-align:middle" onerror="this.style.display='none'">`;})()}${d.name}</div>
+        <div class="pkg-card2-days">${d.days}</div>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:4px">
           <div>
             <div style="font-size:13px;font-weight:700;color:#C8102E;font-family:Outfit,sans-serif;line-height:1">${d.price}</div>
             <div style="font-size:9px;color:#aaa;font-family:Outfit,sans-serif">per person</div>
           </div>
-          <button class="pkg-card2-book" onclick="event.stopPropagation();openTourDetail('${countryKey}','${d.name.replace(/'/g,"\\'")}')">Book Now</button>
+          <button class="pkg-card2-book" onclick="event.stopPropagation();${d.link ? `window.location.href='${d.link.replace(/'/g,"\\'")}'` : `window.location.href='TourDetails.html?country='+encodeURIComponent('${countryKey}')+'&dest='+encodeURIComponent('${d.name}')` }">Book Now</button>
         </div>
       </div>
     </div>`;
@@ -3381,7 +3505,11 @@ function showPkgPanel(pkg) {
   _currentPkg = pkg;
   activeTourFilter = 'all';
 
-  document.getElementById('pkgPanelFlag').textContent = pkg.flag;
+  const _flagChars = [...(pkg.flag || '')];
+  const _flagIso2 = _flagChars.length >= 2
+    ? _flagChars.map(c => String.fromCharCode(c.codePointAt(0) - 0x1F1E6 + 65)).join('').toLowerCase()
+    : '';
+  document.getElementById('pkgPanelFlag').src = `https://flagcdn.com/80x60/${_flagIso2}.png`;
   document.getElementById('pkgPanelTitle').textContent = `Explore ${Object.keys(PKG_DATA).find(k=>PKG_DATA[k]===pkg) || pkg.city}`;
   document.getElementById('pkgPanelSub').textContent = '';
 
@@ -3426,7 +3554,22 @@ window.pkgQuick = function(key) {
 
   // Only update search label if dropdown hasn't already set it
   const _sv = document.getElementById('pkgSearch');
-  if (_sv && !_sv.value.includes(pkg.flag)) _sv.value = pkg.flag + '  ' + (Object.keys(PKG_DATA).find(k=>PKG_DATA[k]===pkg) || pkg.city);
+  if (_sv && !_sv.value.includes(pkg.flag)) {
+    _sv.value = pkg.flag + '  ' + (Object.keys(PKG_DATA).find(k=>PKG_DATA[k]===pkg) || pkg.city);
+    _sv.style.opacity = '0';
+    // Update flag display
+    const chars = [...(pkg.flag || '')];
+    const iso2 = chars.length >= 2 ? chars.map(c => String.fromCharCode(c.codePointAt(0) - 0x1F1E6 + 65)).join('').toLowerCase() : '';
+    const flagEl = document.getElementById('pkgSelectedFlag');
+    const nameEl = document.getElementById('pkgSelectedName');
+    const dispEl = document.getElementById('pkgSelectedDisplay');
+    const labelEl = document.getElementById('pkgBarLabel');
+    const key = Object.keys(PKG_DATA).find(k=>PKG_DATA[k]===pkg) || pkg.city;
+    if (flagEl) flagEl.src = `https://flagcdn.com/40x30/${iso2}.png`;
+    if (nameEl) nameEl.textContent = key;
+    if (dispEl) dispEl.style.display = 'flex';
+    if (labelEl) labelEl.style.display = 'none';
+  }
 
   if (!mapInited) {
     initMap();
@@ -3455,7 +3598,7 @@ function buildPkgDropdown(filterQ) {
     const p = PKG_DATA[key];
     const text = (key + ' ' + p.city + ' ' + (p.destinations||[]).map(d=>d.name).join(' ')).toLowerCase();
     return text.includes(q);
-  });
+  }).sort((a, b) => a.localeCompare(b));
 
   // Helper: emoji flag → ISO2 code for flagcdn
   function flagToIso2(emoji) {
@@ -3550,6 +3693,24 @@ window.selectPkgCountry = function(key) {
     searchEl.blur();
     window.pkgHandleInput(searchEl); // hide typewriter label
   }
+  // Show flag img + country name in pill (instead of emoji in input)
+  (function() {
+    const chars = [...(p.flag || '')];
+    const iso2 = chars.length >= 2
+      ? chars.map(c => String.fromCharCode(c.codePointAt(0) - 0x1F1E6 + 65)).join('').toLowerCase()
+      : '';
+    const flagEl = document.getElementById('pkgSelectedFlag');
+    const nameEl = document.getElementById('pkgSelectedName');
+    const dispEl = document.getElementById('pkgSelectedDisplay');
+    const labelEl = document.getElementById('pkgBarLabel');
+    const inputEl = document.getElementById('pkgSearch');
+    if (flagEl) flagEl.src = `https://flagcdn.com/40x30/${iso2}.png`;
+    if (nameEl) nameEl.textContent = key;
+    if (dispEl) { dispEl.style.display = 'flex'; }
+    if (labelEl) { labelEl.style.display = 'none'; }
+    // Hide the raw text in the input (keep value for logic but make opacity 0)
+    if (inputEl) { inputEl.style.opacity = '0'; }
+  })();
   // Dismiss keyboard on mobile
   if (document.activeElement) document.activeElement.blur();
   // Highlight active row in open dropdown (if open)
@@ -3582,7 +3743,12 @@ window.closePkgPanel = function() {
   highlightCityDot(null);
   // Clear search bar and restore typewriter animation
   const searchEl = document.getElementById('pkgSearch');
-  if (searchEl) { searchEl.value = ''; window.pkgHandleInput(searchEl); }
+  if (searchEl) { searchEl.value = ''; searchEl.style.opacity = ''; window.pkgHandleInput(searchEl); }
+  // Hide selected flag display, restore label
+  const dispEl = document.getElementById('pkgSelectedDisplay');
+  const labelEl = document.getElementById('pkgBarLabel');
+  if (dispEl) dispEl.style.display = 'none';
+  if (labelEl) labelEl.style.display = '';
   if (map && mapReady) {
     map.flyTo({ center: [INDIA_LNG, INDIA_LAT], zoom: window.innerWidth <= 860 ? 1.8 : 2.8, pitch: 0, bearing: 0, duration: 1000, essential: true });
   }
@@ -4698,7 +4864,7 @@ function populateTourDetail(d) {
 
   // Similar
   document.getElementById('tdSimilar').innerHTML = similars.map(s=>`
-    <div class="td-similar-card" onclick="openTourDetail('${s.country}','${s.name.replace(/'/g,"\\'")}')">
+    <div class="td-similar-card" onclick="window.location.href='TourDetails.html?country='+encodeURIComponent('${s.country}')+'&dest='+encodeURIComponent('${s.name}')">
       <img src="${s.img}" alt="${s.name}" onerror="this.style.background='#e8edf2'">
       <div class="td-similar-card-body">
         <div class="td-similar-card-name">${s.flag} ${s.name}</div>

@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F8F6F3">
+<title>Dubai Luxury Escape – Visavera Tours</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── ROOT TOKENS (same as tours.html) ─── */
+:root {
+  --red:#C8102E; --red-dark:#9B0E24; --red-light:#fdeaed; --red-glow:rgba(200,16,46,0.2);
+  --bg:#F8F6F3; --bg2:#F0EDE8;
+  --black:#111; --text:#1a1a1a; --text-2:#555; --text-3:#999;
+  --border:rgba(0,0,0,0.08); --border-2:rgba(0,0,0,0.13);
+  --shadow-sm:0 1px 4px rgba(0,0,0,0.07);
+  --shadow-lg:0 12px 48px rgba(0,0,0,0.16);
+  --nav-h:62px; --bar-h:76px;
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-l:env(safe-area-inset-left,0px);
+  --safe-r:env(safe-area-inset-right,0px);
+}
+*,::after,::before{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:Outfit,sans-serif;overflow-x:hidden;padding-bottom:calc(var(--bar-h) + var(--safe-b))}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+button{font-family:Outfit,sans-serif;cursor:pointer}
+
+/* ════════════════════════════════════════════
+   NAV — exact copy from tours.html
+   ════════════════════════════════════════════ */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(248,246,243,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--black);display:flex;align-items:center;gap:2px;letter-spacing:-0.5px;cursor:pointer}
+.nav-logo span{color:var(--red)}
+.nav-dot{width:7px;height:7px;background:var(--red);border-radius:50%;margin-left:3px}
+.nav-links{display:flex;align-items:center;gap:2px;list-style:none}
+.nav-links a{color:var(--text-2);text-decoration:none;font-size:13.5px;font-weight:500;padding:6px 13px;border-radius:7px;transition:all .2s;cursor:pointer}
+.nav-links a:hover{color:var(--text);background:var(--bg2)}
+.nav-links a.active{color:var(--red);background:var(--red-light);font-weight:600}
+.nav-cta{background:var(--red)!important;color:#fff!important;padding:8px 20px!important;border-radius:8px!important;font-weight:600!important;box-shadow:0 2px 12px var(--red-glow)}
+.nav-cta:hover{background:var(--red-dark)!important;transform:translateY(-1px)}
+
+/* Visa dropdown (tours.html) */
+.nav-visa-li{position:relative;list-style:none}
+.nav-visa-trigger{color:var(--text-2);text-decoration:none;font-size:13.5px;font-weight:500;padding:6px 13px;border-radius:7px;transition:all .2s;cursor:pointer;display:flex;align-items:center;gap:2px;user-select:none}
+.nav-visa-trigger:hover,.nav-visa-trigger.open{color:var(--text);background:var(--bg2)}
+.nav-visa-trigger.open{color:var(--red);background:var(--red-light);font-weight:600}
+.nav-visa-drop{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(-6px);min-width:230px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 16px 48px rgba(0,0,0,0.14);padding:6px;opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;z-index:700}
+.nav-visa-drop.open{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.nav-visa-drop::before{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-bottom-color:#fff;border-top:none;filter:drop-shadow(0 -2px 2px rgba(0,0,0,0.06))}
+.nav-visa-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:background .16s;text-decoration:none;color:var(--text)}
+.nav-visa-item:hover{background:var(--red-light)}
+.nav-visa-item:hover .nvi-title{color:var(--red)}
+.nvi-icon{font-size:20px;flex-shrink:0;line-height:1;width:28px;text-align:center}
+.nvi-text{display:flex;flex-direction:column;gap:2px}
+.nvi-title{font-size:13.5px;font-weight:600;color:var(--black);transition:color .16s}
+.nvi-sub{font-size:11px;color:var(--text-3)}
+
+/* Hamburger */
+.nav-hamburger{display:none;align-items:center;justify-content:center;flex-direction:column;gap:5px;width:40px;height:40px;padding:8px;border-radius:9px;background:transparent;border:1.5px solid var(--border-2);cursor:pointer;transition:all .2s;flex-shrink:0}
+.nav-hamburger:hover{border-color:var(--red);background:var(--red-light)}
+.nav-hamburger.open{background:var(--red-light);border-color:var(--red)}
+.nav-hamburger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;transition:all .35s cubic-bezier(.77,0,.175,1);transform-origin:center}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* Mobile menu */
+.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;background:rgba(248,246,243,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.12);z-index:600;padding:12px 16px 20px;flex-direction:column;gap:4px;transform:translateY(-12px);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.mobile-menu.open{transform:translateY(0);opacity:1;pointer-events:auto}
+.mobile-menu a{display:block;color:var(--text-2);text-decoration:none;font-size:15px;font-weight:500;padding:12px 16px;border-radius:10px;transition:all .2s;cursor:pointer}
+.mobile-menu a:hover{color:var(--text);background:var(--bg2)}
+.mobile-menu a.active{color:var(--red);background:var(--red-light);font-weight:600}
+.mobile-menu .mob-cta{background:var(--red);color:#fff!important;font-weight:600!important;text-align:center;margin-top:8px;padding:14px 16px;border-radius:10px;box-shadow:0 4px 16px var(--red-glow)}
+
+/* ════════════════════════════════════════════
+   HERO
+   ════════════════════════════════════════════ */
+.hero{position:relative;height:80vh;min-height:480px;max-height:860px;overflow:hidden;margin-top:var(--nav-h)}
+.hero-overlay{position:absolute;inset:0;z-index:2;background:linear-gradient(to bottom,rgba(0,0,0,.32) 0,transparent 28%),linear-gradient(to top,rgba(0,0,0,.88) 0,rgba(0,0,0,.44) 40%,transparent 72%)}
+.hero-video-wrap{position:absolute;inset:-6%;z-index:1;animation:heroZoom 22s ease-in-out infinite alternate;will-change:transform}
+@keyframes heroZoom{from{transform:scale(1)}to{transform:scale(1.08)}}
+.hero-poster{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) brightness(.82)}
+.hero-badge{position:absolute;z-index:3;top:clamp(20px,5vh,44px);left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:8px;font-size:clamp(9px,1.5vw,11px);letter-spacing:1.4px;text-transform:uppercase;font-weight:600;color:rgba(255,255,255,.92);border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);backdrop-filter:blur(14px);padding:6px clamp(14px,3vw,22px);border-radius:30px;white-space:nowrap}
+.hero-badge-dot{width:6px;height:6px;background:#ffb3bf;border-radius:50%;animation:pls 2s ease-in-out infinite}
+@keyframes pls{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.6)}}
+.hero-content{position:absolute;bottom:clamp(44px,8vh,72px);left:0;right:0;z-index:3;text-align:center;padding:0 clamp(16px,5vw,32px)}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(32px,8vw,86px);font-weight:900;line-height:1.03;color:#fff;text-shadow:0 4px 32px rgba(0,0,0,.5)}
+.hero-title em{font-style:italic;color:#ffb3bf}
+.hero-meta{display:flex;align-items:center;justify-content:center;gap:clamp(10px,2vw,20px);margin-top:clamp(12px,2.5vh,18px);flex-wrap:wrap}
+.hero-meta-pill{display:flex;align-items:center;gap:6px;font-size:clamp(12px,2vw,13.5px);font-weight:500;color:rgba(255,255,255,.88)}
+.hero-divider{width:4px;height:4px;background:rgba(255,255,255,.35);border-radius:50%}
+.hero-price-pill{background:var(--red);color:#fff;font-size:clamp(12px,2vw,14px);font-weight:700;padding:7px clamp(14px,2.5vw,20px);border-radius:24px;box-shadow:0 4px 20px var(--red-glow);border:1px solid rgba(255,255,255,.2)}
+.hero-cta{margin-top:clamp(18px,3.5vh,28px)}
+.btn-hero{display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--black);border:none;padding:clamp(11px,2vh,14px) clamp(22px,4vw,32px);border-radius:12px;font-size:clamp(13px,2vw,15px);font-weight:700;box-shadow:0 8px 36px rgba(0,0,0,.28);transition:all .28s cubic-bezier(.22,1,.36,1)}
+.btn-hero:hover{background:var(--red);color:#fff;transform:translateY(-3px);box-shadow:0 14px 40px var(--red-glow)}
+
+/* ════════════════════════════════════════════
+   SHARED LAYOUT
+   ════════════════════════════════════════════ */
+.container{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4.5vw,32px)}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.section-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:1.8px;text-transform:uppercase;font-weight:700;color:var(--red);margin-bottom:12px}
+.section-eyebrow::before,.section-eyebrow::after{content:'';display:block;width:22px;height:1px;background:var(--red);opacity:.4}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(22px,3.5vw,38px);font-weight:900;color:var(--black);line-height:1.15;margin-top:6px}
+.section-title em{font-style:italic;color:var(--red)}
+
+/* ════════════════════════════════════════════
+   OVERVIEW
+   ════════════════════════════════════════════ */
+.overview{padding:clamp(44px,7vh,72px) 0 clamp(32px,6vh,56px);background:var(--bg)}
+.overview-split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,60px);align-items:start}
+.overview-body{font-size:clamp(13.5px,1.6vw,15px);color:var(--text-2);line-height:1.72;margin-top:14px;margin-bottom:18px}
+.overview-highlights{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+.ov-highlight{display:flex;align-items:center;gap:9px;font-size:clamp(11.5px,1.4vw,13px);color:var(--text);font-weight:600;background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 12px;box-shadow:var(--shadow-sm);transition:all .22s}
+.ov-highlight:hover{border-color:rgba(200,16,46,.25);transform:translateY(-2px);box-shadow:0 6px 20px rgba(200,16,46,.08)}
+.ov-cta{display:inline-flex;align-items:center;gap:10px;background:var(--red);color:#fff;padding:clamp(11px,1.8vh,13px) clamp(20px,3vw,28px);border-radius:12px;font-size:clamp(13px,1.6vw,14px);font-weight:700;box-shadow:0 4px 20px var(--red-glow);transition:all .28s cubic-bezier(.22,1,.36,1)}
+.ov-cta:hover{background:var(--red-dark);transform:translateY(-2px);box-shadow:0 10px 32px var(--red-glow)}
+
+/* Carousel */
+.carousel-wrap{position:relative;border-radius:20px;overflow:hidden;box-shadow:var(--shadow-lg);aspect-ratio:4/3;width:100%}
+.carousel-track{display:flex;width:100%;height:100%;will-change:transform}
+.carousel-slide{flex:0 0 100%;width:100%;height:100%;position:relative}
+.carousel-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.carousel-dots{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:5px;z-index:10}
+.c-dot{position:relative;display:block;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.45);transition:width .35s cubic-bezier(.22,1,.36,1),border-radius .35s,background .35s;cursor:pointer;flex-shrink:0}
+.c-dot.active{width:20px;height:6px;border-radius:3px;background:#fff}
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,.18);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.3);color:#fff;width:clamp(32px,5vw,40px);height:clamp(32px,5vw,40px);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:clamp(14px,2vw,18px);transition:all .25s;border:none}
+.carousel-btn:hover{background:rgba(255,255,255,.38)}
+.carousel-btn.prev{left:10px}
+.carousel-btn.next{right:10px}
+
+/* ════════════════════════════════════════════
+   ATTRACTIONS
+   ════════════════════════════════════════════ */
+.attractions-section{padding:clamp(48px,7vh,64px) 0 clamp(52px,8vh,72px);background:var(--bg2)}
+.attractions-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:10px;max-width:860px;margin:0 auto}
+.attr-item{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:clamp(12px,2vw,16px) clamp(14px,2.5vw,20px);box-shadow:var(--shadow-sm);transition:all .25s cubic-bezier(.22,1,.36,1)}
+.attr-item:hover{border-color:rgba(200,16,46,.25);transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,16,46,.09)}
+.attr-item-num{font-size:11px;font-weight:800;color:var(--red);opacity:.6;letter-spacing:1px;flex-shrink:0;min-width:20px}
+.attr-item-name{font-family:'Playfair Display',serif;font-size:clamp(13px,1.8vw,15px);font-weight:700;color:var(--black);transition:color .22s}
+.attr-item:hover .attr-item-name{color:var(--red)}
+
+/* ════════════════════════════════════════════
+   INCLUSIONS / EXCLUSIONS
+   ════════════════════════════════════════════ */
+.inc-exc{padding:clamp(48px,7vh,68px) 0;background:linear-gradient(160deg,var(--bg2) 0,var(--bg) 100%)}
+.inc-exc-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2.5vw,28px);margin-top:40px}
+.exc-panel,.inc-panel{background:#fff;border-radius:20px;padding:clamp(20px,3vw,28px);border:1px solid var(--border);box-shadow:var(--shadow-sm)}
+.panel-header{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.panel-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.panel-icon.green{background:rgba(22,163,74,.1)}
+.panel-icon.orange{background:rgba(200,16,46,.08)}
+.panel-title{font-family:'Playfair Display',serif;font-size:clamp(17px,2.5vw,20px);font-weight:700;color:var(--black)}
+.provides-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.provides-card{position:relative;overflow:hidden;background:rgba(248,246,243,.8);border:1px solid rgba(255,255,255,.9);border-radius:14px;padding:clamp(12px,2vw,16px) clamp(10px,1.8vw,14px);display:flex;align-items:center;gap:10px;transition:all .35s cubic-bezier(.22,1,.36,1);box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.provides-card:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 10px 28px rgba(200,16,46,.1);border-color:rgba(200,16,46,.2)}
+.provides-icon{font-size:clamp(18px,3vw,24px);flex-shrink:0}
+.provides-label{font-size:clamp(11px,1.3vw,12.5px);font-weight:700;color:var(--text);line-height:1.3}
+.provides-sub{font-size:clamp(9px,1.1vw,10.5px);color:var(--text-3);margin-top:2px;font-weight:500}
+.exc-sub-title{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--text-2);letter-spacing:.4px;text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.exc-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.exc-list li{display:flex;align-items:flex-start;gap:10px;font-size:clamp(12px,1.4vw,13px);color:var(--text-2);line-height:1.5;font-weight:500}
+.exc-dot{width:18px;height:18px;min-width:18px;border-radius:50%;background:rgba(200,16,46,.08);display:flex;align-items:center;justify-content:center;color:var(--red);font-size:9px;font-weight:900;margin-top:1px}
+
+/* ════════════════════════════════════════════
+   INQUIRY
+   ════════════════════════════════════════════ */
+.inquiry{padding:clamp(52px,8vh,80px) 0;background:var(--bg)}
+.inquiry-inner{display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(28px,5vw,52px);align-items:start}
+.inquiry-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:1.6px;text-transform:uppercase;font-weight:700;color:var(--red);background:var(--red-light);padding:6px 16px;border-radius:20px;margin-bottom:18px}
+.inquiry-heading{font-family:'Playfair Display',serif;font-size:clamp(22px,3.5vw,40px);font-weight:900;color:var(--black);line-height:1.15;margin-bottom:12px}
+.inquiry-heading em{font-style:italic;color:var(--red)}
+.inquiry-desc{font-size:clamp(13px,1.6vw,14.5px);color:var(--text-2);line-height:1.65;margin-bottom:24px}
+.trust-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.trust-list li{display:flex;align-items:center;gap:10px;font-size:clamp(12.5px,1.5vw,13.5px);font-weight:500;color:var(--text)}
+.trust-check{width:22px;height:22px;min-width:22px;border-radius:50%;background:rgba(22,163,74,.12);display:flex;align-items:center;justify-content:center;font-size:11px;color:#16a34a;border:1px solid rgba(22,163,74,.25)}
+.dest-strip{margin-top:26px;background:linear-gradient(135deg,#1a1a2e 0,#16213e 100%);border-radius:16px;padding:18px clamp(16px,3vw,22px);display:flex;align-items:center;gap:14px;border:1px solid rgba(255,255,255,.06)}
+.dest-flag{font-size:clamp(24px,4vw,30px);flex-shrink:0}
+.dest-info{flex:1;min-width:0}
+.dest-name{font-family:'Playfair Display',serif;font-size:clamp(14px,2vw,16px);font-weight:700;color:#fff;line-height:1.2}
+.dest-sub{font-size:clamp(10px,1.2vw,11.5px);color:rgba(255,255,255,.48);margin-top:2px;font-weight:500}
+.dest-price{text-align:right;flex-shrink:0}
+.dest-price .from{font-size:10px;color:rgba(255,255,255,.42);display:block;margin-bottom:2px}
+.dest-price .amount{font-family:'Playfair Display',serif;font-size:clamp(18px,3vw,22px);font-weight:900;color:#ffb3bf}
+.form-card{background:#fff;border-radius:22px;padding:clamp(22px,3.5vw,36px) clamp(18px,3vw,34px) clamp(20px,3vh,32px);box-shadow:0 8px 56px rgba(0,0,0,.09),0 2px 14px rgba(0,0,0,.05);border:1px solid var(--border);position:relative}
+.form-card::before{content:'';position:absolute;top:0;left:28px;right:28px;height:3px;background:linear-gradient(90deg,var(--red),var(--red-dark));border-radius:0 0 3px 3px}
+.form-card-title{font-family:'Playfair Display',serif;font-size:clamp(18px,2.5vw,21px);font-weight:900;color:var(--black);margin-bottom:4px}
+.form-card-sub{font-size:clamp(11.5px,1.4vw,13px);color:var(--text-3);margin-bottom:20px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:12px;font-weight:600;color:var(--text-2);letter-spacing:.3px}
+.form-input,.form-select{background:var(--bg);border:1.5px solid var(--border-2);border-radius:10px;padding:clamp(10px,1.5vh,11px) 14px;font-size:max(16px,clamp(13px,1.6vw,13.5px));font-family:Outfit,sans-serif;color:var(--text);transition:all .2s;outline:0;width:100%;-webkit-appearance:none;appearance:none}
+.form-input:focus,.form-select:focus{border-color:var(--red);background:#fff;box-shadow:0 0 0 3px var(--red-light)}
+.form-input::placeholder{color:var(--text-3)}
+.form-select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg width='11' height='7' viewBox='0 0 11 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23999' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.form-submit{width:100%;margin-top:10px;background:var(--red);color:#fff;border:none;padding:clamp(12px,2vh,14px);border-radius:12px;font-size:clamp(13.5px,1.8vw,15px);font-weight:700;box-shadow:0 4px 20px var(--red-glow);transition:all .28s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.3px}
+.form-submit:hover{background:var(--red-dark);transform:translateY(-2px);box-shadow:0 10px 32px var(--red-glow)}
+.form-trust{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:12px}
+.form-trust-item{font-size:11.5px;font-weight:600;color:var(--text-3);display:flex;align-items:center;gap:5px}
+.form-trust-item .ok{color:#16a34a}
+.form-success{display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px 0;text-align:center}
+.form-success.show{display:flex}
+.form-success-icon{font-size:48px}
+.form-success-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#111}
+.form-success-sub{font-size:14px;color:var(--text-2)}
+
+/* ════════════════════════════════════════════
+   MORE DREAM DESTINATIONS — pkg-card2 style from tours.html
+   ════════════════════════════════════════════ */
+.more-tours{padding:clamp(52px,8vh,76px) 0 clamp(60px,10vh,88px);background:linear-gradient(180deg,var(--bg2) 0,var(--bg) 100%)}
+.more-tours-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:clamp(24px,4vh,36px);gap:16px;flex-wrap:wrap}
+.view-all{display:inline-flex;align-items:center;gap:6px;font-size:clamp(12px,1.5vw,13px);font-weight:600;color:var(--red);border:1.5px solid rgba(200,16,46,.3);padding:8px 18px;border-radius:20px;background:var(--red-light);transition:all .22s;flex-shrink:0;white-space:nowrap}
+.view-all:hover{background:var(--red);color:#fff;border-color:var(--red);transform:translateY(-1px)}
+
+/* tours-grid horizontal scroll on mobile, grid on desktop */
+.tours-grid{display:flex;gap:16px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tours-grid::-webkit-scrollbar{display:none}
+@media(min-width:640px){
+  .tours-grid{display:grid;grid-template-columns:repeat(4,1fr);overflow:visible;padding-bottom:0}
+}
+
+/* ─── pkg-card2 (exact from tours.html) ─── */
+.pkg-card2{
+  flex-shrink:0;width:200px;min-width:180px;
+  background:#fff;
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:16px;
+  overflow:hidden;
+  cursor:pointer;
+  position:relative;
+  box-shadow:0 2px 12px rgba(0,0,0,0.07);
+  transition:transform .38s cubic-bezier(0.22,1,0.36,1),
+             box-shadow .38s cubic-bezier(0.22,1,0.36,1),
+             border-color .25s;
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+@media(min-width:640px){.pkg-card2{width:auto;min-width:0}}
+
+.pkg-card2:hover{
+  transform:translateY(-8px) scale(1.025);
+  border-color:rgba(200,16,46,0.25);
+  box-shadow:
+    0 20px 48px rgba(200,16,46,0.18),
+    0 8px 20px rgba(0,0,0,0.12),
+    0 0 0 1.5px rgba(200,16,46,0.12);
+}
+.pkg-card2::before{
+  content:'';position:absolute;inset:0;z-index:4;
+  background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,0.55) 50%,transparent 60%);
+  background-size:200% 100%;background-position:200% 0;
+  transition:background-position .55s ease;pointer-events:none;border-radius:16px;
+}
+.pkg-card2:hover::before{background-position:-100% 0}
+.pkg-card2::after{
+  content:'';position:absolute;left:0;top:12%;bottom:12%;width:3px;
+  background:linear-gradient(to bottom,transparent,#C8102E,transparent);
+  border-radius:0 3px 3px 0;opacity:0;transform:scaleY(0.4);
+  transition:opacity .3s,transform .38s cubic-bezier(0.22,1,0.36,1);z-index:5;
+}
+.pkg-card2:hover::after{opacity:1;transform:scaleY(1)}
+
+.pkg-card2-img-wrap{overflow:hidden;border-radius:14px 14px 0 0;position:relative;}
+.pkg-card2-img{width:100%;height:105px;object-fit:cover;display:block;transition:transform .55s cubic-bezier(0.22,1,0.36,1),filter .4s}
+.pkg-card2:hover .pkg-card2-img{transform:scale(1.1);filter:brightness(1.08) saturate(1.1)}
+.pkg-card2-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.1) 60%,transparent 100%);opacity:0;transition:opacity .35s}
+.pkg-card2:hover .pkg-card2-img-wrap::after{opacity:1}
+.pkg-card2-explore{position:absolute;bottom:9px;left:0;right:0;text-align:center;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#fff;letter-spacing:.8px;text-transform:uppercase;opacity:0;transform:translateY(6px);transition:opacity .3s .05s,transform .3s .05s;z-index:3;pointer-events:none;text-shadow:0 1px 6px rgba(0,0,0,0.5)}
+.pkg-card2:hover .pkg-card2-explore{opacity:1;transform:translateY(0)}
+
+.pkg-card2-body{padding:11px 13px 13px;background:#fff;transition:background .25s}
+.pkg-card2:hover .pkg-card2-body{background:#fafafa}
+.pkg-card2-dest{font-family:'Playfair Display',serif;font-size:13.5px;font-weight:700;color:#111;margin-bottom:2px;transition:color .2s}
+.pkg-card2:hover .pkg-card2-dest{color:#C8102E}
+.pkg-card2-days{font-size:10px;color:#888;margin-bottom:9px}
+.pkg-card2-price{font-size:15px;font-weight:700;color:var(--red);font-family:'Outfit',sans-serif}
+.pkg-card2-price span{font-size:10px;font-weight:500;color:#aaa}
+.pkg-card2-row{display:flex;align-items:center;justify-content:space-between}
+
+.pkg-card2-tag{position:absolute;top:9px;left:9px;background:rgba(200,16,46,0.92);color:#fff;font-size:8.5px;font-weight:700;letter-spacing:.8px;padding:3px 8px;border-radius:10px;text-transform:uppercase;backdrop-filter:blur(6px);transition:transform .3s cubic-bezier(0.22,1,0.36,1),box-shadow .3s;z-index:6}
+.pkg-card2:hover .pkg-card2-tag{transform:translateY(-2px) scale(1.06);box-shadow:0 4px 14px rgba(200,16,46,0.4)}
+
+.pkg-card2-book{background:#C8102E;color:#fff;border:none;border-radius:8px;padding:6px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.3px;white-space:nowrap;flex-shrink:0;transition:background .2s,transform .28s cubic-bezier(0.22,1,0.36,1),box-shadow .28s;position:relative;overflow:hidden}
+.pkg-card2:hover .pkg-card2-book{transform:translateY(-2px);box-shadow:0 6px 18px rgba(200,16,46,0.45);background:#a80d26}
+
+/* ════════════════════════════════════════════
+   FOOTER & BOTTOM BAR
+   ════════════════════════════════════════════ */
+.footer-strip{background:#111;padding:clamp(20px,3vh,26px) clamp(16px,4vw,32px);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-logo{font-family:'Playfair Display',serif;font-size:clamp(16px,2.5vw,18px);font-weight:900;color:#fff}
+.footer-logo span{color:var(--red)}
+.footer-copy{font-size:clamp(10px,1.3vw,12px);color:rgba(255,255,255,.38)}
+.footer-links{display:flex;gap:14px}
+.footer-links a{font-size:clamp(10px,1.3vw,12px);color:rgba(255,255,255,.45);transition:color .2s}
+.footer-links a:hover{color:var(--red)}
+
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;z-index:700;height:calc(var(--bar-h) + var(--safe-b));padding-bottom:var(--safe-b);padding-left:max(clamp(16px,3vw,32px),var(--safe-l));padding-right:max(clamp(16px,3vw,32px),var(--safe-r));background:rgba(255,255,255,.97);backdrop-filter:blur(24px);border-top:1px solid var(--border-2);box-shadow:0 -4px 32px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:space-between;gap:12px;transform:translateY(100%);transition:transform .48s cubic-bezier(.22,1,.36,1)}
+.bottom-bar.visible{transform:translateY(0)}
+.bar-left{display:flex;align-items:center;gap:clamp(10px,2vw,18px);min-width:0}
+.bar-dest{display:flex;align-items:center;gap:8px;min-width:0}
+.bar-flag{font-size:clamp(20px,3vw,26px);line-height:1;flex-shrink:0}
+.bar-dest-name{font-family:'Playfair Display',serif;font-size:clamp(13px,2vw,16px);font-weight:700;color:var(--black);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-dest-sub{font-size:clamp(9px,1.1vw,11px);color:var(--text-3);font-weight:500;margin-top:1px;white-space:nowrap}
+.bar-divider{width:1px;height:36px;background:var(--border-2);flex-shrink:0}
+.bar-from{font-size:10px;color:var(--text-3);font-weight:600;letter-spacing:.3px;text-transform:uppercase;margin-bottom:1px}
+.bar-price{font-family:'Playfair Display',serif;font-size:clamp(20px,3.5vw,26px);font-weight:900;color:var(--red);line-height:1}
+.bar-per{font-size:10px;color:var(--text-3);font-weight:500;margin-left:2px}
+.bar-right{display:flex;align-items:center;gap:clamp(8px,1.5vw,12px);flex-shrink:0}
+.bar-wa{display:inline-flex;align-items:center;gap:7px;background:#25d366;color:#fff;border:none;padding:clamp(10px,1.5vh,13px) clamp(14px,2vw,20px);border-radius:12px;font-size:clamp(12px,1.5vw,13.5px);font-weight:600;box-shadow:0 4px 16px rgba(37,211,102,.35);transition:all .28s cubic-bezier(.22,1,.36,1);white-space:nowrap;text-decoration:none}
+.bar-wa:hover{background:#1ebe5d;transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,211,102,.45)}
+.bar-btn{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;border:none;padding:clamp(10px,1.5vh,13px) clamp(14px,2vw,26px);border-radius:12px;font-size:clamp(12px,1.5vw,14.5px);font-weight:700;box-shadow:0 4px 20px var(--red-glow);transition:all .28s cubic-bezier(.22,1,.36,1);white-space:nowrap}
+.bar-btn:hover{background:var(--red-dark);transform:translateY(-2px);box-shadow:0 10px 32px var(--red-glow)}
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════ */
+@media(max-width:960px){nav{padding:0 24px}}
+@media(max-width:860px){
+  nav{padding:0 18px}
+  .nav-links{display:none!important}
+  .nav-hamburger{display:flex!important}
+  .mobile-menu{display:flex;top:62px}
+  .inc-exc-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  nav{height:56px;padding:0 16px}
+  .mobile-menu{top:56px}
+  .hero{height:75vh;min-height:440px}
+  .overview-split{grid-template-columns:1fr;gap:clamp(20px,3vh,32px)}
+  .carousel-wrap{aspect-ratio:16/9;max-height:380px}
+  .inquiry-inner{grid-template-columns:1fr}
+  .dest-strip{display:none}
+  .form-grid{grid-template-columns:1fr}
+  .footer-strip{flex-direction:column;align-items:flex-start;gap:10px}
+  .bar-divider{display:none}
+  .bar-dest-sub{display:none}
+}
+@media(max-width:480px){
+  nav{height:52px;padding:0 14px}
+  .hero{height:72vh;min-height:420px}
+  .hero-divider{display:none}
+  .provides-grid{grid-template-columns:1fr 1fr}
+  .overview-highlights{grid-template-columns:1fr}
+  .bar-price{font-size:20px}
+  .bar-dest-name{font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-video-wrap{animation:none}
+  .reveal{transition:none;opacity:1;transform:none}
+  *{animation-duration:0s!important;transition-duration:0s!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     NAV (exact from tours.html)
+     ══════════════════════════════════════════ -->
+<nav>
+  <div class="nav-logo" onclick="window.location.href='index.html'">Visa<span>vera</span><div class="nav-dot"></div></div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About Us</a></li>
+    <li class="nav-visa-li" id="navVisaLi">
+      <a class="nav-visa-trigger" id="navVisaTrigger" onclick="toggleVisaNavDrop(event)">Visas
+        <svg style="display:inline;vertical-align:middle;margin-left:3px;margin-top:-2px;transition:transform .25s" id="visaNavChevronSvg" width="11" height="11" viewBox="0 0 12 12" fill="none">
+          <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <div class="nav-visa-drop" id="navVisaDrop">
+        <a class="nav-visa-item" href="visas.html"><span class="nvi-icon">🌍</span><span class="nvi-text"><span class="nvi-title">Visitor Visa</span><span class="nvi-sub">Tourist &amp; family visits</span></span></a>
+        <a class="nav-visa-item" href="visas.html"><span class="nvi-icon">🎓</span><span class="nvi-text"><span class="nvi-title">Student Visa</span><span class="nvi-sub">Study abroad programs</span></span></a>
+        <a class="nav-visa-item" href="visas.html"><span class="nvi-icon">💼</span><span class="nvi-text"><span class="nvi-title">Work Visa</span><span class="nvi-sub">Global employment visas</span></span></a>
+      </div>
+    </li>
+    <li><a href="tours.html" class="active" onclick="sessionStorage.removeItem('visavera_tours_state')">Tours &amp; Packages</a></li>
+    <li><a href="success.html">Success Stories</a></li>
+    <li><a href="#inquiry" class="nav-cta">Contact</a></li>
+  </ul>
+  <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a>
+  <a href="about.html">About Us</a>
+  <a style="font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3);padding:10px 16px 4px;pointer-events:none">Visas</a>
+  <a href="visas.html" style="padding-left:28px">↳ Visitor Visa</a>
+  <a href="visas.html" style="padding-left:28px">↳ Student Visa</a>
+  <a href="visas.html" style="padding-left:28px">↳ Work Visa</a>
+  <a href="tours.html" class="active" onclick="sessionStorage.removeItem('visavera_tours_state')">Tours &amp; Packages</a>
+  <a href="success.html">Success Stories</a>
+  <a href="#inquiry" class="mob-cta">Contact</a>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HERO
+     ══════════════════════════════════════════ -->
+<section class="hero" id="hero">
+  <div class="hero-badge"><div class="hero-badge-dot"></div>Most Popular Package<div class="hero-badge-dot"></div></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-video-wrap">
+    <video class="hero-poster" autoplay muted loop playsinline preload="auto"
+      poster="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1800&q=85&auto=format&fit=crop">
+      <source src="https://cdn.coverr.co/videos/coverr-dubai-skyline-at-night-4720/1080p.mp4" type="video/mp4">
+      <source src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-dubai-city-34952-large.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="hero-content">
+    <h1 class="hero-title">Dubai <em>Luxury</em> Escape</h1>
+    <div class="hero-meta">
+      <div class="hero-meta-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        5 Days &middot; 4 Nights
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-price-pill">Starting &#8377;34,999/-</div>
+    </div>
+    <div class="hero-cta">
+      <a href="#inquiry" class="btn-hero">Get Full Details
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     OVERVIEW
+     ══════════════════════════════════════════ -->
+<section class="overview reveal" id="overview">
+  <div class="container">
+    <div class="overview-split">
+      <!-- Carousel -->
+      <div class="carousel-wrap">
+        <div class="carousel-track" id="carouselTrack">
+          <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=700&q=80&auto=format&fit=crop" alt="Dubai Skyline" loading="lazy"></div>
+          <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1574076374034-1cfddfc5e7a8?w=700&q=80&auto=format&fit=crop" alt="Burj Khalifa" loading="lazy"></div>
+          <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1582672060674-bc2bd808a8b5?w=700&q=80&auto=format&fit=crop" alt="Desert Safari" loading="lazy"></div>
+          <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1528702748617-c64d49f918af?w=700&q=80&auto=format&fit=crop" alt="Dubai Marina" loading="lazy"></div>
+        </div>
+        <button class="carousel-btn prev" id="carouselPrev" aria-label="Previous">&#8592;</button>
+        <button class="carousel-btn next" id="carouselNext" aria-label="Next">&#8594;</button>
+        <div class="carousel-dots" id="carouselDots" role="tablist">
+          <span class="c-dot active"></span>
+          <span class="c-dot"></span>
+          <span class="c-dot"></span>
+          <span class="c-dot"></span>
+        </div>
+      </div>
+      <!-- Content -->
+      <div class="overview-content">
+        <div class="section-eyebrow">Explore Dubai</div>
+        <h2 class="section-title">Dubai <em>Luxury</em> Escape</h2>
+        <p class="overview-body">Discover Dubai's iconic skyline, world-class luxury shopping, thrilling desert adventures, and globally celebrated attractions — all woven into one unforgettable five-day journey. From towering architecture to golden dunes, this package delivers the very best of the UAE in comfort and style.</p>
+        <div class="overview-highlights" id="ovHighlights">
+          <div class="ov-highlight"><span>✅</span><span>Fully guided 5-day experience</span></div>
+          <div class="ov-highlight"><span>✅</span><span>4-star &amp; 5-star hotel options</span></div>
+          <div class="ov-highlight"><span>✅</span><span>Return flights + all transfers</span></div>
+          <div class="ov-highlight"><span>✅</span><span>Desert safari &amp; city sightseeing</span></div>
+        </div>
+        <a href="#inquiry" class="ov-cta">Request Full Itinerary
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     ATTRACTIONS
+     ══════════════════════════════════════════ -->
+<section class="attractions-section reveal">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:clamp(28px,5vh,40px)">
+      <div class="section-eyebrow">Highlights</div>
+      <h2 class="section-title">Top <em>Attractions</em></h2>
+      <p style="font-size:clamp(13px,1.8vw,14.5px);color:var(--text-2);margin-top:10px;max-width:520px;margin-left:auto;margin-right:auto;line-height:1.6">Six iconic experiences that make this Dubai escape truly unforgettable.</p>
+    </div>
+    <div class="attractions-list">
+      <div class="attr-item"><span class="attr-item-num">01</span><span class="attr-item-name">Burj Khalifa</span></div>
+      <div class="attr-item"><span class="attr-item-num">02</span><span class="attr-item-name">Desert Safari</span></div>
+      <div class="attr-item"><span class="attr-item-num">03</span><span class="attr-item-name">Dubai Marina Cruise</span></div>
+      <div class="attr-item"><span class="attr-item-num">04</span><span class="attr-item-name">Old Dubai Heritage Walk</span></div>
+      <div class="attr-item"><span class="attr-item-num">05</span><span class="attr-item-name">Mall of the Emirates</span></div>
+      <div class="attr-item"><span class="attr-item-num">06</span><span class="attr-item-name">Palm Jumeirah</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     INCLUSIONS / EXCLUSIONS
+     ══════════════════════════════════════════ -->
+<section class="inc-exc reveal">
+  <div class="container">
+    <div style="text-align:center">
+      <div class="section-eyebrow">What&#8217;s Covered</div>
+      <h2 class="section-title">Everything <em>Arranged</em> for You</h2>
+    </div>
+    <div class="inc-exc-grid">
+      <div class="inc-panel">
+        <div class="panel-header">
+          <div class="panel-icon green">✅</div>
+          <div class="panel-title">Inclusions</div>
+        </div>
+        <div class="provides-grid" id="incGrid">
+          <div class="provides-card"><span class="provides-icon">🏨</span><div><div class="provides-label">Hotel Stay</div><div class="provides-sub">4-star &amp; 5-star options</div></div></div>
+          <div class="provides-card"><span class="provides-icon">✈️</span><div><div class="provides-label">Flights*</div><div class="provides-sub">Return airfare included</div></div></div>
+          <div class="provides-card"><span class="provides-icon">🍽</span><div><div class="provides-label">Daily Meals</div><div class="provides-sub">Breakfast + selected dinners</div></div></div>
+          <div class="provides-card"><span class="provides-icon">🚗</span><div><div class="provides-label">All Transfers</div><div class="provides-sub">Airport · Hotel · Sights</div></div></div>
+          <div class="provides-card"><span class="provides-icon">🎟</span><div><div class="provides-label">Entrance Tickets*</div><div class="provides-sub">Burj Khalifa + more</div></div></div>
+          <div class="provides-card"><span class="provides-icon">👨‍🏫</span><div><div class="provides-label">Tour Manager</div><div class="provides-sub">Friendly &amp; professional</div></div></div>
+          <div class="provides-card"><span class="provides-icon">🛡️</span><div><div class="provides-label">Travel Assistance</div><div class="provides-sub">24/7 on-ground support</div></div></div>
+          <div class="provides-card"><span class="provides-icon">📷</span><div><div class="provides-label">Sightseeing</div><div class="provides-sub">All major attractions</div></div></div>
+        </div>
+      </div>
+      <div class="exc-panel">
+        <div class="panel-header">
+          <div class="panel-icon orange">⚠️</div>
+          <div class="panel-title">Exclusions</div>
+        </div>
+        <div class="exc-sub-title">General Exclusions</div>
+        <ul class="exc-list" id="excList">
+          <li><div class="exc-dot">✕</div>Entrance fees not mentioned in the itinerary</li>
+          <li><div class="exc-dot">✕</div>Travel insurance</li>
+          <li><div class="exc-dot">✕</div>Tips and gratuities</li>
+          <li><div class="exc-dot">✕</div>Costs arising from deviations, amendments, or itinerary changes</li>
+          <li><div class="exc-dot">✕</div>Visa charges (for Indian citizen) as per itinerary</li>
+          <li><div class="exc-dot">✕</div>Visa charges for NRI and foreign passport holders</li>
+          <li><div class="exc-dot">✕</div>Sightseeing tours not mentioned in the itinerary</li>
+          <li><div class="exc-dot">✕</div>Transit visa charges (if applicable)</li>
+          <li><div class="exc-dot">✕</div>Transfers not specifically mentioned in the itinerary</li>
+          <li><div class="exc-dot">✕</div>City Tax, Tourism Tax (if applicable)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     INQUIRY FORM
+     ══════════════════════════════════════════ -->
+<section class="inquiry reveal" id="inquiry">
+  <div class="container">
+    <div class="inquiry-inner">
+      <div>
+        <div class="inquiry-tag">✦ Limited Slots</div>
+        <h2 class="inquiry-heading">Get Complete <em>Tour Details</em></h2>
+        <p class="inquiry-desc">Share your details and our travel specialist will send you the full itinerary, pricing, and personalised recommendations — quickly.</p>
+        <ul class="trust-list">
+          <li><div class="trust-check">✓</div>Quick Response</li>
+          <li><div class="trust-check">✓</div>No Hidden Charges</li>
+          <li><div class="trust-check">✓</div>Fully Personalised Assistance</li>
+          <li><div class="trust-check">✓</div>Visa Support Included</li>
+        </ul>
+        <div class="dest-strip">
+          <div class="dest-flag">🇦🇪</div>
+          <div class="dest-info">
+            <div class="dest-name">Dubai Luxury Escape</div>
+            <div class="dest-sub">United Arab Emirates · 5D / 4N</div>
+          </div>
+          <div class="dest-price">
+            <span class="from">Starting from</span>
+            <span class="amount">&#8377;34,999</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-card">
+        <div class="form-card-title">Request Full Itinerary</div>
+        <div class="form-card-sub">We'll get back to you quickly on WhatsApp.</div>
+        <div id="formWrap">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="fname">Full Name</label>
+              <input class="form-input" id="fname" placeholder="e.g. Rahul Sharma" autocomplete="name">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="fmob">Mobile Number</label>
+              <input class="form-input" id="fmob" type="tel" placeholder="+91 98765 43210" autocomplete="tel">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="femail">Email Address</label>
+              <input class="form-input" id="femail" type="email" placeholder="you@email.com" autocomplete="email">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="fmonth">Travel Month</label>
+              <select class="form-select" id="fmonth">
+                <option value="" disabled selected>Select month</option>
+                <option>July 2025</option><option>August 2025</option><option>September 2025</option>
+                <option>October 2025</option><option>November 2025</option><option>December 2025</option>
+                <option>January 2026</option><option>February 2026</option><option>March 2026</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label class="form-label" for="ftrav">Number of Travellers</label>
+              <select class="form-select" id="ftrav">
+                <option value="" disabled selected>How many are travelling?</option>
+                <option>1 Person (Solo)</option>
+                <option>2 People (Couple)</option>
+                <option>3–4 People (Family / Group)</option>
+                <option>5–8 People</option>
+                <option>9+ People (Large Group)</option>
+              </select>
+            </div>
+          </div>
+          <button class="form-submit" onclick="submitForm(this)" style="margin-top:16px">
+            Request Full Itinerary
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+          <div class="form-trust">
+            <div class="form-trust-item"><span class="ok">✓</span> Quick Response</div>
+            <div class="form-trust-item"><span class="ok">✓</span> Free Itinerary</div>
+          </div>
+        </div>
+        <div class="form-success" id="formSuccess">
+          <div class="form-success-icon">🎉</div>
+          <div class="form-success-title">You're all set!</div>
+          <div class="form-success-sub">Our Dubai specialist will reach out on WhatsApp shortly. Get ready for an amazing trip!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     MORE DREAM DESTINATIONS — pkg-card2 style
+     ══════════════════════════════════════════ -->
+<section class="more-tours reveal">
+  <div class="container">
+    <div class="more-tours-head">
+      <div>
+        <div class="section-eyebrow">Keep Exploring</div>
+        <h2 class="section-title">More <em>Dream</em> Destinations</h2>
+      </div>
+      <a href="#" class="view-all">View All Tours
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+
+    <div class="tours-grid" id="pkgCards">
+
+      <!-- Bali -->
+      <div class="pkg-card2">
+        <div class="pkg-card2-tag">Bestseller</div>
+        <div class="pkg-card2-img-wrap">
+          <img class="pkg-card2-img" src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400&q=80" alt="Bali" loading="lazy">
+          <span class="pkg-card2-explore">Explore →</span>
+        </div>
+        <div class="pkg-card2-body">
+          <div class="pkg-card2-dest">🇮🇩 Bali, Indonesia</div>
+          <div class="pkg-card2-days">4N / 5D</div>
+          <div class="pkg-card2-row">
+            <div class="pkg-card2-price">₹45,000 <span>/ person</span></div>
+            <button class="pkg-card2-book">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Singapore -->
+      <div class="pkg-card2">
+        <div class="pkg-card2-tag">New</div>
+        <div class="pkg-card2-img-wrap">
+          <img class="pkg-card2-img" src="https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400&q=80" alt="Singapore" loading="lazy">
+          <span class="pkg-card2-explore">Explore →</span>
+        </div>
+        <div class="pkg-card2-body">
+          <div class="pkg-card2-dest">🇸🇬 Singapore</div>
+          <div class="pkg-card2-days">2N / 3D</div>
+          <div class="pkg-card2-row">
+            <div class="pkg-card2-price">₹55,000 <span>/ person</span></div>
+            <button class="pkg-card2-book">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thailand -->
+      <div class="pkg-card2">
+        <div class="pkg-card2-tag">Hot Deal</div>
+        <div class="pkg-card2-img-wrap">
+          <img class="pkg-card2-img" src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&q=80" alt="Thailand" loading="lazy">
+          <span class="pkg-card2-explore">Explore →</span>
+        </div>
+        <div class="pkg-card2-body">
+          <div class="pkg-card2-dest">🇹🇭 Bangkok, Thailand</div>
+          <div class="pkg-card2-days">3N / 4D</div>
+          <div class="pkg-card2-row">
+            <div class="pkg-card2-price">₹38,000 <span>/ person</span></div>
+            <button class="pkg-card2-book">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Maldives -->
+      <div class="pkg-card2">
+        <div class="pkg-card2-tag">Luxury</div>
+        <div class="pkg-card2-img-wrap">
+          <img class="pkg-card2-img" src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=400&q=80" alt="Maldives" loading="lazy">
+          <span class="pkg-card2-explore">Explore →</span>
+        </div>
+        <div class="pkg-card2-body">
+          <div class="pkg-card2-dest">🇲🇻 Maldives</div>
+          <div class="pkg-card2-days">4N / 5D</div>
+          <div class="pkg-card2-row">
+            <div class="pkg-card2-price">₹95,000 <span>/ person</span></div>
+            <button class="pkg-card2-book">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer-strip">
+  <div class="footer-logo">Visa<span>vera</span></div>
+  <div class="footer-copy">&copy; 2025 Visavera. All rights reserved.</div>
+  <div class="footer-links">
+    <a href="index.html">Privacy</a>
+    <a href="index.html">Terms</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</footer>
+
+<!-- STICKY BOTTOM BAR -->
+<div class="bottom-bar" id="bottomBar" role="complementary" aria-label="Booking bar">
+  <div class="bar-left">
+    <div class="bar-dest">
+      <div class="bar-flag">🇦🇪</div>
+      <div>
+        <div class="bar-dest-name">Dubai Luxury Escape</div>
+        <div class="bar-dest-sub">5 Days · 4 Nights · UAE</div>
+      </div>
+    </div>
+    <div class="bar-divider"></div>
+    <div>
+      <div class="bar-from">Starting from</div>
+      <div class="bar-price">&#8377;34,999<span class="bar-per">/ person</span></div>
+    </div>
+  </div>
+  <div class="bar-right">
+    <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" class="bar-wa" aria-label="Chat on WhatsApp">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      WhatsApp
+    </a>
+    <a href="#inquiry" class="bar-btn" aria-label="Enquire now">
+      Enquire Now
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   DYNAMIC PAGE POPULATION — reads ?country=UAE&dest=Dubai
+   ══════════════════════════════════════════════════════════════ */
+(function(){
+  // ── Minimal destination data (mirrored from tours.html PKG_DATA) ──
+  // Each entry: { flag, days, price, tag, img, carouselImgs, attractions, country }
+
+const DEST_DATA = {
+    "UAE|Dubai": { tourname:"", flag:"🇦🇪", country:"United Arab Emirates", days:"5D / 4N", price:"₹34,999", tag:"Luxury Escape", img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1800&q=85&auto=format&fit=crop", carouselImgs:["https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=700&q=80","https://images.unsplash.com/photo-1574076374034-1cfddfc5e7a8?w=700&q=80","https://images.unsplash.com/photo-1582672060674-bc2bd808a8b5?w=700&q=80","https://images.unsplash.com/photo-1528702748617-c64d49f918af?w=700&q=80"], attractions:["Burj Khalifa","Desert Safari","Dubai Marina Cruise","Old Dubai Heritage Walk","Mall of the Emirates","Palm Jumeirah"], desc:"Discover Dubai's iconic skyline, world-class luxury shopping, thrilling desert adventures, and globally celebrated attractions — all woven into one unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "UAE|Abu Dhabi": { tourname:"", flag:"🇦🇪", country:"United Arab Emirates", days:"4D / 3N", price:"₹29,999", tag:"City Escape", img:"https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=700&q=80","https://images.unsplash.com/photo-1509987081-c5f4b4a32cef?w=700&q=80","https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?w=700&q=80","https://images.unsplash.com/photo-1548013146-72479768bada?w=700&q=80"], attractions:["Sheikh Zayed Grand Mosque","Louvre Abu Dhabi","Ferrari World","Corniche Beach","Yas Island","Heritage Village"], desc:"Experience the grandeur of Abu Dhabi — stunning mosques, world-class museums, thrilling theme parks, and serene coastlines.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "UAE|Sharjah": { tourname:"", flag:"🇦🇪", country:"United Arab Emirates", days:"3D / 2N", price:"₹22,999", tag:"Cultural Tour", img:"https://images.unsplash.com/photo-1578895101408-1a36b834405b?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1578895101408-1a36b834405b?w=700&q=80","https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=700&q=80","https://images.unsplash.com/photo-1548013146-72479768bada?w=700&q=80","https://images.unsplash.com/photo-1509987081-c5f4b4a32cef?w=700&q=80"], attractions:["Sharjah Museum of Islamic Civilisation","Al Noor Island","Sharjah Heritage Area","Sharjah Aquarium","Al Majaz Waterfront","Sharjah Art Museum"], desc:"Sharjah, the cultural capital of the UAE, offers a rich tapestry of Islamic heritage, art, and architecture.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United Kingdom|London": { tourname:"", flag:"🇬🇧", country:"United Kingdom", days:"9D / 8N", price:"₹1,85,000", tag:"Classic", img:"https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=700&q=80","https://images.unsplash.com/photo-1520986606214-8b456906c813?w=700&q=80","https://images.unsplash.com/photo-1551634979-2b11f8c218da?w=700&q=80","https://images.unsplash.com/photo-1582030859773-050aab640ac7?w=700&q=80"], attractions:["Big Ben & Houses of Parliament","Buckingham Palace","The British Museum","Tower of London","Hyde Park","Borough Market"], desc:"London — a magnificent blend of royal history, cutting-edge culture, world-class theatre, and diverse neighbourhoods.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "UAE|Ras Al Khaimah": { tourname:"", flag:"🇦🇪", country:"United Arab Emirates", days:"2N/3D", price:"₹35,000", tag:"Adventure", img:"https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=700&q=80","https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=700&q=80","https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=700&q=80","https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=700&q=80"], attractions:["Ras Al Khaimah City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Ras Al Khaimah with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "UAE|Fujairah": { tourname:"", flag:"🇦🇪", country:"United Arab Emirates", days:"1N/2D", price:"₹30,000", tag:"Beach", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=700&q=80","https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=700&q=80","https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=700&q=80","https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=700&q=80"], attractions:["Fujairah City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Fujairah with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United States|New York": { tourname:"", flag:"🇺🇸", country:"United States", days:"4N/5D", price:"₹1,75,000", tag:"Iconic", img:"https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=700&q=80","https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=700&q=80","https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=700&q=80","https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=700&q=80"], attractions:["New York City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of New York with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United States|Los Angeles": { tourname:"", flag:"🇺🇸", country:"United States", days:"3N/4D", price:"₹1,60,000", tag:"Glamour", img:"https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=700&q=80","https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=700&q=80","https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=700&q=80","https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=700&q=80"], attractions:["Los Angeles City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Los Angeles with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United States|Las Vegas": { tourname:"", flag:"🇺🇸", country:"United States", days:"3N/4D", price:"₹1,50,000", tag:"Entertainment", img:"https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=700&q=80","https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=700&q=80","https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=700&q=80","https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=700&q=80"], attractions:["Las Vegas City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Las Vegas with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United States|San Francisco": { tourname:"", flag:"🇺🇸", country:"United States", days:"3N/4D", price:"₹1,55,000", tag:"Bay City", img:"https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=700&q=80","https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=700&q=80","https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=700&q=80","https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=700&q=80"], attractions:["San Francisco City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of San Francisco with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United States|Chicago": { tourname:"", flag:"🇺🇸", country:"United States", days:"2N/3D", price:"₹1,40,000", tag:"Windy City", img:"https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=700&q=80","https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=700&q=80","https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=700&q=80","https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=700&q=80"], attractions:["Chicago City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Chicago with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United States|Miami": { tourname:"", flag:"🇺🇸", country:"United States", days:"3N/4D", price:"₹1,45,000", tag:"Beach & Vibes", img:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=80","https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=80","https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=80","https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=80"], attractions:["Miami City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Miami with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United States|Orlando": { tourname:"", flag:"🇺🇸", country:"United States", days:"4N/5D", price:"₹1,65,000", tag:"Theme Parks", img:"https://images.unsplash.com/photo-1563911302283-d2bc129e7570?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1563911302283-d2bc129e7570?w=700&q=80","https://images.unsplash.com/photo-1563911302283-d2bc129e7570?w=700&q=80","https://images.unsplash.com/photo-1563911302283-d2bc129e7570?w=700&q=80","https://images.unsplash.com/photo-1563911302283-d2bc129e7570?w=700&q=80"], attractions:["Orlando City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Orlando with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United States|Washington DC": { tourname:"", flag:"🇺🇸", country:"United States", days:"2N/3D", price:"₹1,35,000", tag:"Capital", img:"https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=700&q=80","https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=700&q=80","https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=700&q=80","https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=700&q=80"], attractions:["Washington DC City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Washington DC with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United States|Hawaii": { tourname:"", flag:"🇺🇸", country:"United States", days:"5N/6D", price:"₹2,10,000", tag:"Paradise", img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=700&q=80","https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=700&q=80","https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=700&q=80","https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=700&q=80"], attractions:["Hawaii City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Hawaii with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United States|Grand Canyon": { tourname:"", flag:"🇺🇸", country:"United States", days:"2N/3D", price:"₹1,30,000", tag:"Natural Wonder", img:"https://images.unsplash.com/photo-1615551043360-33de8b5f410c?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1615551043360-33de8b5f410c?w=700&q=80","https://images.unsplash.com/photo-1615551043360-33de8b5f410c?w=700&q=80","https://images.unsplash.com/photo-1615551043360-33de8b5f410c?w=700&q=80","https://images.unsplash.com/photo-1615551043360-33de8b5f410c?w=700&q=80"], attractions:["Grand Canyon City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Grand Canyon with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United States|New Orleans": { tourname:"", flag:"🇺🇸", country:"United States", days:"2N/3D", price:"₹1,25,000", tag:"Jazz & Culture", img:"https://images.unsplash.com/photo-1568393691622-c7ba131d63b4?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1568393691622-c7ba131d63b4?w=700&q=80","https://images.unsplash.com/photo-1568393691622-c7ba131d63b4?w=700&q=80","https://images.unsplash.com/photo-1568393691622-c7ba131d63b4?w=700&q=80","https://images.unsplash.com/photo-1568393691622-c7ba131d63b4?w=700&q=80"], attractions:["New Orleans City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of New Orleans with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United States|Seattle": { tourname:"Explore Seattle", flag:"🇺🇸", country:"United States", days:"2N/3Dt", price:"₹1,38,000t", tag:"Pacific NWt", img:"https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=700&q=80","https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=700&q=80","https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=700&q=80","https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=700&q=80"], attractions:["Seattle City Tourt","Local Marketst","Cultural Experiencet","Heritage Walkt","Local Cuisine Tourt","Photography Spotst","t","t"], desc:"Explore the best of Seattle with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.t", highlights:["t","t","t","t"], inclusions:[], exclusions:["t","t","t","t","t"], moreTours:[], trustPoints:[] },
+    "United States|Boston": { tourname:"", flag:"🇺🇸", country:"United States", days:"2N/3D", price:"₹1,32,000", tag:"Historic", img:"https://images.unsplash.com/photo-1501979376754-098f01c4fcae?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1501979376754-098f01c4fcae?w=700&q=80","https://images.unsplash.com/photo-1501979376754-098f01c4fcae?w=700&q=80","https://images.unsplash.com/photo-1501979376754-098f01c4fcae?w=700&q=80","https://images.unsplash.com/photo-1501979376754-098f01c4fcae?w=700&q=80"], attractions:["Boston City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Boston with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United States|Yellowstone": { tourname:"", flag:"🇺🇸", country:"United States", days:"3N/4D", price:"₹1,42,000", tag:"Wildlife", img:"https://images.unsplash.com/photo-1589470288084-51c3e0b49700?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1589470288084-51c3e0b49700?w=700&q=80","https://images.unsplash.com/photo-1589470288084-51c3e0b49700?w=700&q=80","https://images.unsplash.com/photo-1589470288084-51c3e0b49700?w=700&q=80","https://images.unsplash.com/photo-1589470288084-51c3e0b49700?w=700&q=80"], attractions:["Yellowstone City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Yellowstone with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United States|Nashville": { tourname:"", flag:"🇺🇸", country:"United States", days:"2N/3D", price:"₹1,20,000", tag:"Music City", img:"https://images.unsplash.com/photo-1545419913-775e3e68c081?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1545419913-775e3e68c081?w=700&q=80","https://images.unsplash.com/photo-1545419913-775e3e68c081?w=700&q=80","https://images.unsplash.com/photo-1545419913-775e3e68c081?w=700&q=80","https://images.unsplash.com/photo-1545419913-775e3e68c081?w=700&q=80"], attractions:["Nashville City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Nashville with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United Kingdom|Edinburgh": { tourname:"", flag:"🇬🇧", country:"United Kingdom", days:"2N/3D", price:"₹1,00,000", tag:"Historic", img:"https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=700&q=80","https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=700&q=80","https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=700&q=80","https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=700&q=80"], attractions:["Edinburgh City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Edinburgh with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United Kingdom|Manchester": { tourname:"", flag:"🇬🇧", country:"United Kingdom", days:"2N/3D", price:"₹95,000", tag:"Vibrant", img:"https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=700&q=80","https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=700&q=80","https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=700&q=80","https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=700&q=80"], attractions:["Manchester City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Manchester with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United Kingdom|Oxford": { tourname:"", flag:"🇬🇧", country:"United Kingdom", days:"1N/2D", price:"₹85,000", tag:"Academia", img:"https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=700&q=80","https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=700&q=80","https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=700&q=80","https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=700&q=80"], attractions:["Oxford City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Oxford with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United Kingdom|Lake District": { tourname:"", flag:"🇬🇧", country:"United Kingdom", days:"2N/3D", price:"₹90,000", tag:"Nature", img:"https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=1800&q=85", carouselImgs:["https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=700&q=80","https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=700&q=80","https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=700&q=80","https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=700&q=80"], attractions:["Lake District City Tour","Local Markets","Cultural Experience","Heritage Walk","Local Cuisine Tour","Photography Spots"], desc:"Explore the best of Lake District with Visavera's expertly curated tour packages — seamlessly blending culture, adventure, and comfort for an unforgettable journey.", highlights:[], inclusions:[], exclusions:[], moreTours:[], trustPoints:[] },
+    "United States|Gujarat": { tourname:"Explore Gujarat", flag:"🇺🇸", country:"United States", days:"5N/5D", price:"5000", tag:"Ahmedabad", img:"https://res.cloudinary.com/dq2nrpky0/image/upload/v1779988341/MH_4_2_n4fi3z.jpg", carouselImgs:["https://res.cloudinary.com/dq2nrpky0/image/upload/v1779988341/MH_4_2_n4fi3z.jpg","https://res.cloudinary.com/dq2nrpky0/image/upload/v1779988341/MH_4_2_n4fi3z.jpg","https://res.cloudinary.com/dq2nrpky0/image/upload/v1779988341/MH_4_2_n4fi3z.jpg","https://res.cloudinary.com/dq2nrpky0/image/upload/v1779988341/MH_4_2_n4fi3z.jpg"], attractions:["1","2","3","4","5","6","7"], desc:"HELLO GUJARAT", highlights:["1","2","3","4"], inclusions:[], exclusions:["2","2","2","2","2"], moreTours:[{dest:"Dubai",country:"UAE"},{dest:"Abu Dabhi",country:"UAE"},{dest:"Sharjah",country:"UAE"},{dest:"Fujairah",country:"UAE"}], trustPoints:[] },
+    "UAE|GOA": { tourname:"Explore GOA", flag:"🇦🇪", country:"United Arab Emirates", days:"5N/5D", price:"5000", tag:"GOA", img:"https://res.cloudinary.com/dq2nrpky0/image/upload/q_auto/f_auto/v1779988341/MH_4_2_n4fi3z.jpg", carouselImgs:["https://res.cloudinary.com/dq2nrpky0/image/upload/q_auto/f_auto/v1779988341/MH_4_2_n4fi3z.jpg","https://res.cloudinary.com/dq2nrpky0/image/upload/q_auto/f_auto/v1779988341/MH_4_2_n4fi3z.jpg","https://res.cloudinary.com/dq2nrpky0/image/upload/q_auto/f_auto/v1779988341/MH_4_2_n4fi3z.jpg","https://res.cloudinary.com/dq2nrpky0/image/upload/q_auto/f_auto/v1779988341/MH_4_2_n4fi3z.jpg"], attractions:["1","2","3","4"], desc:"fdfv", highlights:["fsvvs","sdv","svs","sdv"], inclusions:[], exclusions:[], moreTours:[{dest:"Dubai",country:"UAE"},{dest:"Sharjah",country:"United Arab Emirates"},{dest:"Abu Dabhi",country:"United Arab Emirates"},{dest:"Fujairah",country:"UAE"}], trustPoints:[] }
+};
+
+  // ── AUTO-MERGE: pull any admin edits from localStorage ──
+  // The admin panel saves tour details under 'visavera_admin_tourdetails_v1'.
+  // We merge those entries ON TOP of the hardcoded DEST_DATA so that any edit
+  // made in the admin is reflected here immediately — no manual copy-paste needed.
+  (function mergeAdminEdits() {
+    try {
+      const raw = localStorage.getItem('visavera_admin_tourdetails_v1');
+      const rawMain = localStorage.getItem('visavera_admin_v1');
+      if (!raw && !rawMain) return;
+
+      // ── Build a set of disabled country keys from admin main data ──
+      const disabledCountries = new Set();
+      if (rawMain) {
+        try {
+          const mainData = JSON.parse(rawMain);
+          (mainData.COUNTRIES || []).forEach(function(c) {
+            if (!c.enabled) disabledCountries.add(c.key);
+          });
+        } catch(e) {}
+      }
+
+      // ── Remove any hardcoded DEST_DATA entries for disabled countries ──
+      // This ensures that when admin disables a country, the tour detail
+      // page for that country also stops showing.
+      Object.keys(DEST_DATA).forEach(function(key) {
+        const countryKey = key.split('|')[0];
+        if (disabledCountries.has(countryKey)) {
+          delete DEST_DATA[key];
+        }
+      });
+
+      if (!raw) return;
+      const adminList = JSON.parse(raw);
+      if (!Array.isArray(adminList)) return;
+
+      // ── Build set of all admin-tracked keys to know which hardcoded ones to remove ──
+      // If admin tracks a key and marks it disabled, remove it from DEST_DATA.
+      const adminKeyMap = {};
+      adminList.forEach(function(d) { if (d.key) adminKeyMap[d.key] = d; });
+
+      // Remove hardcoded entries that admin has explicitly disabled
+      Object.keys(adminKeyMap).forEach(function(key) {
+        const d = adminKeyMap[key];
+        if (d.enabled === false && DEST_DATA[key]) {
+          delete DEST_DATA[key];
+        }
+      });
+
+      // Now merge in enabled admin entries (add or overwrite)
+      adminList.forEach(function(d) {
+        if (!d.key) return;
+
+        // SKIP disabled entries — they should not appear on the site
+        if (d.enabled === false) return;
+
+        // SKIP if country is disabled
+        const countryKey = d.key.split('|')[0];
+        if (disabledCountries.has(countryKey)) return;
+
+        // ── SKIP entries with no real content (blank desc AND blank tourname
+        //    AND no custom attractions) — these are default placeholders that
+        //    haven't been edited yet and should NOT overwrite hardcoded data ──
+        const hasRealContent = (d.tourname && d.tourname.trim()) ||
+                               (d.desc && d.desc.trim()) ||
+                               (Array.isArray(d.highlights) && d.highlights.some(Boolean)) ||
+                               (Array.isArray(d.inclusions) && d.inclusions.length > 0) ||
+                               (Array.isArray(d.exclusions) && d.exclusions.length > 0);
+
+        // For entries that already exist in DEST_DATA, only overwrite if there
+        // is real admin content to apply. For brand-new entries not in DEST_DATA,
+        // always add them (they were intentionally created in admin).
+        const isNewEntry = !DEST_DATA[d.key];
+        if (!hasRealContent && !isNewEntry) return;
+
+        // Build the same shape that DEST_DATA expects
+        const existing = DEST_DATA[d.key] || {};
+        const entry = {
+          tourname:     (d.tourname || '').trim()   || existing.tourname || '',
+          flag:         d.flag                      || existing.flag     || '',
+          country:      d.country                   || existing.country  || '',
+          days:         d.days                      || existing.days     || '',
+          price:        d.price                     || existing.price    || '',
+          tag:          d.tag                       || existing.tag      || '',
+          img:          d.img                       || existing.img      || '',
+          carouselImgs: (Array.isArray(d.carouselImgs) && d.carouselImgs.some(Boolean))
+                          ? d.carouselImgs
+                          : (existing.carouselImgs || []),
+          attractions:  (Array.isArray(d.attractions) && d.attractions.some(Boolean))
+                          ? d.attractions
+                          : (existing.attractions  || []),
+          desc:         (d.desc || '').trim()       || existing.desc     || '',
+          highlights:   (Array.isArray(d.highlights) && d.highlights.some(Boolean))
+                          ? d.highlights
+                          : (existing.highlights   || []),
+          inclusions:   (Array.isArray(d.inclusions) && d.inclusions.length)
+                          ? d.inclusions
+                          : (existing.inclusions   || []),
+          exclusions:   (Array.isArray(d.exclusions) && d.exclusions.some(Boolean))
+                          ? d.exclusions
+                          : (existing.exclusions   || [])
+        };
+        DEST_DATA[d.key] = entry;
+      });
+    } catch(e) {
+      console.warn('TourDetails: could not merge admin edits from localStorage', e);
+    }
+  })();
+
+  // ── Parse URL params ──
+  const params = new URLSearchParams(window.location.search);
+  const countryParam = params.get('country') || 'UAE';
+  const destParam    = params.get('dest') || 'Dubai';
+
+  // Try exact match first, then country-level match
+  const key = countryParam + '|' + destParam;
+  let d = DEST_DATA[key];
+
+  // Fallback: find any key starting with the country
+  if (!d) {
+    const fallbackKey = Object.keys(DEST_DATA).find(k => k.startsWith(countryParam + '|'));
+    if (fallbackKey) d = DEST_DATA[fallbackKey];
+  }
+
+  // Final fallback: use Dubai
+  if (!d) d = DEST_DATA['UAE|Dubai'];
+
+  // ── Helper: flag emoji → ISO2 code (for flagcdn.com) ──
+  function flagToIso2(flagEmoji) {
+    try {
+      const chars = [...flagEmoji];
+      if (chars.length < 2) return '';
+      return chars.map(c => String.fromCharCode(c.codePointAt(0) - 0x1F1E6 + 65)).join('').toLowerCase();
+    } catch(e) { return ''; }
+  }
+
+  // ── Update page <title> ──
+  document.title = destParam + ' – ' + countryParam + ' Tour · Visavera';
+
+  // ── Update hero section ──
+  // Hero title
+  const heroTitle = document.querySelector('.hero-title');
+  if (heroTitle) heroTitle.innerHTML = destParam + ' <em>' + d.tag + '</em>';
+
+  // Hero price pill
+  const pricePill = document.querySelector('.hero-price-pill');
+  if (pricePill) pricePill.textContent = 'Starting ' + d.price + '/-';
+
+  // Hero duration pill
+  const metaPills = document.querySelectorAll('.hero-meta-pill');
+  if (metaPills[0]) {
+    const parts = d.days.split('/');
+    metaPills[0].innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${d.days.replace('/',' · ')}`;
+  }
+
+  // Hero video/image poster
+  const heroVideo = document.querySelector('.hero-poster');
+  if (heroVideo) {
+    // Update poster
+    if (heroVideo.tagName === 'VIDEO') {
+      heroVideo.setAttribute('poster', d.img);
+      // Remove existing sources, use a generic MP4 or just show poster
+      heroVideo.querySelectorAll('source').forEach(s => s.remove());
+    }
+    if (heroVideo.tagName === 'IMG') {
+      heroVideo.src = d.img;
+    }
+  }
+
+  // ── Update Overview section ──
+  const eyebrows = document.querySelectorAll('.section-eyebrow');
+  if (eyebrows[0]) eyebrows[0].textContent = 'Explore ' + destParam;
+
+  const sectionTitles = document.querySelectorAll('.section-title');
+  if (sectionTitles[0]) sectionTitles[0].innerHTML = destParam + ' <em>' + d.tag + '</em>';
+
+  const overviewBody = document.querySelector('.overview-body');
+  if (overviewBody) overviewBody.textContent = d.desc;
+
+  // ── Update Overview Highlights ──
+  const ovHighlights = document.getElementById('ovHighlights');
+  if (ovHighlights && d.highlights && d.highlights.length) {
+    ovHighlights.innerHTML = d.highlights.map(h =>
+      `<div class="ov-highlight"><span>✅</span><span>${h}</span></div>`
+    ).join('');
+  }
+
+  // ── Update Inclusions ──
+  const incGrid = document.getElementById('incGrid');
+  if (incGrid && d.inclusions && d.inclusions.length) {
+    incGrid.innerHTML = d.inclusions.map(inc =>
+      `<div class="provides-card"><span class="provides-icon">${inc.icon||'✅'}</span><div><div class="provides-label">${inc.label}</div><div class="provides-sub">${inc.sub||''}</div></div></div>`
+    ).join('');
+  }
+
+  // ── Update Exclusions ──
+  const excList = document.getElementById('excList');
+  if (excList && d.exclusions && d.exclusions.length) {
+    excList.innerHTML = d.exclusions.map(ex =>
+      `<li><div class="exc-dot">✕</div>${ex}</li>`
+    ).join('');
+  }
+
+  // ── Update Attractions ──
+  const attrSection = document.querySelector('.attractions-section');
+  if (attrSection) {
+    const attrList = attrSection.querySelector('.attractions-list');
+    if (attrList && d.attractions && d.attractions.length) {
+      attrList.innerHTML = d.attractions.map((a, i) =>
+        `<div class="attr-item"><span class="attr-item-num">${String(i+1).padStart(2,'0')}</span><span class="attr-item-name">${a}</span></div>`
+      ).join('');
+    }
+    // Also update the description text
+    const attrDesc = attrSection.querySelector('p');
+    if (attrDesc) attrDesc.textContent = d.attractions.length + ' iconic experiences that make this ' + destParam + ' escape truly unforgettable.';
+  }
+
+  // ── Update Inquiry section ──
+  const inquiryHeading = document.querySelector('.inquiry-heading');
+  if (inquiryHeading) inquiryHeading.innerHTML = 'Get Complete <em>Tour Details</em>';
+
+  const destFlag = document.querySelector('.dest-flag');
+  if (destFlag) destFlag.textContent = d.flag;
+
+  const destName = document.querySelector('.dest-name');
+  if (destName) destName.textContent = destParam + ' ' + d.tag;
+
+  const destSub = document.querySelector('.dest-sub');
+  if (destSub) destSub.textContent = d.country + ' · ' + d.days;
+
+  const destAmount = document.querySelector('.dest-price .amount');
+  if (destAmount) destAmount.textContent = d.price;
+
+  const formSuccessSub = document.querySelector('.form-success-sub');
+  if (formSuccessSub) formSuccessSub.textContent = 'Our ' + destParam + ' specialist will reach out on WhatsApp shortly. Get ready for an amazing trip!';
+
+  const formTitle = document.querySelector('.form-card-title');
+  if (formTitle) formTitle.textContent = 'Request Full Itinerary';
+
+  // ── Update bottom sticky bar ──
+  const barFlag = document.querySelector('.bar-flag');
+  if (barFlag) barFlag.textContent = d.flag;
+
+  const barDestName = document.querySelector('.bar-dest-name');
+  if (barDestName) barDestName.textContent = destParam + ' ' + d.tag;
+
+  const barDestSub = document.querySelector('.bar-dest-sub');
+  if (barDestSub) barDestSub.textContent = d.days + ' · ' + d.country;
+
+  const barPrice = document.querySelector('.bar-price');
+  if (barPrice) barPrice.innerHTML = d.price + '<span class="bar-per">/ person</span>';
+
+  // ── Update carousel images ──
+  const carouselTrack = document.getElementById('carouselTrack');
+  if (carouselTrack && d.carouselImgs && d.carouselImgs.length) {
+    const dotsContainer = document.getElementById('carouselDots');
+    carouselTrack.innerHTML = d.carouselImgs.map((src, i) => {
+      const imgSrc = src.includes('unsplash.com') && !src.includes('auto=format') ? src + '&auto=format&fit=crop' : src;
+      return `<div class="carousel-slide"><img src="${imgSrc}" alt="${destParam} ${i+1}" loading="${i===0?'eager':'lazy'}"></div>`;
+    }).join('');
+    if (dotsContainer) {
+      dotsContainer.innerHTML = d.carouselImgs.map((_, i) =>
+        `<span class="c-dot${i===0?' active':''}"></span>`
+      ).join('');
+    }
+  }
+
+  // ── Update "More Dream Destinations" cards to link back correctly ──
+  // Point "View All Tours" to tours.html
+  const viewAll = document.querySelector('.view-all');
+  if (viewAll) viewAll.href = 'tours.html';
+
+  // Update each more-tours card to link to TourDetails.html with proper params
+  // Build "More Dream Destinations" from admin-configured d.moreTours,
+  // pulling each referenced destination's live data from DEST_DATA.
+  const moreTours = (d.moreTours || [])
+    .map(t => {
+      const refKey = t.country + '|' + t.dest;
+      const ref = DEST_DATA[refKey];
+      if (!ref) return null;
+      return {
+        dest: t.dest,
+        country: t.country,
+        flag: ref.flag,
+        img: (ref.carouselImgs && ref.carouselImgs[0]) || ref.img,
+        days: ref.days,
+        price: ref.price,
+        tag: ref.tag
+      };
+    })
+    .filter(t => t && !(t.dest === destParam && t.country === countryParam));
+
+  const pkgCardsEl = document.getElementById('pkgCards');
+  if (pkgCardsEl) {
+    pkgCardsEl.innerHTML = moreTours.slice(0,4).map(t => {
+      const link = `TourDetails.html?country=${encodeURIComponent(t.country)}&dest=${encodeURIComponent(t.dest)}`;
+      return `<div class="pkg-card2" onclick="window.location.href='${link}'" style="cursor:pointer">
+        <div class="pkg-card2-tag">${t.tag}</div>
+        <div class="pkg-card2-img-wrap">
+          <img class="pkg-card2-img" src="${t.img}" alt="${t.dest}" loading="lazy" onerror="this.parentNode.style.background='linear-gradient(135deg,#e8edf2,#d0d8e0)'">
+          <span class="pkg-card2-explore">Explore →</span>
+        </div>
+        <div class="pkg-card2-body">
+          <div class="pkg-card2-dest">${t.flag} ${t.dest}</div>
+          <div class="pkg-card2-days">${t.days}</div>
+          <div class="pkg-card2-row">
+            <div class="pkg-card2-price">${t.price} <span>/ person</span></div>
+            <button class="pkg-card2-book" onclick="event.stopPropagation();window.location.href='${link}'">Book Now</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Nav logo now links to index.html (Home) like every other page —
+  // no JS override needed.
+
+  // ── Inject a floating back button ──
+  const backBtn = document.createElement('button');
+  backBtn.id = 'tourBackBtn';
+  backBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Back to Tours`;
+  backBtn.style.cssText = `
+    position:fixed;top:74px;left:24px;z-index:400;
+    display:inline-flex;align-items:center;gap:7px;
+    background:rgba(248,246,243,0.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border:1.5px solid rgba(0,0,0,0.10);border-radius:24px;
+    padding:8px 18px 8px 14px;
+    font-family:Outfit,sans-serif;font-size:13px;font-weight:600;color:#333;
+    cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.10);
+    transition:all .22s cubic-bezier(0.22,1,0.36,1);
+    white-space:nowrap;
+  `;
+  backBtn.onmouseenter = () => { backBtn.style.background='#C8102E'; backBtn.style.color='#fff'; backBtn.style.borderColor='#C8102E'; backBtn.style.transform='translateY(-2px)'; backBtn.style.boxShadow='0 8px 28px rgba(200,16,46,0.28)'; };
+  backBtn.onmouseleave = () => { backBtn.style.background='rgba(248,246,243,0.95)'; backBtn.style.color='#333'; backBtn.style.borderColor='rgba(0,0,0,0.10)'; backBtn.style.transform='translateY(0)'; backBtn.style.boxShadow='0 4px 20px rgba(0,0,0,0.10)'; };
+  backBtn.onclick = () => history.length > 1 ? history.back() : (window.location.href = 'tours.html');
+  document.body.appendChild(backBtn);
+
+})();
+
+/* ── Scroll reveal ── */
+const io = new IntersectionObserver(entries => entries.forEach(e => {
+  if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); }
+}), {threshold:.07, rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ── Sticky bottom bar ── */
+const bar = document.getElementById('bottomBar');
+const heroEl = document.getElementById('hero');
+new IntersectionObserver(([e]) => bar.classList.toggle('visible', !e.isIntersecting), {threshold:.12}).observe(heroEl);
+
+/* ── Nav dropdown ── */
+let visaNavDropOpen = false;
+function toggleVisaNavDrop(e){
+  e.stopPropagation();
+  visaNavDropOpen ? closeVisaNavDrop() : openVisaNavDrop();
+}
+function openVisaNavDrop(){
+  visaNavDropOpen = true;
+  document.getElementById('navVisaDrop').classList.add('open');
+  document.getElementById('navVisaTrigger').classList.add('open');
+  document.getElementById('visaNavChevronSvg').style.transform = 'rotate(180deg)';
+}
+function closeVisaNavDrop(){
+  visaNavDropOpen = false;
+  document.getElementById('navVisaDrop').classList.remove('open');
+  document.getElementById('navVisaTrigger').classList.remove('open');
+  document.getElementById('visaNavChevronSvg').style.transform = 'rotate(0deg)';
+}
+document.addEventListener('mousedown', function(e){
+  const li = document.getElementById('navVisaLi');
+  if(li && !li.contains(e.target) && visaNavDropOpen) closeVisaNavDrop();
+});
+
+/* ── Mobile menu ── */
+function toggleMobileMenu(){
+  const ham = document.getElementById('navHamburger');
+  const menu = document.getElementById('mobileMenu');
+  const isOpen = menu.classList.contains('open');
+  ham.classList.toggle('open', !isOpen);
+  menu.classList.toggle('open', !isOpen);
+}
+document.addEventListener('click', e => {
+  if(!e.target.closest('#navHamburger') && !e.target.closest('#mobileMenu')){
+    const ham = document.getElementById('navHamburger');
+    const menu = document.getElementById('mobileMenu');
+    if(ham) ham.classList.remove('open');
+    if(menu) menu.classList.remove('open');
+  }
+});
+
+/* ── Carousel ── */
+(function(){
+  const track = document.getElementById('carouselTrack');
+  const dots = document.querySelectorAll('.c-dot');
+  const prev = document.getElementById('carouselPrev');
+  const next = document.getElementById('carouselNext');
+  if(!track) return;
+  const total = track.querySelectorAll('.carousel-slide').length;
+  let cur = 0, busy = false, timer, startX = 0;
+
+  function go(n, animate=true){
+    track.style.transition = animate ? 'transform 0.72s cubic-bezier(0.77,0,0.18,1)' : 'none';
+    track.style.transform = `translateX(-${100*n}%)`;
+    dots.forEach((d,i) => d.classList.toggle('active', i===n));
+    cur = n;
+  }
+  function fwd(){ if(!busy){ busy=true; go((cur+1)%total); setTimeout(()=>busy=false,750); } }
+  function bwd(){ if(!busy){ busy=true; go((cur-1+total)%total); setTimeout(()=>busy=false,750); } }
+  function reset(){ clearInterval(timer); timer=setInterval(fwd,3800); }
+
+  dots.forEach((d,i) => d.addEventListener('click', ()=>{ if(!busy){ busy=true; go(i); setTimeout(()=>busy=false,750); reset(); } }));
+  prev && prev.addEventListener('click', ()=>{ bwd(); reset(); });
+  next && next.addEventListener('click', ()=>{ fwd(); reset(); });
+  track.addEventListener('touchstart', e=>{ startX=e.changedTouches[0].screenX; }, {passive:true});
+  track.addEventListener('touchend', e=>{
+    const dx = startX - e.changedTouches[0].screenX;
+    if(Math.abs(dx)>40){ dx>0 ? fwd() : bwd(); reset(); }
+  }, {passive:true});
+  track.addEventListener('mouseenter', ()=>clearInterval(timer));
+  track.addEventListener('mouseleave', reset);
+  go(0, false);
+  reset();
+})();
+
+/* ── Stagger animations ── */
+function staggerIn(sel, delay){
+  const els = document.querySelectorAll(sel);
+  const obs = new IntersectionObserver(entries => entries.forEach(e=>{
+    if(e.isIntersecting){
+      const i = [...els].indexOf(e.target);
+      e.target.style.transitionDelay = i*delay+'ms';
+      e.target.style.opacity='1';
+      e.target.style.transform='translateY(0)';
+      obs.unobserve(e.target);
+    }
+  }), {threshold:.06});
+  els.forEach(el=>{
+    el.style.opacity='0';
+    el.style.transform='translateY(20px)';
+    el.style.transition='opacity .55s ease,transform .55s cubic-bezier(0.22,1,0.36,1)';
+    obs.observe(el);
+  });
+}
+staggerIn('.pkg-card2', 70);
+staggerIn('.attr-item', 45);
+staggerIn('.provides-card', 55);
+
+/* ── Form submit ── */
+window.submitForm = function(btn){
+  const name = document.getElementById('fname').value.trim();
+  const mob  = document.getElementById('fmob').value.trim();
+  if(name && mob){
+    btn.innerHTML = 'Sending…';
+    btn.disabled = true;
+    setTimeout(()=>{
+      document.getElementById('formWrap').style.display = 'none';
+      document.getElementById('formSuccess').classList.add('show');
+    }, 1400);
+  } else {
+    [document.getElementById('fname'), document.getElementById('fmob')].forEach(el=>{
+      if(!el.value.trim()){ el.style.borderColor='var(--red)'; el.focus(); setTimeout(()=>el.style.borderColor='',1800); }
+    });
+  }
+};
+</script>
+</body>
+</html>

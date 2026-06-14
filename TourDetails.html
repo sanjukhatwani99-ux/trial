@@ -41,7 +41,7 @@ button{font-family:Outfit,sans-serif;cursor:pointer}
 .hero-video-wrap{position:absolute;inset:0;z-index:1;overflow:hidden;animation:heroZoom 22s ease-in-out infinite alternate;will-change:transform}
 @keyframes heroZoom{from{transform:scale(1.0)}to{transform:scale(1.1)}}
 .hero-poster{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) brightness(.82);transform:scale(1.06)}
-.hero-badge{position:absolute;z-index:3;top:clamp(20px,5vh,44px);left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:8px;font-size:clamp(9px,1.5vw,11px);letter-spacing:1.4px;text-transform:uppercase;font-weight:600;color:rgba(255,255,255,.92);border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);backdrop-filter:blur(14px);padding:6px clamp(14px,3vw,22px);border-radius:30px;white-space:nowrap}
+.hero-badge{position:absolute;z-index:3;top:clamp(20px,5vh,44px);left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:8px;font-size:clamp(9px,1.5vw,11px);letter-spacing:1.4px;text-transform:uppercase;font-weight:600;color:rgba(255,255,255,.92);border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);backdrop-filter:blur(14px);padding:6px clamp(14px,3vw,22px);border-radius:30px;white-space:nowrap;text-align:center}
 .hero-badge-dot{width:6px;height:6px;background:#ffb3bf;border-radius:50%;animation:pls 2s ease-in-out infinite}
 @keyframes pls{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.6)}}
 .hero-content{position:absolute;bottom:clamp(44px,8vh,72px);left:0;right:0;z-index:3;text-align:center;padding:0 clamp(16px,5vw,32px)}
@@ -137,7 +137,8 @@ button{font-family:Outfit,sans-serif;cursor:pointer}
 .trust-list li{display:flex;align-items:center;gap:10px;font-size:clamp(12.5px,1.5vw,13.5px);font-weight:500;color:var(--text)}
 .trust-check{width:22px;height:22px;min-width:22px;border-radius:50%;background:rgba(22,163,74,.12);display:flex;align-items:center;justify-content:center;font-size:11px;color:#16a34a;border:1px solid rgba(22,163,74,.25)}
 .dest-strip{margin-top:26px;background:linear-gradient(135deg,#1a1a2e 0,#16213e 100%);border-radius:16px;padding:18px clamp(16px,3vw,22px);display:flex;align-items:center;gap:14px;border:1px solid rgba(255,255,255,.06)}
-.dest-flag{font-size:clamp(24px,4vw,30px);flex-shrink:0}
+.dest-flag{flex-shrink:0;display:flex;align-items:center}
+.dest-flag img{width:clamp(36px,5vw,44px);height:auto;border-radius:4px;border:1px solid rgba(255,255,255,.18);box-shadow:0 2px 8px rgba(0,0,0,.3);display:block}
 .dest-info{flex:1;min-width:0}
 .dest-name{font-family:'Playfair Display',serif;font-size:clamp(14px,2vw,16px);font-weight:700;color:#fff;line-height:1.2}
 .dest-sub{font-size:clamp(10px,1.2vw,11.5px);color:rgba(255,255,255,.48);margin-top:2px;font-weight:500}
@@ -233,8 +234,9 @@ button{font-family:Outfit,sans-serif;cursor:pointer}
 
 .pkg-card2-body{padding:11px 13px 13px;background:#fff;transition:background .25s}
 .pkg-card2:hover .pkg-card2-body{background:#fafafa}
-.pkg-card2-dest{font-family:'Playfair Display',serif;font-size:13.5px;font-weight:700;color:#111;margin-bottom:2px;transition:color .2s}
+.pkg-card2-dest{font-family:'Playfair Display',serif;font-size:13.5px;font-weight:700;color:#111;margin-bottom:2px;transition:color .2s;display:flex;align-items:center;gap:6px}
 .pkg-card2:hover .pkg-card2-dest{color:#C8102E}
+.pkg-card2-dest img{width:20px;height:auto;border-radius:2px;border:1px solid rgba(0,0,0,.1);flex-shrink:0;display:block}
 .pkg-card2-days{font-size:10px;color:#888;margin-bottom:9px}
 .pkg-card2-price{font-size:15px;font-weight:700;color:var(--red);font-family:'Outfit',sans-serif}
 .pkg-card2-price span{font-size:10px;font-weight:500;color:#aaa}
@@ -257,7 +259,8 @@ button{font-family:Outfit,sans-serif;cursor:pointer}
 .bar-left{display:flex;align-items:center;gap:clamp(8px,2vw,18px);min-width:0;flex:1}
 .bar-dest{display:flex;align-items:center;gap:6px;min-width:0}
 .bar-dest>div:last-child{min-width:0;overflow:hidden}
-.bar-flag{font-size:clamp(18px,3vw,26px);line-height:1;flex-shrink:0}
+.bar-flag{flex-shrink:0;display:flex;align-items:center}
+.bar-flag img{width:clamp(28px,4vw,38px);height:auto;border-radius:3px;border:1px solid rgba(0,0,0,.1);box-shadow:0 1px 4px rgba(0,0,0,.12);display:block}
 .bar-dest-name{font-family:'Playfair Display',serif;font-size:clamp(11px,2vw,16px);font-weight:700;color:var(--black);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar-dest-sub{font-size:clamp(8px,1.1vw,11px);color:var(--text-3);font-weight:500;margin-top:1px;white-space:nowrap}
 .bar-divider{width:1px;height:30px;background:var(--border-2);flex-shrink:0}
@@ -373,9 +376,10 @@ body.pt-leaving #pageTransition{
    once the destination data has been applied
    ════════════════════════════════════════════ */
 #main-nav{opacity:0;transform:translateY(-14px);transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1)}
-.hero-badge,.hero-title,.hero-meta,.hero-cta{opacity:0;transform:translateY(26px);transition:opacity .85s cubic-bezier(.22,1,.36,1),transform .85s cubic-bezier(.22,1,.36,1)}
+.hero-title,.hero-meta,.hero-cta{opacity:0;transform:translateY(26px);transition:opacity .85s cubic-bezier(.22,1,.36,1),transform .85s cubic-bezier(.22,1,.36,1)}
+.hero-badge{opacity:0;transform:translateX(-50%) translateY(26px);transition:opacity .85s cubic-bezier(.22,1,.36,1),transform .85s cubic-bezier(.22,1,.36,1)}
 body.page-ready #main-nav{opacity:1;transform:translateY(0);transition-delay:.05s}
-body.page-ready .hero-badge{opacity:1;transform:translateY(0);transition-delay:.12s}
+body.page-ready .hero-badge{opacity:1;transform:translateX(-50%) translateY(0);transition-delay:.12s}
 body.page-ready .hero-title{opacity:1;transform:translateY(0);transition-delay:.22s}
 body.page-ready .hero-meta{opacity:1;transform:translateY(0);transition-delay:.36s}
 body.page-ready .hero-cta{opacity:1;transform:translateY(0);transition-delay:.48s}
@@ -389,7 +393,8 @@ body.page-ready .hero-cta{opacity:1;transform:translateY(0);transition-delay:.48
   .reveal{transition:none;opacity:1;transform:none}
   *{animation-duration:0s!important;transition-duration:0s!important}
   #pageTransition{display:none!important}
-  #main-nav,.hero-badge,.hero-title,.hero-meta,.hero-cta{opacity:1!important;transform:none!important}
+  #main-nav,.hero-title,.hero-meta,.hero-cta{opacity:1!important;transform:none!important}
+  .hero-badge{opacity:1!important;transform:translateX(-50%)!important}
 }
 </style>
 </head>
@@ -566,7 +571,7 @@ body.page-ready .hero-cta{opacity:1;transform:translateY(0);transition-delay:.48
           <li><div class="trust-check">✓</div>Visa Support Included</li>
         </ul>
         <div class="dest-strip">
-          <div class="dest-flag">🇦🇪</div>
+          <div class="dest-flag"><img src="https://flagcdn.com/w40/ae.png" alt="UAE flag" width="40"></div>
           <div class="dest-info">
             <div class="dest-name">Dubai Luxury Escape</div>
             <div class="dest-sub">United Arab Emirates · 5D / 4N</div>
@@ -658,7 +663,7 @@ body.page-ready .hero-cta{opacity:1;transform:translateY(0);transition-delay:.48
 <div class="bottom-bar" id="bottomBar" role="complementary" aria-label="Booking bar">
   <div class="bar-left">
     <div class="bar-dest">
-      <div class="bar-flag">🇦🇪</div>
+      <div class="bar-flag"><img src="https://flagcdn.com/w40/ae.png" alt="UAE flag" width="40"></div>
       <div>
         <div class="bar-dest-name">Dubai Luxury Escape</div>
         <div class="bar-dest-sub">5 Days · 4 Nights · UAE</div>
@@ -1002,7 +1007,10 @@ const DEST_DATA = {
   if (inquiryHeading) inquiryHeading.innerHTML = 'Get Complete <em>Tour Details</em>';
 
   const destFlag = document.querySelector('.dest-flag');
-  if (destFlag) destFlag.textContent = d.flag;
+  if (destFlag) {
+    const iso2 = flagToIso2(d.flag);
+    destFlag.innerHTML = iso2 ? `<img src="https://flagcdn.com/w40/${iso2}.png" alt="${d.country} flag" width="40" loading="lazy">` : d.flag;
+  }
 
   const destName = document.querySelector('.dest-name');
   if (destName) destName.textContent = destParam + ' ' + d.tag;
@@ -1021,7 +1029,10 @@ const DEST_DATA = {
 
   // ── Update bottom sticky bar ──
   const barFlag = document.querySelector('.bar-flag');
-  if (barFlag) barFlag.textContent = d.flag;
+  if (barFlag) {
+    const iso2 = flagToIso2(d.flag);
+    barFlag.innerHTML = iso2 ? `<img src="https://flagcdn.com/w40/${iso2}.png" alt="${d.country} flag" width="40" loading="lazy">` : d.flag;
+  }
 
   const barDestName = document.querySelector('.bar-dest-name');
   if (barDestName) barDestName.textContent = destParam + ' ' + d.tag;
@@ -1095,7 +1106,7 @@ const DEST_DATA = {
           <span class="pkg-card2-explore">Explore →</span>
         </div>
         <div class="pkg-card2-body">
-          <div class="pkg-card2-dest">${t.flag} ${t.dest}</div>
+          <div class="pkg-card2-dest">${(function(){ const iso2 = flagToIso2(t.flag); return iso2 ? `<img src="https://flagcdn.com/w20/${iso2}.png" alt="${t.country} flag" width="20" loading="lazy">` : t.flag; })()} ${t.dest}</div>
           <div class="pkg-card2-days">${t.days}</div>
           <div class="pkg-card2-row">
             <div class="pkg-card2-price">${t.price} <span>/ person</span></div>

@@ -3291,6 +3291,33 @@ function doFlight(pkg) {
     glowP.setAttribute('d', pathD);
     mainP.setAttribute('d', pathD);
 
+    // SVG <feGaussianBlur> filters are re-rasterized every frame on most
+    // tablet/mobile browsers (software filter pipeline), and both the glow
+    // path and the plane have their geometry/transform animated every rAF
+    // tick during the flight — that's the main source of jank on tablets.
+    // Drop the filter on low-power devices and use a flat translucent halo
+    // (wider stroke / circle) instead so it still reads as a glow.
+    const planeGlowCircle = plane ? plane.querySelector('circle') : null;
+    if (isLowPower) {
+      glowP.removeAttribute('filter');
+      glowP.setAttribute('stroke-width', '5');
+      glowP.setAttribute('stroke', 'rgba(200,16,46,0.18)');
+      if (planeGlowCircle) {
+        planeGlowCircle.removeAttribute('filter');
+        planeGlowCircle.setAttribute('r', '10');
+        planeGlowCircle.setAttribute('fill', 'rgba(255,255,255,0.12)');
+      }
+    } else {
+      glowP.setAttribute('filter', 'url(#glow)');
+      glowP.setAttribute('stroke-width', '8');
+      glowP.setAttribute('stroke', 'rgba(200,16,46,0.25)');
+      if (planeGlowCircle) {
+        planeGlowCircle.setAttribute('filter', 'url(#glow)');
+        planeGlowCircle.setAttribute('r', '14');
+        planeGlowCircle.setAttribute('fill', 'rgba(255,255,255,0.08)');
+      }
+    }
+
     // Draw related routes in background
     drawRelatedRoutes(pkg);
 

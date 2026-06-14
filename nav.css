@@ -146,8 +146,8 @@ html.page-leaving {
   display: none;
   flex-direction: column;
   gap: 5px;
-  width: 40px; height: 40px;
-  padding: 8px;
+  width: 44px; height: 44px;
+  padding: 10px;
   border-radius: 9px;
   background: transparent;
   border: 1.5px solid var(--border-2);
@@ -185,6 +185,10 @@ html.page-leaving {
   padding: 12px 16px 20px;
   flex-direction: column;
   gap: 4px;
+  max-height: calc(100vh - 62px);
+  max-height: calc(100dvh - 62px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   opacity: 0;
   transform: translateY(-10px);
   transition: opacity 0.25s ease, transform 0.25s cubic-bezier(.4,0,.2,1);
@@ -197,12 +201,14 @@ html.page-leaving {
 }
 
 .mob-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
   color: var(--text-2);
   text-decoration: none;
   font-size: 15px;
   font-weight: 500;
-  padding: 12px 16px;
+  padding: 10px 16px;
   border-radius: 10px;
   transition: color 0.2s, background 0.2s, transform 0.15s;
 }
@@ -218,12 +224,16 @@ html.page-leaving {
 }
 
 .mob-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
   background: var(--red) !important;
   color: #fff !important;
   font-weight: 600 !important;
   text-align: center;
   margin-top: 8px;
-  padding: 14px 16px;
+  padding: 10px 16px;
   border-radius: 10px;
   transition: background 0.2s, transform 0.15s !important;
 }
@@ -237,9 +247,23 @@ html.page-leaving {
 }
 
 /* ── Responsive ── */
-@media (max-width: 680px) {
-  #main-nav { padding: 0 16px; }
+@media (max-width: 960px) {
+  #main-nav { padding: 0 24px; }
+  .nav-link { font-size: 12.5px; padding: 6px 10px; }
+  .nav-cta { padding: 7px 15px !important; }
+}
+@media (max-width: 860px) {
+  #main-nav { padding: 0 18px; }
   .nav-links { display: none; }
   .nav-hamburger { display: flex; }
   .mobile-menu { display: flex; }
+}
+@media (max-width: 768px) {
+  #main-nav { height: 56px; }
+  .mobile-menu { top: 56px; max-height: calc(100vh - 56px); max-height: calc(100dvh - 56px); }
+}
+@media (max-width: 480px) {
+  #main-nav { height: 52px; padding: 0 14px; }
+  .nav-logo { font-size: 19px; }
+  .mobile-menu { top: 52px; max-height: calc(100vh - 52px); max-height: calc(100dvh - 52px); }
 }

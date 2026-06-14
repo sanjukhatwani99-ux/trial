@@ -19,6 +19,7 @@
   --shadow-lg:0 12px 48px rgba(0,0,0,0.16);
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+img{max-width:100%;height:auto;display:block}
 html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
 
 
@@ -41,13 +42,13 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
 .stat-num{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--black)}
 .stat-lbl{font-size:12px;color:var(--text-3);margin-top:3px;letter-spacing:.3px}
 
-#page-visitor{overflow:hidden;background:#07111f}
+#page-visitor{overflow:hidden;background:#ffffff}
 
 
 /* ── VISITOR GLOBE AREA ── */
 .globe-area{flex:1;position:relative;overflow:hidden}
-#cesiumContainer{width:100%;height:100%}
-.cesium-widget,.cesium-widget canvas{width:100%!important;height:100%!important}
+#cesiumContainer{width:100%;height:100%;background:#fff}
+.cesium-widget,.cesium-widget canvas{width:100%!important;height:100%!important;background:#fff!important}
 
 
 /* Strip ALL Cesium default chrome */
@@ -221,11 +222,10 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @media (max-width:360px){
   #main-nav{padding:0 12px}
   #main-nav .nav-logo{font-size:17px}
-  #main-nav .nav-hamburger{width:36px;height:36px;padding:7px}
   #page-home h1{font-size:clamp(21px,8.5vw,32px)}
-  .btn-primary,.btn-ghost{font-size:13.5px;padding:12px 16px}
+  .btn-primary,.btn-ghost{font-size:13.5px;padding:14px 16px}
   .country-card{left:6px;right:6px}
-  .pkg-card2{width:140px}
+  .pkg-card2{width:140px;max-width:100%}
   .minimal-page h2{font-size:24px}
 }
 
@@ -240,7 +240,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   #page-home h1{font-size:clamp(20px,4vw,34px)}
   .home-stats{margin-top:14px;padding-top:12px}
   .home-btns{flex-direction:row;margin-top:14px}
-  .btn-primary,.btn-ghost{width:auto;padding:10px 22px}
+  .btn-primary,.btn-ghost{width:auto;padding:12px 22px}
 
   .globe-area{height:calc(100dvh - 48px)}
   .visa-marquee-wrap{height:50px}
@@ -554,6 +554,39 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   </div>
 </div>
 <div class="page" id="page-visitor">
+  <!-- Globe loading overlay — white screen shown until Cesium tiles are ready -->
+  <div id="globeLoadingOverlay" style="
+    position:absolute;inset:0;z-index:9999;
+    background:#ffffff;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:18px;
+    transition:opacity 0.6s ease;
+    pointer-events:none;
+  ">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+      <!-- Animated Visavera logo mark -->
+      <div style="position:relative;width:52px;height:52px">
+        <div style="
+          width:52px;height:52px;border-radius:50%;
+          border:3px solid #fdeaed;
+          border-top-color:#C8102E;
+          animation:globeSpin 0.9s linear infinite;
+        "></div>
+        <div style="
+          position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+          font-family:'Playfair Display',serif;font-size:17px;font-weight:900;
+          color:#C8102E;letter-spacing:-0.5px;
+        ">V</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:'Outfit',sans-serif;font-size:13.5px;font-weight:600;color:#1a1a1a;letter-spacing:0.2px">Loading Globe</div>
+        <div style="font-family:'Outfit',sans-serif;font-size:11.5px;color:#999;margin-top:3px">Preparing your world map…</div>
+      </div>
+    </div>
+  </div>
+  <style>
+    @keyframes globeSpin { to { transform: rotate(360deg); } }
+  </style>
   <div class="globe-area" style="position:relative;flex:1">
     <!-- UNIFIED SEARCH — same style as Packages page -->
     <div id="visitorSearchWrap" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:200;width:min(480px,92vw)">
@@ -2196,8 +2229,36 @@ function initGlobe() {
   scene.fog.enabled = true;
   scene.fog.density = 0.0002;
 
-  // Deep space background
-  scene.backgroundColor = Cesium.Color.fromCssColorString('#020810');
+  // White background until tiles load (prevents navy flash)
+  scene.backgroundColor = Cesium.Color.WHITE;
+
+  // ── WHITE LOADING OVERLAY — fade out once the globe tiles are painted ──
+  (function () {
+    const overlay = document.getElementById('globeLoadingOverlay');
+    if (!overlay) return;
+
+    let dismissed = false;
+    function dismissOverlay() {
+      if (dismissed) return;
+      dismissed = true;
+      overlay.style.opacity = '0';
+      setTimeout(() => { overlay.style.display = 'none'; }, 650);
+    }
+
+    // Primary: listen for Cesium's tileLoadProgress going to 0 after first render
+    let firstRenderDone = false;
+    const removePostRender = scene.postRender.addEventListener(function () {
+      if (!firstRenderDone) {
+        firstRenderDone = true;
+        // Give one extra frame so the canvas actually has pixels
+        requestAnimationFrame(() => requestAnimationFrame(dismissOverlay));
+        removePostRender();
+      }
+    });
+
+    // Fallback: dismiss after 4 s regardless, so the overlay never gets stuck
+    setTimeout(dismissOverlay, 4000);
+  })();
 
   // ── LOAD COUNTRY POLYGONS (GeoJSON) ────────────────────
   Cesium.GeoJsonDataSource.load(
@@ -2525,39 +2586,42 @@ const INDIA_LNG = 78.96, INDIA_LAT = 20.59;
 const _PKG_DATA_DEFAULT = {
   'UAE': { city:"Dubai", code:"DXB", flag:"🇦🇪", lng:55.27, lat:25.2, zoom:7, days:"3N/4D", price:"₹45,000", tag:"Popular", color:"#fdcb6e", img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=500&q=85",
     destinations:[
-      { name:"Dubai", tag:"undefined", img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=80", days:"3N/4D", price:"₹45,000", types:["group"] },
-      { name:"Abu Dhabi", tag:"undefined", img:"https://images.unsplash.com/photo-1512632578888-169bbbc64f33?w=400&q=80", days:"2N/3D", price:"₹38,000", types:["group"] },
-      { name:"Sharjah", tag:"undefined", img:"https://images.unsplash.com/photo-1580674684081-7617fbf3d745?w=400&q=80", days:"1N/2D", price:"₹28,000", types:["group"] },
-      { name:"Ras Al Khaimah", tag:"undefined", img:"https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80", days:"2N/3D", price:"₹35,000", types:["family"] },
-      { name:"Fujairah", tag:"undefined", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=400&q=80", days:"1N/2D", price:"₹30,000", types:["honeymoon"] },
-      { name:"GOA", tag:"GOA", img:"https://res.cloudinary.com/dq2nrpky0/image/upload/q_auto/f_auto/v1779988341/MH_4_2_n4fi3z.jpg", days:"5N/5D", price:"5000", types:["group","honeymoon","family","cruise","custom"] },
+      { name:"Dubai", tag:"Iconic", img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=80", days:"3N/4D", price:"₹45,000", types:["group"] },
+      { name:"Abu Dhabi", tag:"Capital", img:"https://images.unsplash.com/photo-1512632578888-169bbbc64f33?w=400&q=80", days:"2N/3D", price:"₹38,000", types:["group"] },
+      { name:"Sharjah", tag:"Culture", img:"https://images.unsplash.com/photo-1580674684081-7617fbf3d745?w=400&q=80", days:"1N/2D", price:"₹28,000", types:["group"] },
+      { name:"Ras Al Khaimah", tag:"Adventure", img:"https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80", days:"2N/3D", price:"₹35,000", types:["family"] },
+      { name:"Fujairah", tag:"Beach", img:"https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=400&q=80", days:"1N/2D", price:"₹30,000", types:["honeymoon"] },
     ]},
   'United States': { city:"New York", code:"JFK", flag:"🇺🇸", lng:-74.01, lat:40.71, zoom:5, days:"4N/5D", price:"₹1,75,000", tag:"Popular", color:"#a29bfe", img:"https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=500&q=85",
     destinations:[
-      { name:"New York", tag:"undefined", img:"https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=400&q=80", days:"4N/5D", price:"₹1,75,000", types:["group"] },
-      { name:"Los Angeles", tag:"undefined", img:"https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=400&q=80", days:"3N/4D", price:"₹1,60,000", types:["group"] },
-      { name:"Las Vegas", tag:"undefined", img:"https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=400&q=80", days:"3N/4D", price:"₹1,50,000", types:["group"] },
-      { name:"San Francisco", tag:"undefined", img:"https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&q=80", days:"3N/4D", price:"₹1,55,000", types:["group"] },
-      { name:"Chicago", tag:"undefined", img:"https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=80", days:"2N/3D", price:"₹1,40,000", types:["group"] },
-      { name:"Miami", tag:"undefined", img:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80", days:"3N/4D", price:"₹1,45,000", types:["honeymoon"] },
-      { name:"Orlando", tag:"undefined", img:"https://images.unsplash.com/photo-1563911302283-d2bc129e7570?w=400&q=80", days:"4N/5D", price:"₹1,65,000", types:["family"] },
-      { name:"Washington DC", tag:"undefined", img:"https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=400&q=80", days:"2N/3D", price:"₹1,35,000", types:["group"] },
-      { name:"Hawaii", tag:"undefined", img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80", days:"5N/6D", price:"₹2,10,000", types:["honeymoon"] },
-      { name:"Grand Canyon", tag:"undefined", img:"https://images.unsplash.com/photo-1615551043360-33de8b5f410c?w=400&q=80", days:"2N/3D", price:"₹1,30,000", types:["group"] },
-      { name:"New Orleans", tag:"undefined", img:"https://images.unsplash.com/photo-1568393691622-c7ba131d63b4?w=400&q=80", days:"2N/3D", price:"₹1,25,000", types:["group"] },
-      { name:"Seattle", tag:"undefined", img:"https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=400&q=80", days:"2N/3D", price:"₹1,38,000", types:["group"] },
-      { name:"Boston", tag:"undefined", img:"https://images.unsplash.com/photo-1501979376754-098f01c4fcae?w=400&q=80", days:"2N/3D", price:"₹1,32,000", types:["group"] },
-      { name:"Yellowstone", tag:"undefined", img:"https://images.unsplash.com/photo-1589470288084-51c3e0b49700?w=400&q=80", days:"3N/4D", price:"₹1,42,000", types:["family"] },
-      { name:"Nashville", tag:"undefined", img:"https://images.unsplash.com/photo-1545419913-775e3e68c081?w=400&q=80", days:"2N/3D", price:"₹1,20,000", types:["group"] },
-      { name:"Gujarat", tag:"undefined", img:"https://res.cloudinary.com/dq2nrpky0/image/upload/v1779988341/MH_4_2_n4fi3z.jpg", days:"5N/5D", price:"5000", types:["group","honeymoon","family","cruise","custom"] },
+      { name:"New York", tag:"Iconic", img:"https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=400&q=80", days:"4N/5D", price:"₹1,75,000", types:["group"] },
+      { name:"Los Angeles", tag:"Glamour", img:"https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=400&q=80", days:"3N/4D", price:"₹1,60,000", types:["group"] },
+      { name:"Las Vegas", tag:"Entertainment", img:"https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=400&q=80", days:"3N/4D", price:"₹1,50,000", types:["group"] },
+      { name:"San Francisco", tag:"Bay City", img:"https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&q=80", days:"3N/4D", price:"₹1,55,000", types:["group"] },
+      { name:"Chicago", tag:"Windy City", img:"https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=80", days:"2N/3D", price:"₹1,40,000", types:["group"] },
+      { name:"Miami", tag:"Beach & Vibes", img:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80", days:"3N/4D", price:"₹1,45,000", types:["honeymoon"] },
+      { name:"Orlando", tag:"Theme Parks", img:"https://images.unsplash.com/photo-1563911302283-d2bc129e7570?w=400&q=80", days:"4N/5D", price:"₹1,65,000", types:["family"] },
+      { name:"Washington DC", tag:"Capital", img:"https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=400&q=80", days:"2N/3D", price:"₹1,35,000", types:["group"] },
+      { name:"Hawaii", tag:"Paradise", img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80", days:"5N/6D", price:"₹2,10,000", types:["honeymoon"] },
+      { name:"Grand Canyon", tag:"Natural Wonder", img:"https://images.unsplash.com/photo-1615551043360-33de8b5f410c?w=400&q=80", days:"2N/3D", price:"₹1,30,000", types:["group"] },
+      { name:"New Orleans", tag:"Jazz & Culture", img:"https://images.unsplash.com/photo-1568393691622-c7ba131d63b4?w=400&q=80", days:"2N/3D", price:"₹1,25,000", types:["group"] },
+      { name:"Seattle", tag:"Pacific NW", img:"https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=400&q=80", days:"2N/3D", price:"₹1,38,000", types:["group"] },
+      { name:"Boston", tag:"Historic", img:"https://images.unsplash.com/photo-1501979376754-098f01c4fcae?w=400&q=80", days:"2N/3D", price:"₹1,32,000", types:["group"] },
+      { name:"Yellowstone", tag:"Wildlife", img:"https://images.unsplash.com/photo-1589470288084-51c3e0b49700?w=400&q=80", days:"3N/4D", price:"₹1,42,000", types:["family"] },
+      { name:"Nashville", tag:"Music City", img:"https://images.unsplash.com/photo-1545419913-775e3e68c081?w=400&q=80", days:"2N/3D", price:"₹1,20,000", types:["group"] },
     ]},
   'United Kingdom': { city:"London", code:"LHR", flag:"🇬🇧", lng:-0.13, lat:51.51, zoom:5, days:"4N/5D", price:"₹1,25,000", tag:"Popular", color:"#74b9ff", img:"https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=500&q=85",
     destinations:[
-      { name:"London", tag:"undefined", img:"https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&q=80", days:"4N/5D", price:"₹1,25,000", types:["group"] },
-      { name:"Edinburgh", tag:"undefined", img:"https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&q=80", days:"2N/3D", price:"₹1,00,000", types:["group"] },
-      { name:"Manchester", tag:"undefined", img:"https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80", days:"2N/3D", price:"₹95,000", types:["group"] },
-      { name:"Oxford", tag:"undefined", img:"https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=400&q=80", days:"1N/2D", price:"₹85,000", types:["group"] },
-      { name:"Lake District", tag:"undefined", img:"https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=400&q=80", days:"2N/3D", price:"₹90,000", types:["cruise","family"] },
+      { name:"London", tag:"Capital", img:"https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&q=80", days:"4N/5D", price:"₹1,25,000", types:["group"] },
+      { name:"Edinburgh", tag:"Historic", img:"https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&q=80", days:"2N/3D", price:"₹1,00,000", types:["group"] },
+      { name:"Manchester", tag:"Vibrant", img:"https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80", days:"2N/3D", price:"₹95,000", types:["group"] },
+      { name:"Oxford", tag:"Academia", img:"https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=400&q=80", days:"1N/2D", price:"₹85,000", types:["group"] },
+      { name:"Lake District", tag:"Nature", img:"https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=400&q=80", days:"2N/3D", price:"₹90,000", types:["cruise","family"] },
+    ]},
+  'Monaco': { city:"Monaco", code:"NCE", flag:"🇲🇨", lng:7.42, lat:43.74, zoom:12, days:"2N/3D", price:"₹1,50,000", tag:"Popular", color:"#a29bfe", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=85",
+    destinations:[
+      { name:"Monte Carlo", tag:"Casino", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", days:"2N/3D", price:"₹1,50,000", types:["group"] },
+      { name:"Monaco Ville", tag:"Palace", img:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80", days:"1N/2D", price:"₹1,55,000", types:["group"] },
     ]}
 };
 // Use admin data if available, otherwise hardcoded defaults
@@ -2567,7 +2631,8 @@ const PKG_DATA = window._ADMIN_PKG_DATA || _PKG_DATA_DEFAULT;
 const WORLD_CITIES = [
   { name:"Dubai", flag:"🇦🇪", lng:55.27, lat:25.2, key:"UAE" },
   { name:"New York", flag:"🇺🇸", lng:-74.01, lat:40.71, key:"United States" },
-  { name:"London", flag:"🇬🇧", lng:-0.13, lat:51.51, key:"United Kingdom" }
+  { name:"London", flag:"🇬🇧", lng:-0.13, lat:51.51, key:"United Kingdom" },
+  { name:"Monaco", flag:"🇲🇨", lng:7.42, lat:43.74, key:"Monaco" }
 ];
 
 // ── EXPOSE PKG_DATA GLOBALLY for tour detail page ─────────────────────────

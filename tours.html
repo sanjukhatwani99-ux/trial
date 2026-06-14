@@ -540,9 +540,38 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   opacity: 0 !important;
   pointer-events: none !important;
 }
+/* ── Shared page-exit transition overlay (matches TourDetails.html) ── */
+#pageTransition{
+  position:fixed;inset:0;z-index:100000;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .3s cubic-bezier(.4,0,.2,1),visibility 0s;
+}
+body.pt-leaving #pageTransition{opacity:1;visibility:visible;pointer-events:auto}
+.pt-mark{
+  font-family:'Playfair Display',serif;font-size:24px;font-weight:900;
+  color:var(--black);letter-spacing:-.5px;display:flex;align-items:center;gap:2px;
+}
+.pt-mark span{color:var(--red)}
+.pt-mark .pt-dot{width:7px;height:7px;background:var(--red);border-radius:50%;margin-left:4px;animation:ptPulse 1.15s ease-in-out infinite}
+@keyframes ptPulse{0%,100%{opacity:.35;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
 </style>
 
 <body>
+
+<div id="pageTransition" aria-hidden="true">
+  <div class="pt-mark">Visa<span>vera</span><div class="pt-dot"></div></div>
+</div>
+
+<script>
+// Smoothly fade to an overlay before leaving for another page (e.g. TourDetails.html)
+window.ptNavigate = function(url){
+  if(!url) return;
+  document.body.classList.add('pt-leaving');
+  setTimeout(() => { window.location.href = url; }, 320);
+};
+</script>
 
 
 
@@ -1902,7 +1931,7 @@ function openVisitorDropdown() {
   dd.style.pointerEvents = 'auto';
   if (chev) { chev.style.transform = 'translateY(-50%) rotate(180deg)'; chev.style.color = '#C8102E'; }
   const fi = document.getElementById('visitorDropFilter');
-  if (fi) { fi.value = ''; setTimeout(() => { fi.focus(); fi.removeAttribute('readonly'); }, 80); }
+  if (fi) { fi.value = ''; fi.focus({preventScroll:true}); }
 }
 
 function closeVisitorDropdown() {
@@ -3856,7 +3885,7 @@ function openPkgDropdown() {
   if (dd) { dd.style.maxHeight = '360px'; dd.classList.add('open'); }
   if (chev) chev.classList.add('open');
   const fi = document.getElementById('pkgDropFilter');
-  if (fi) { fi.value = ''; setTimeout(() => { fi.focus(); fi.removeAttribute('readonly'); }, 80); }
+  if (fi) { fi.value = ''; fi.focus({preventScroll:true}); }
 }
 
 function closePkgDropdown() {
@@ -4169,7 +4198,7 @@ function openStudentDropdown(){
   const dd=document.getElementById('studentDropdown'),ch=document.getElementById('studentChevron');
   dd.style.maxHeight='380px';dd.style.opacity='1';dd.style.transform='translateY(0)';dd.style.pointerEvents='auto';
   if(ch)ch.style.transform='translateY(-50%) rotate(180deg)';
-  setTimeout(()=>{const f=document.getElementById('studentDropFilter');if(f)f.focus();},100);
+  const f=document.getElementById('studentDropFilter');if(f)f.focus({preventScroll:true});
 }
 function closeStudentDropdown(){
   if(!studentDropOpen)return;
@@ -4347,7 +4376,7 @@ function openWorkDropdown(){
   const dd=document.getElementById('workDropdown'),ch=document.getElementById('workChevron');
   dd.style.maxHeight='380px';dd.style.opacity='1';dd.style.transform='translateY(0)';dd.style.pointerEvents='auto';
   if(ch)ch.style.transform='translateY(-50%) rotate(180deg)';
-  setTimeout(()=>{const f=document.getElementById('workDropFilter');if(f)f.focus();},100);
+  const f=document.getElementById('workDropFilter');if(f)f.focus({preventScroll:true});
 }
 function closeWorkDropdown(){
   if(!workDropOpen)return;
@@ -4702,7 +4731,7 @@ window.saveStateAndGo = function(url) {
     };
     sessionStorage.setItem('visavera_tours_state', JSON.stringify(state));
   } catch(e) {}
-  window.location.href = url;
+  window.ptNavigate(url);
 };
 
 // Expose activePkgKey for saving

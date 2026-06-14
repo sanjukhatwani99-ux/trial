@@ -104,7 +104,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
    SHARED LAYOUT
    ════════════════════════════════════════════ */
 .container{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4.5vw,32px)}
-.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.reveal{opacity:0;transform:translateY(32px) scale(.985);transition:opacity .7s ease,transform .7s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
 .section-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:1.8px;text-transform:uppercase;font-weight:700;color:var(--red);margin-bottom:12px}
 .section-eyebrow::before,.section-eyebrow::after{content:'';display:block;width:22px;height:1px;background:var(--red);opacity:.4}
@@ -361,20 +361,73 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
   .bar-dest-name{font-size:12px}
   .bar-flag{font-size:18px}
 }
+/* ════════════════════════════════════════════
+   PAGE TRANSITION OVERLAY (covers initial paint
+   so the destination data-swap never flashes,
+   and provides a smooth exit on navigation)
+   ════════════════════════════════════════════ */
+#pageTransition{
+  position:fixed;inset:0;z-index:100000;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  opacity:1;visibility:visible;
+  transition:opacity .48s cubic-bezier(.4,0,.2,1),visibility 0s linear .48s;
+}
+#pageTransition.pt-hidden{opacity:0;visibility:hidden;pointer-events:none}
+body.pt-leaving #pageTransition{
+  opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+  transition:opacity .3s cubic-bezier(.4,0,.2,1),visibility 0s!important;
+}
+.pt-mark{
+  font-family:'Playfair Display',serif;font-size:24px;font-weight:900;
+  color:var(--black);letter-spacing:-.5px;display:flex;align-items:center;gap:2px;
+}
+.pt-mark span{color:var(--red)}
+.pt-mark .pt-dot{width:7px;height:7px;background:var(--red);border-radius:50%;margin-left:4px;animation:ptPulse 1.15s ease-in-out infinite}
+@keyframes ptPulse{0%,100%{opacity:.35;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+
+/* ════════════════════════════════════════════
+   ENTRANCE CHOREOGRAPHY — nav + hero stagger in
+   once the destination data has been applied
+   ════════════════════════════════════════════ */
+nav{opacity:0;transform:translateY(-14px);transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1)}
+.hero-badge,.hero-title,.hero-meta,.hero-cta{opacity:0;transform:translateY(26px);transition:opacity .85s cubic-bezier(.22,1,.36,1),transform .85s cubic-bezier(.22,1,.36,1)}
+body.page-ready nav{opacity:1;transform:translateY(0);transition-delay:.05s}
+body.page-ready .hero-badge{opacity:1;transform:translateY(0);transition-delay:.12s}
+body.page-ready .hero-title{opacity:1;transform:translateY(0);transition-delay:.22s}
+body.page-ready .hero-meta{opacity:1;transform:translateY(0);transition-delay:.36s}
+body.page-ready .hero-cta{opacity:1;transform:translateY(0);transition-delay:.48s}
+
+/* Smoother, slightly springier scroll-reveal */
+.reveal{transition:opacity .85s cubic-bezier(.22,1,.36,1),transform .85s cubic-bezier(.22,1,.36,1)}
+.reveal.visible{opacity:1;transform:translateY(0) scale(1)}
+
 @media(prefers-reduced-motion:reduce){
   .hero-video-wrap{animation:none}
   .reveal{transition:none;opacity:1;transform:none}
   *{animation-duration:0s!important;transition-duration:0s!important}
+  #pageTransition{display:none!important}
+  nav,.hero-badge,.hero-title,.hero-meta,.hero-cta{opacity:1!important;transform:none!important}
 }
 </style>
 </head>
 <body>
 
 <!-- ══════════════════════════════════════════
+     PAGE TRANSITION OVERLAY
+     Covers the initial paint until destination
+     data is applied, and reappears briefly on
+     navigation for a smooth cross-page feel.
+     ══════════════════════════════════════════ -->
+<div id="pageTransition" aria-hidden="true">
+  <div class="pt-mark">Visa<span>vera</span><div class="pt-dot"></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
      NAV (exact from tours.html)
      ══════════════════════════════════════════ -->
 <nav>
-  <div class="nav-logo" onclick="window.location.href='index.html'">Visa<span>vera</span><div class="nav-dot"></div></div>
+  <div class="nav-logo" onclick="window.ptNavigate('index.html')">Visa<span>vera</span><div class="nav-dot"></div></div>
   <ul class="nav-links">
     <li><a href="index.html">Home</a></li>
     <li><a href="about.html">About Us</a></li>
@@ -688,6 +741,50 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;ali
 </div>
 
 <script>
+/* ══════════════════════════════════════════════════════════════
+   PAGE TRANSITIONS — smooth fade between pages, no abrupt cuts
+   ══════════════════════════════════════════════════════════════ */
+(function(){
+  const EXIT_MS = 320;
+
+  // Smoothly fade to the overlay, then navigate
+  window.ptNavigate = function(url){
+    if(!url) return;
+    const pt = document.getElementById('pageTransition');
+    document.body.classList.add('pt-leaving');
+    if(pt) pt.classList.remove('pt-hidden');
+    setTimeout(() => { window.location.href = url; }, EXIT_MS);
+  };
+
+  // Same, but goes back in history (falls back to a given URL)
+  window.ptBack = function(fallback){
+    const pt = document.getElementById('pageTransition');
+    document.body.classList.add('pt-leaving');
+    if(pt) pt.classList.remove('pt-hidden');
+    setTimeout(() => {
+      if (history.length > 1) history.back();
+      else window.location.href = fallback;
+    }, EXIT_MS);
+  };
+
+  // Catch normal in-site link clicks (nav, mobile menu, footer, etc.)
+  // and route them through the same fade-out transition.
+  document.addEventListener('click', function(e){
+    const a = e.target.closest('a[href]');
+    if(!a) return;
+    const href = a.getAttribute('href');
+    if(!href || href.charAt(0) === '#' || /^(https?:|mailto:|tel:|javascript:)/i.test(href) || a.target === '_blank' || a.hasAttribute('download')) return;
+    e.preventDefault();
+    window.ptNavigate(href);
+  }, true);
+
+  // Safety net: never let the overlay get stuck on screen
+  setTimeout(() => {
+    document.getElementById('pageTransition')?.classList.add('pt-hidden');
+    document.body.classList.add('page-ready');
+  }, 2500);
+})();
+
 /* ══════════════════════════════════════════════════════════════
    DYNAMIC PAGE POPULATION — reads ?country=UAE&dest=Dubai
    ══════════════════════════════════════════════════════════════ */
@@ -1039,7 +1136,7 @@ const DEST_DATA = {
   if (pkgCardsEl) {
     pkgCardsEl.innerHTML = moreTours.slice(0,4).map(t => {
       const link = `TourDetails.html?country=${encodeURIComponent(t.country)}&dest=${encodeURIComponent(t.dest)}`;
-      return `<div class="pkg-card2" onclick="window.location.href='${link}'" style="cursor:pointer">
+      return `<div class="pkg-card2" onclick="window.ptNavigate('${link}')" style="cursor:pointer">
         <div class="pkg-card2-tag">${t.tag}</div>
         <div class="pkg-card2-img-wrap">
           <img class="pkg-card2-img" src="${t.img}" alt="${t.dest}" loading="lazy" onerror="this.parentNode.style.background='linear-gradient(135deg,#e8edf2,#d0d8e0)'">
@@ -1050,7 +1147,7 @@ const DEST_DATA = {
           <div class="pkg-card2-days">${t.days}</div>
           <div class="pkg-card2-row">
             <div class="pkg-card2-price">${t.price} <span>/ person</span></div>
-            <button class="pkg-card2-book" onclick="event.stopPropagation();window.location.href='${link}'">Book Now</button>
+            <button class="pkg-card2-book" onclick="event.stopPropagation();window.ptNavigate('${link}')">Book Now</button>
           </div>
         </div>
       </div>`;
@@ -1077,10 +1174,26 @@ const DEST_DATA = {
   `;
   backBtn.onmouseenter = () => { backBtn.style.background='#C8102E'; backBtn.style.color='#fff'; backBtn.style.borderColor='#C8102E'; backBtn.style.transform='translateY(-2px)'; backBtn.style.boxShadow='0 8px 28px rgba(200,16,46,0.28)'; };
   backBtn.onmouseleave = () => { backBtn.style.background='rgba(248,246,243,0.95)'; backBtn.style.color='#333'; backBtn.style.borderColor='rgba(0,0,0,0.10)'; backBtn.style.transform='translateY(0)'; backBtn.style.boxShadow='0 4px 20px rgba(0,0,0,0.10)'; };
-  backBtn.onclick = () => history.length > 1 ? history.back() : (window.location.href = 'tours.html');
+  backBtn.onclick = () => window.ptBack('tours.html');
+  // Entrance animation for the floating back button (joins the hero stagger)
+  backBtn.style.opacity = '0';
+  backBtn.style.transform = 'translateX(-14px)';
+  backBtn.style.transitionProperty = 'opacity, transform, background, color, border-color, box-shadow';
   document.body.appendChild(backBtn);
 
 })();
+
+/* ── Reveal the page now that destination data is applied ──
+   Double rAF lets the browser paint the populated DOM first,
+   then fades out the overlay while the hero/nav stagger in. */
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  document.getElementById('pageTransition')?.classList.add('pt-hidden');
+  document.body.classList.add('page-ready');
+  const backBtn = document.getElementById('tourBackBtn');
+  if (backBtn) {
+    setTimeout(() => { backBtn.style.opacity = '1'; backBtn.style.transform = 'translateX(0)'; }, 500);
+  }
+}));
 
 /* ── Scroll reveal ── */
 const io = new IntersectionObserver(entries => entries.forEach(e => {

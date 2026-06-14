@@ -571,6 +571,20 @@ window.ptNavigate = function(url){
   document.body.classList.add('pt-leaving');
   setTimeout(() => { window.location.href = url; }, 320);
 };
+
+// ── bfcache fix ──
+// When the user presses Back from TourDetails, the browser may restore this
+// page from the bfcache with pt-leaving still on <body>, keeping the Visavera
+// overlay permanently visible. Clear it immediately on every pageshow event.
+window.addEventListener('pageshow', function() {
+  document.body.classList.remove('pt-leaving');
+  var pt = document.getElementById('pageTransition');
+  if (pt) {
+    pt.style.opacity = '0';
+    pt.style.visibility = 'hidden';
+    pt.style.pointerEvents = 'none';
+  }
+});
 </script>
 
 

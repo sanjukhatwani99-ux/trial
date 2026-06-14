@@ -698,6 +698,16 @@ body.page-ready .hero-cta{opacity:1;transform:translateY(0);transition-delay:.48
     document.getElementById('pageTransition')?.classList.add('pt-hidden');
     document.body.classList.add('page-ready');
   }, 2500);
+
+  // ── bfcache fix ──
+  // If this page is restored from bfcache (e.g. user goes forward after going back),
+  // pt-leaving may still be on <body>. Clear it immediately.
+  window.addEventListener('pageshow', function() {
+    document.body.classList.remove('pt-leaving');
+    var pt = document.getElementById('pageTransition');
+    if (pt) { pt.classList.add('pt-hidden'); }
+    document.body.classList.add('page-ready');
+  });
 })();
 
 /* ══════════════════════════════════════════════════════════════

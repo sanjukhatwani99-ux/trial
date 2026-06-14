@@ -443,7 +443,7 @@ body.page-ready .hero-cta{opacity:1;transform:translateY(0);transition-delay:.48
         <a class="nav-visa-item" href="visas.html"><span class="nvi-icon">💼</span><span class="nvi-text"><span class="nvi-title">Work Visa</span><span class="nvi-sub">Global employment visas</span></span></a>
       </div>
     </li>
-    <li><a href="tours.html" class="active" onclick="window.ptBack&&window.ptBack('tours.html');return false;">Tours &amp; Packages</a></li>
+    <li><a href="tours.html" class="active" onclick="sessionStorage.removeItem('visavera_tours_state')">Tours &amp; Packages</a></li>
     <li><a href="success.html">Success Stories</a></li>
     <li><a href="#inquiry" class="nav-cta">Contact</a></li>
   </ul>
@@ -459,7 +459,7 @@ body.page-ready .hero-cta{opacity:1;transform:translateY(0);transition-delay:.48
   <a href="visas.html" style="padding-left:28px">↳ Visitor Visa</a>
   <a href="visas.html" style="padding-left:28px">↳ Student Visa</a>
   <a href="visas.html" style="padding-left:28px">↳ Work Visa</a>
-  <a href="tours.html" class="active" onclick="window.ptBack&&window.ptBack('tours.html');return false;">Tours &amp; Packages</a>
+  <a href="tours.html" class="active" onclick="sessionStorage.removeItem('visavera_tours_state')">Tours &amp; Packages</a>
   <a href="success.html">Success Stories</a>
   <a href="#inquiry" class="mob-cta">Contact</a>
 </div>
@@ -756,30 +756,15 @@ body.page-ready .hero-cta{opacity:1;transform:translateY(0);transition-delay:.48
     setTimeout(() => { window.location.href = url; }, EXIT_MS);
   };
 
-  // Goes back to tours.html, restoring the panel for the current tour
+  // Same, but goes back in history (falls back to a given URL)
   window.ptBack = function(fallback){
-    // Save current tour's pkg key so tours.html reopens the right panel instantly
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const country = params.get('country') || '';
-      const dest    = params.get('dest')    || '';
-      if (country && dest) {
-        const pkgKey = country + '|' + dest;
-        const state = {
-          activePkgKey: pkgKey,
-          panelScrollTop: 0,
-          panelVisible: true,
-          activeFilter: 'all',
-        };
-        sessionStorage.setItem('visavera_tours_state', JSON.stringify(state));
-      }
-    } catch(e) {}
-    // Navigate directly instead of history.back() so tours.html runs its
-    // state-restore logic and shows the correct panel without any delay
     const pt = document.getElementById('pageTransition');
     document.body.classList.add('pt-leaving');
     if(pt) pt.classList.remove('pt-hidden');
-    setTimeout(() => { window.location.href = fallback || 'tours.html'; }, EXIT_MS);
+    setTimeout(() => {
+      if (history.length > 1) history.back();
+      else window.location.href = fallback;
+    }, EXIT_MS);
   };
 
   // Catch normal in-site link clicks (nav, mobile menu, footer, etc.)

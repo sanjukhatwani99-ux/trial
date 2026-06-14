@@ -22,6 +22,10 @@
 }
 *,::after,::before{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;background:var(--bg)}
+/* Prevent mobile auto-zoom when inputs are focused */
+@media (max-width:768px){
+  input, select, textarea { font-size:16px !important; }
+}
 body{background:var(--bg);color:var(--text);font-family:Outfit,sans-serif;overflow-x:hidden;overflow-y:auto;padding-bottom:calc(var(--bar-h) + var(--safe-b))}
 img{display:block;max-width:100%;height:auto}
 a{color:inherit;text-decoration:none}
@@ -1203,6 +1207,23 @@ window.submitForm = function(btn){
     });
   }
 };
+
+/* ── Always start at top of page — covers direct load AND back-button cache ── */
+(function(){
+  // Immediate scroll to suppress any browser scroll restoration
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  // pageshow fires on both fresh loads and bfcache restores (back/forward button)
+  window.addEventListener('pageshow', function(e) {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  });
+  // DOMContentLoaded as a belt-and-suspenders fallback
+  document.addEventListener('DOMContentLoaded', function() {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  });
+})();
 </script>
 </body>
 </html>

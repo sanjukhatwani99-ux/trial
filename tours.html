@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Visavera – Tours & Packages</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nav.css">
@@ -467,12 +467,21 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   #studentSearchWrap{top:6px!important;width:calc(100% - 16px)!important;left:8px!important;right:8px!important;transform:none!important}
   #workSearchWrap{top:6px!important;width:calc(100% - 16px)!important;left:8px!important;right:8px!important;transform:none!important}
 }
-#page-tickets { clip-path: inset(0); }
+/* ── TICKETS PAGE: smooth map touch ── */
+#page-tickets {
+  /* clip-path creates a GPU compositing layer — keep it but promote canvas separately */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+}
 #pkgMap, #pkgMap > * {
   overflow: hidden !important;
+  overscroll-behavior: none;
 }
-/* Allow full touch control for smooth map panning */
-#pkgMap {
+/* Allow full touch control for smooth map panning — set on container AND canvas */
+#pkgMap,
+#pkgMap canvas,
+#pkgMap .maptilergl-canvas,
+#pkgMap .maplibregl-canvas {
   touch-action: none;
 }
 /* Ensure map fills entire tickets page (behind padding-top) */
@@ -964,7 +973,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       background: transparent;
       outline: none;
       cursor: text;
-      font-size: 14px;
+      font-size: 16px;
       font-family: 'Outfit', sans-serif;
       padding: 0 60px 0 58px;
       color: rgba(20,20,28,0.88);
@@ -1057,7 +1066,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     #pkgDropFilter {
       width: 100%;
       padding: 10px 18px;
-      font-size: 13.5px;
+      font-size: 16px;
       font-family: 'Outfit', sans-serif;
       font-weight: 400;
       border: 1px solid rgba(0,0,0,0.08);
@@ -2702,13 +2711,16 @@ function setupMap() {
 
   maptilersdk.config.apiKey = MAPTILER_KEY;
 
-  // Ensure the map container allows smooth touch panning
+  // Ensure the map container and its canvas get full native touch control
   const pkgMapEl = document.getElementById('pkgMap');
   if (pkgMapEl) {
     pkgMapEl.style.touchAction = 'none';
+    pkgMapEl.style.overscrollBehavior = 'none';
   }
 
-  const initZoom = window.innerWidth <= 860 ? 1.8 : 2.8;
+  const isMobileSetup = window.innerWidth <= 860;
+  const initZoom = isMobileSetup ? 1.8 : 2.8;
+
   map = new maptilersdk.Map({
     container: 'pkgMap',
     style: maptilersdk.MapStyle.SATELLITE,
@@ -2716,23 +2728,34 @@ function setupMap() {
     zoom: initZoom,
     pitch: 0,
     bearing: 0,
-    antialias: true,
+    antialias: !isMobileSetup,        // antialias costs GPU on mobile — disable
     interactive: true,
     navigationControl: false,
     geolocateControl: false,
     maptilerLogo: false,
     attributionControl: false,
-    // Performance optimizations for mobile
-    fadeDuration: window.innerWidth <= 860 ? 0 : 300,
+    fadeDuration: isMobileSetup ? 0 : 300,
     trackResize: true,
-    // Smooth touch panning on mobile
+    // Smooth touch panning
     dragPan: true,
     touchZoomRotate: true,
     touchPitch: false,
+    // Cap pixel ratio on mobile so the GPU renders fewer pixels → smoother pan
+    pixelRatio: isMobileSetup ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio,
   });
 
   map.on('load', () => {
     mapReady = true;
+
+    // Apply touch-action:none to the dynamically created canvas for butter-smooth panning
+    const mapEl = document.getElementById('pkgMap');
+    if (mapEl) {
+      const canvas = mapEl.querySelector('canvas');
+      if (canvas) {
+        canvas.style.touchAction = 'none';
+        canvas.style.overscrollBehavior = 'none';
+      }
+    }
 
     // Force resize to ensure map fills container (especially important on mobile
     // where the packages page may still be display:none during map initialisation)

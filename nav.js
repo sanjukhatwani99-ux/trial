@@ -67,25 +67,42 @@
     menu.setAttribute('aria-hidden', !open);
   });
 
+  /* Close mobile menu on outside click */
+  document.addEventListener('click', e => {
+    if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) {
+      btn.classList.remove('open');
+      menu.classList.remove('open');
+      btn.setAttribute('aria-expanded', false);
+      menu.setAttribute('aria-hidden', true);
+    }
+  });
+
+  /* Close mobile menu on Escape */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && menu.classList.contains('open')) {
+      btn.classList.remove('open');
+      menu.classList.remove('open');
+      btn.setAttribute('aria-expanded', false);
+      menu.setAttribute('aria-hidden', true);
+      btn.focus();
+    }
+  });
+
   /* ── 5. Smooth page transitions ── */
   function navigate(href) {
     document.documentElement.classList.add('page-leaving');
     setTimeout(() => { location.href = href; }, 220);
   }
 
-  // Intercept nav link clicks — skip links pointing to the current page
-  // (tours.html is a SPA; reloading it would kill the map)
+  // Intercept nav link clicks
   document.addEventListener('click', e => {
     const a = e.target.closest('a[href]');
     if (!a) return;
     const href = a.getAttribute('href');
-    // Only intercept internal .html links
-    if (!href || href.startsWith('http') || href.startsWith('mailto') || href.startsWith('#')) return;
-    // Don't intercept links to the current page — let the page's own router handle it
+    if (!href || href.startsWith('http') || href.startsWith('mailto') || href.startsWith('#') || href.startsWith('tel')) return;
     const currentFile = location.pathname.split('/').pop() || 'index.html';
     if (href === currentFile) return;
     e.preventDefault();
-    // Close mobile menu if open
     btn.classList.remove('open');
     menu.classList.remove('open');
     btn.setAttribute('aria-expanded', false);

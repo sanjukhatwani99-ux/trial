@@ -15,6 +15,7 @@
   --border: rgba(0, 0, 0, 0.08);
   --border-2: rgba(0, 0, 0, 0.13);
   --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.07);
+  --nav-h: 62px;
 }
 
 /* ── Page Transitions ── */
@@ -34,7 +35,7 @@ html.page-leaving {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 500;
-  height: 62px;
+  height: var(--nav-h);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -58,6 +59,7 @@ html.page-leaving {
   letter-spacing: -0.5px;
   text-decoration: none;
   transition: opacity 0.2s;
+  flex-shrink: 0;
 }
 .nav-logo:hover { opacity: 0.8; }
 .nav-logo span { color: var(--red); }
@@ -92,9 +94,10 @@ html.page-leaving {
   border-radius: 7px;
   transition: color 0.2s, background 0.2s;
   overflow: hidden;
+  white-space: nowrap;
 }
 
-/* Hover background fill — slide up */
+/* Hover background fill */
 .nav-link::before {
   content: '';
   position: absolute;
@@ -128,15 +131,12 @@ html.page-leaving {
   transition: background 0.2s, transform 0.2s, box-shadow 0.2s !important;
 }
 .nav-cta::before { display: none !important; }
-
 .nav-cta:hover {
   background: var(--red-dark) !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 6px 20px var(--red-glow) !important;
   color: #fff !important;
 }
-
-/* When contact page is active — darken slightly */
 .nav-cta.nav-cta-active {
   background: var(--red-dark) !important;
 }
@@ -155,6 +155,7 @@ html.page-leaving {
   align-items: center;
   justify-content: center;
   transition: border-color 0.2s, background 0.2s;
+  flex-shrink: 0;
 }
 .nav-hamburger:hover {
   background: var(--bg2);
@@ -175,7 +176,7 @@ html.page-leaving {
 .mobile-menu {
   display: none;
   position: fixed;
-  top: 62px; left: 0; right: 0;
+  top: var(--nav-h); left: 0; right: 0;
   background: rgba(248, 246, 243, 0.98);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -185,8 +186,8 @@ html.page-leaving {
   padding: 12px 16px 20px;
   flex-direction: column;
   gap: 4px;
-  max-height: calc(100vh - 62px);
-  max-height: calc(100dvh - 62px);
+  max-height: calc(100vh - var(--nav-h));
+  max-height: calc(100dvh - var(--nav-h));
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   opacity: 0;
@@ -247,23 +248,48 @@ html.page-leaving {
 }
 
 /* ── Responsive ── */
+
+/* Tablet ≤ 960px */
 @media (max-width: 960px) {
   #main-nav { padding: 0 24px; }
-  .nav-link { font-size: 12.5px; padding: 6px 10px; }
-  .nav-cta { padding: 7px 15px !important; }
+  .nav-link { font-size: 12.5px; padding: 6px 9px; }
+  .nav-cta { padding: 7px 14px !important; }
 }
+
+/* Show hamburger ≤ 860px */
 @media (max-width: 860px) {
   #main-nav { padding: 0 18px; }
   .nav-links { display: none; }
   .nav-hamburger { display: flex; }
   .mobile-menu { display: flex; }
 }
+
+/* Small tablet ≤ 768px */
 @media (max-width: 768px) {
-  #main-nav { height: 56px; }
-  .mobile-menu { top: 56px; max-height: calc(100vh - 56px); max-height: calc(100dvh - 56px); }
+  :root { --nav-h: 56px; }
 }
+
+/* Mobile ≤ 480px */
 @media (max-width: 480px) {
-  #main-nav { height: 52px; padding: 0 14px; }
+  :root { --nav-h: 52px; }
+  #main-nav { padding: 0 14px; }
   .nav-logo { font-size: 19px; }
-  .mobile-menu { top: 52px; max-height: calc(100vh - 52px); max-height: calc(100dvh - 52px); }
+}
+
+/* Very small ≤ 360px */
+@media (max-width: 360px) {
+  #main-nav { padding: 0 12px; }
+  .nav-logo { font-size: 17px; }
+}
+
+/* Landscape short screens */
+@media (max-height: 520px) and (orientation: landscape) {
+  :root { --nav-h: 48px; }
+}
+
+/* Ultrawide ≥ 1600px — keep nav content centred */
+@media (min-width: 1600px) {
+  #main-nav {
+    padding: 0 max(32px, calc((100vw - 1400px) / 2));
+  }
 }

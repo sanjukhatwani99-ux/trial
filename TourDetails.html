@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#F8F6F3">
 <title>Dubai Luxury Escape – Visavera Tours</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -22,7 +22,7 @@
   --safe-r:env(safe-area-inset-right,0px);
 }
 *,::after,::before{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;background:var(--bg)}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;background:var(--bg)}
 /* Prevent mobile auto-zoom when inputs are focused */
 @media (max-width:768px){
   input, select, textarea { font-size:16px !important; }
@@ -278,7 +278,7 @@ button{font-family:Outfit,sans-serif;cursor:pointer}
   nav{padding:0 18px}
   .nav-links{display:none!important}
   .nav-hamburger{display:flex!important}
-  .mobile-menu{display:flex;top:62px}
+  .mobile-menu{display:flex}
   .inc-exc-grid{grid-template-columns:1fr}
 }
 @media(max-width:768px){
@@ -315,6 +315,33 @@ button{font-family:Outfit,sans-serif;cursor:pointer}
   .bar-price{font-size:17px}
   .bar-dest-name{font-size:12px}
   .bar-flag{font-size:18px}
+}
+@media(max-width:360px){
+  :root{--nav-h:52px}
+  nav{padding:0 12px}
+  .hero-title{font-size:clamp(26px,9vw,38px)}
+  .section-title{font-size:clamp(18px,5.5vw,28px)}
+  .bar-wa{display:none}
+  .bar-btn{flex:1;justify-content:center}
+}
+/* Landscape short screens */
+@media(max-height:520px) and (orientation:landscape){
+  :root{--nav-h:48px}
+  nav{height:48px}
+  .mobile-menu{top:48px}
+  .hero{height:100dvh;min-height:0}
+  .overview-split{grid-template-columns:1fr 1fr}
+  .inquiry-inner{grid-template-columns:1fr 1.15fr}
+}
+/* Ultrawide ≥ 1600px */
+@media(min-width:1600px){
+  #main-nav{padding:0 max(32px, calc((100vw - 1400px) / 2))}
+  .container{max-width:1340px}
+  .hero-title{font-size:clamp(56px,6vw,100px)}
+  .section-title{font-size:clamp(28px,2.8vw,46px)}
+  .overview-split{gap:80px}
+  .inquiry-inner{gap:72px}
+  .tours-grid{grid-template-columns:repeat(5,1fr)!important}
 }
 /* ════════════════════════════════════════════
    PAGE TRANSITION OVERLAY (covers initial paint

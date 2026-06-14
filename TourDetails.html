@@ -1077,7 +1077,7 @@ const DEST_DATA = {
   backBtn.id = 'tourBackBtn';
   backBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Back to Tours`;
   backBtn.style.cssText = `
-    position:fixed;top:74px;left:24px;z-index:400;
+    position:fixed;top:72px;left:16px;z-index:600;
     display:inline-flex;align-items:center;gap:7px;
     background:rgba(248,246,243,0.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
     border:1.5px solid rgba(0,0,0,0.10);border-radius:24px;
@@ -1089,7 +1089,10 @@ const DEST_DATA = {
   `;
   backBtn.onmouseenter = () => { backBtn.style.background='#C8102E'; backBtn.style.color='#fff'; backBtn.style.borderColor='#C8102E'; backBtn.style.transform='translateY(-2px)'; backBtn.style.boxShadow='0 8px 28px rgba(200,16,46,0.28)'; };
   backBtn.onmouseleave = () => { backBtn.style.background='rgba(248,246,243,0.95)'; backBtn.style.color='#333'; backBtn.style.borderColor='rgba(0,0,0,0.10)'; backBtn.style.transform='translateY(0)'; backBtn.style.boxShadow='0 4px 20px rgba(0,0,0,0.10)'; };
-  backBtn.onclick = () => window.ptBack('tours.html');
+  backBtn.addEventListener('click', function(e) {
+    e.stopPropagation(); // prevent nav.js click interceptor from also firing
+    window.ptBack('tours.html');
+  }, true); // capture phase so we win before nav.js bubble listener
   // Entrance animation for the floating back button (joins the hero stagger)
   backBtn.style.opacity = '0';
   backBtn.style.transform = 'translateX(-14px)';
@@ -1198,21 +1201,28 @@ window.submitForm = function(btn){
   }
 };
 
-/* ── Always start at top of page — covers direct load AND back-button cache ── */
-(function(){
-  // Immediate scroll to suppress any browser scroll restoration
-  if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
+/* ── Hide back button when mobile menu is open ── */
+(function() {
+  // Wait for nav.js to inject the hamburger/menu, then observe
+  function watchMenu() {
+    const hamburgerEl = document.getElementById('hamburger');
+    const mobileMenuEl = document.getElementById('mobileMenu');
+    if (!hamburgerEl || !mobileMenuEl) { setTimeout(watchMenu, 100); return; }
+    new MutationObserver(function() {
+      const isOpen = mobileMenuEl.classList.contains('open');
+      const bb = document.getElementById('tourBackBtn');
+      if (bb) { bb.style.opacity = isOpen ? '0' : '1'; bb.style.pointerEvents = isOpen ? 'none' : 'auto'; }
+    }).observe(mobileMenuEl, { attributes: true, attributeFilter: ['class'] });
   }
+  watchMenu();
+})();
+
+/* ── Always start at top of page ── */
+(function(){
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-  // pageshow fires on both fresh loads and bfcache restores (back/forward button)
-  window.addEventListener('pageshow', function(e) {
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-  });
-  // DOMContentLoaded as a belt-and-suspenders fallback
-  document.addEventListener('DOMContentLoaded', function() {
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-  });
+  window.addEventListener('pageshow', function() { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); });
+  document.addEventListener('DOMContentLoaded', function() { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); });
 })();
 </script>
 <script src="nav.js"></script>

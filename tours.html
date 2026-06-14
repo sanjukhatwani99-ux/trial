@@ -571,6 +571,14 @@ window.ptNavigate = function(url){
   document.body.classList.add('pt-leaving');
   setTimeout(() => { window.location.href = url; }, 320);
 };
+
+// If this page is restored from bfcache (e.g. user pressed "Back" from
+// TourDetails.html), the DOM may still have the 'pt-leaving' class from
+// when we navigated away — which leaves the full-screen logo overlay
+// stuck on top of everything. Clear it on every pageshow.
+window.addEventListener('pageshow', function(){
+  document.body.classList.remove('pt-leaving');
+});
 </script>
 
 

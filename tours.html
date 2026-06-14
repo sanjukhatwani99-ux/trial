@@ -1977,7 +1977,6 @@ function closeVisitorDropdown() {
   // Dismiss keyboard
   const fi = document.getElementById('visitorDropFilter');
   if (fi) fi.blur();
-  if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
 }
 
 function toggleVisitorDropdown() {
@@ -2058,7 +2057,7 @@ function toggleMobileMenu() {
 
 // Close dropdowns on outside click
 document.addEventListener('click', e => {
-  if (!e.target.closest('#visitorSearchWrap') && typeof closeVisitorDropdown !== 'undefined') {
+  if (typeof visitorDropOpen !== 'undefined' && visitorDropOpen && !e.target.closest('#visitorSearchWrap') && typeof closeVisitorDropdown !== 'undefined') {
     closeVisitorDropdown();
   }
   if (!e.target.closest('#hamburger') && !e.target.closest('#mobileMenu')) {
@@ -2250,7 +2249,9 @@ const ISO2 = {
 })();
 
 // Cesium — disable default Ion requests entirely
-Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkMzhiOTQ5NS0wNGVjLTRhM2ItOWZiZC1jNjA5OWJlNGY5MjUiLCJpZCI6NDM4Njg2LCJpc3MiOiJodHRwczovL2FwaS5jZXNpdW0uY29tIiwiYXVkIjoidW5kZWZpbmVkX2RlZmF1bHQiLCJpYXQiOjE3ODAyNTI3Njh9.RXzlRrOzCNHHHS-4RmY3LPoUXVooaZpp7z2BeO-x7RM';
+if (typeof Cesium !== 'undefined') {
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkMzhiOTQ5NS0wNGVjLTRhM2ItOWZiZC1jNjA5OWJlNGY5MjUiLCJpZCI6NDM4Njg2LCJpc3MiOiJodHRwczovL2FwaS5jZXNpdW0uY29tIiwiYXVkIjoidW5kZWZpbmVkX2RlZmF1bHQiLCJpYXQiOjE3ODAyNTI3Njh9.RXzlRrOzCNHHHS-4RmY3LPoUXVooaZpp7z2BeO-x7RM';
+}
 
 let viewer = null;
 let currentCountry = null;
@@ -2441,26 +2442,32 @@ function buildEntityCache() {
 }
 
 // Reusable constants — avoids creating new objects on every click
-const MAT_CLEAR      = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString('rgba(0,0,0,0)'));
-const COL_OUTLINE_DM = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'));
-const WIDTH_HI       = new Cesium.ConstantProperty(4);
-const WIDTH_DM       = new Cesium.ConstantProperty(1);
-const OUTLINE_ON     = new Cesium.ConstantProperty(true);
-const FILL_ON        = new Cesium.ConstantProperty(true);
-const FILL_OFF       = new Cesium.ConstantProperty(false);
+let MAT_CLEAR, COL_OUTLINE_DM, WIDTH_HI, WIDTH_DM, OUTLINE_ON, FILL_ON, FILL_OFF;
+if (typeof Cesium !== 'undefined') {
+  MAT_CLEAR      = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString('rgba(0,0,0,0)'));
+  COL_OUTLINE_DM = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString('rgba(255,255,255,0.18)'));
+  WIDTH_HI       = new Cesium.ConstantProperty(4);
+  WIDTH_DM       = new Cesium.ConstantProperty(1);
+  OUTLINE_ON     = new Cesium.ConstantProperty(true);
+  FILL_ON        = new Cesium.ConstantProperty(true);
+  FILL_OFF       = new Cesium.ConstantProperty(false);
+}
 
 // Glowing pulsing outline for selected country
 let _glowTime = 0;
-const COL_OUTLINE_HI = new Cesium.CallbackProperty(() => {
-  _glowTime += 0.04;
-  const pulse = 0.55 + 0.45 * Math.sin(_glowTime * 2.5);
-  return Cesium.Color.fromCssColorString(`rgba(255,255,255,${pulse.toFixed(2)})`);
-}, false);
+let COL_OUTLINE_HI, MAT_HIGHLIGHT;
+if (typeof Cesium !== 'undefined') {
+  COL_OUTLINE_HI = new Cesium.CallbackProperty(() => {
+    _glowTime += 0.04;
+    const pulse = 0.55 + 0.45 * Math.sin(_glowTime * 2.5);
+    return Cesium.Color.fromCssColorString(`rgba(255,255,255,${pulse.toFixed(2)})`);
+  }, false);
 
-// Subtle fill tint — nearly transparent so only border glows
-const MAT_HIGHLIGHT = new Cesium.ColorMaterialProperty(
-  Cesium.Color.fromCssColorString('rgba(255,255,255,0.06)')
-);
+  // Subtle fill tint — nearly transparent so only border glows
+  MAT_HIGHLIGHT = new Cesium.ColorMaterialProperty(
+    Cesium.Color.fromCssColorString('rgba(255,255,255,0.06)')
+  );
+}
 
 let highlightedIso = null;
 

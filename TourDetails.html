@@ -1134,25 +1134,6 @@ const bar = document.getElementById('bottomBar');
 const heroEl = document.getElementById('hero');
 new IntersectionObserver(([e]) => bar.classList.toggle('visible', !e.isIntersecting), {threshold:.12}).observe(heroEl);
 
-/* ── Keep bottom bar flush with the true visible viewport edge.
-   On iPad/tablet Safari (and split-view/slide-over), the on-screen
-   browser chrome at the bottom isn't always reflected by
-   `bottom:0` + safe-area-inset alone, leaving a visible gap below
-   the bar. Use the VisualViewport API to compute the exact offset
-   and pin the bar to it. ── */
-(function(){
-  if (!window.visualViewport) return;
-  function syncBarOffset(){
-    const vv = window.visualViewport;
-    const gap = window.innerHeight - (vv.height + vv.offsetTop);
-    bar.style.bottom = Math.max(0, Math.round(gap)) + 'px';
-  }
-  syncBarOffset();
-  visualViewport.addEventListener('resize', syncBarOffset);
-  visualViewport.addEventListener('scroll', syncBarOffset);
-  window.addEventListener('orientationchange', () => setTimeout(syncBarOffset, 50));
-})();
-
 
 
 /* ── Carousel ── */

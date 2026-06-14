@@ -2721,6 +2721,23 @@ const WORLD_CITIES = [
 // ── EXPOSE PKG_DATA GLOBALLY for tour detail page ─────────────────────────
 window.__PKG_DATA_REF = PKG_DATA;
 
+// ── DEVICE / PERFORMANCE TIER DETECTION ────────────────────────────────────
+// Tablets in landscape (e.g. iPad 1024px) have desktop-sized viewports but
+// mobile-class GPUs. Treat them as a distinct "low power" tier so the heavy
+// desktop animation path (long flight duration, particles, per-frame SVG
+// redraws during zoom, extra arrival rings) doesn't overload them.
+function isLowPowerDevice() {
+  const isMobileWidth = window.innerWidth <= 860;
+  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  const isTabletLandscape = !isMobileWidth && isTouch && window.innerWidth <= 1366;
+  return isMobileWidth || isTabletLandscape;
+}
+function isTabletLandscapeDevice() {
+  const isMobileWidth = window.innerWidth <= 860;
+  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  return !isMobileWidth && isTouch && window.innerWidth <= 1366;
+}
+
 // ── STATE ─────────────────────────────────────────────────────────────────
 let map = null, mapInited = false, mapReady = false;
 let activePkg = null;
@@ -2785,6 +2802,7 @@ function setupMap() {
   }
 
   const isMobileSetup = window.innerWidth <= 860;
+  const isLowPowerSetup = isLowPowerDevice();
   const initZoom = isMobileSetup ? 1.8 : 2.8;
 
   map = new maptilersdk.Map({
@@ -2794,20 +2812,20 @@ function setupMap() {
     zoom: initZoom,
     pitch: 0,
     bearing: 0,
-    antialias: !isMobileSetup,        // antialias costs GPU on mobile — disable
+    antialias: !isLowPowerSetup,       // antialias costs GPU on mobile/tablet — disable
     interactive: true,
     navigationControl: false,
     geolocateControl: false,
     maptilerLogo: false,
     attributionControl: false,
-    fadeDuration: isMobileSetup ? 0 : 300,
+    fadeDuration: isLowPowerSetup ? 0 : 300,
     trackResize: true,
     // Smooth touch panning
     dragPan: true,
     touchZoomRotate: true,
     touchPitch: false,
-    // Cap pixel ratio on mobile so the GPU renders fewer pixels → smoother pan
-    pixelRatio: isMobileSetup ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio,
+    // Cap pixel ratio on mobile/tablet so the GPU renders fewer pixels → smoother pan
+    pixelRatio: isLowPowerSetup ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio,
   });
 
   map.on('load', () => {
@@ -3228,6 +3246,10 @@ function doFlight(pkg) {
 
   // Detect mobile for faster, more visible animation
   const isMobile = window.innerWidth <= 860;
+  // Tablets in landscape (desktop-sized viewport, mobile-class GPU) get the
+  // same lightweight animation budget as mobile to avoid jank.
+  const isTabletLandscape = isTabletLandscapeDevice();
+  const isLowPower = isMobile || isTabletLandscape;
 
   // Phase 1: zoom out to show BOTH India and destination clearly
   const midLng = (INDIA_LNG + pkg.lng) / 2;
@@ -3278,8 +3300,8 @@ function doFlight(pkg) {
       <circle cx="${srcXY.x}" cy="${srcXY.y}" r="6" fill="#e8c06a" opacity="0.9"/>
       <circle cx="${srcXY.x}" cy="${srcXY.y}" r="4" fill="#fff" opacity="1"/>
     `;
-    const ringCount = isMobile ? 2 : 3;
-    const ringInterval = isMobile ? 350 : 500;
+    const ringCount = isLowPower ? 2 : 3;
+    const ringInterval = isLowPower ? 350 : 500;
     for (let i = 0; i < ringCount; i++) {
       const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
       ring.setAttribute('cx', srcXY.x); ring.setAttribute('cy', srcXY.y);
@@ -3287,7 +3309,7 @@ function doFlight(pkg) {
       ring.setAttribute('stroke', '#e8c06a'); ring.setAttribute('stroke-width', '1.5');
       ring.setAttribute('opacity', '0.7');
       or.appendChild(ring);
-      const ringDur = isMobile ? 800 : 1200;
+      const ringDur = isLowPower ? 800 : 1200;
       const delay = i * ringInterval;
       setTimeout(() => {
         const startT = Date.now();
@@ -3324,10 +3346,10 @@ function doFlight(pkg) {
     document.getElementById('pkgFlightSVG').appendChild(planePath);
     planePath.getTotalLength();
 
-    // Mobile: 1200ms flight, Desktop: 2500ms
-    const flightDur = isMobile ? 1200 : 2500;
-    // Mobile: spawn fewer particles for perf
-    const particleChance = isMobile ? 0.15 : 0.3;
+    // Mobile: 1200ms flight, Tablet landscape: 1700ms, Desktop: 2500ms
+    const flightDur = isMobile ? 1200 : isTabletLandscape ? 1700 : 2500;
+    // Mobile/tablet: spawn fewer particles for perf
+    const particleChance = isMobile ? 0.15 : isTabletLandscape ? 0.18 : 0.3;
     const startTime = Date.now();
 
     function animFlight() {
@@ -3368,29 +3390,30 @@ function doFlight(pkg) {
 
   } // end startPhase2
 
-  const phase2Fallback = isMobile ? 700 : 1100;
+  const phase2Fallback = isMobile ? 700 : isTabletLandscape ? 900 : 1100;
   map.once('moveend', () => setTimeout(startPhase2, 30));
   setTimeout(startPhase2, phase2Fallback); // fallback if moveend already fired
 
   // Phase 3: after flight lands, zoom into destination
-  const _phase3Delay = (window.innerWidth <= 860) ? 2300 : 3200;
+  const _phase3Delay = isMobile ? 2300 : isTabletLandscape ? 2900 : 3200;
   setTimeout(() => {
     if (!activePkg) return;
     const plane = document.getElementById('pkgPlane');
     // Hide plane icon during zoom-in — dest dot shows instead
     if (plane) plane.style.display = 'none';
 
-    // On mobile: hide SVG overlay AND block the global move listener so the
-    // WebGL map gets 100% of the GPU during zoom-in. Redraw once at moveend.
+    // On mobile/tablet-landscape: hide SVG overlay AND block the global move
+    // listener so the WebGL map gets 100% of the GPU during zoom-in.
+    // Redraw once at moveend instead of every frame.
     const svgOverlay = document.getElementById('pkgFlightSVG');
-    if (isMobile) {
+    if (isLowPower) {
       if (svgOverlay) svgOverlay.style.visibility = 'hidden';
       if (window._setZoomingIn) window._setZoomingIn(true);
     }
 
-    const zoomInDuration = isMobile ? 700 : 1400;
+    const zoomInDuration = isMobile ? 700 : isTabletLandscape ? 1000 : 1400;
 
-    if (!isMobile) {
+    if (!isLowPower) {
       // Desktop: keep SVG in sync during move (debounced to 1 per rAF)
       let _svgRafId = null;
       function updateAllSVGOnMove() {
@@ -3429,7 +3452,7 @@ function doFlight(pkg) {
         if (activePkg) drawRelatedRoutes(PKG_DATA[activePkg]);
       });
     } else {
-      // Mobile: redraw SVG only once after zoom fully settles, then restore
+      // Mobile/tablet-landscape: redraw SVG only once after zoom fully settles, then restore
       map.once('moveend', () => {
         // Re-enable global move listener first
         if (window._setZoomingIn) window._setZoomingIn(false);
@@ -3471,7 +3494,7 @@ function doFlight(pkg) {
       duration: zoomInDuration,
       essential: true,
     });
-  }, isMobile ? 2300 : 3200);
+  }, _phase3Delay);
 
   // Show flight info in HUD
   document.getElementById('pkgFlightRoute').textContent = `DEL → ${pkg.flag}`;
@@ -3495,11 +3518,14 @@ function onArrived(pkg, dstXY) {
   }
   redrawDestGlow();
 
-  // 3 expanding arrival rings at live position — skip on mobile (zoom-in starts soon after)
+  // Expanding arrival rings at live position — skip on mobile (zoom-in starts
+  // soon after), fewer on tablet landscape (GPU-limited), full set on desktop.
   const isMobileArrival = window.innerWidth <= 860;
+  const isTabletLandscapeArrival = isTabletLandscapeDevice();
   if (!isMobileArrival) {
+    const arrivalRingCount = isTabletLandscapeArrival ? 2 : 4;
     const d0 = getLiveDst();
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < arrivalRingCount; i++) {
       const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
       ring.setAttribute('cx', d0.x); ring.setAttribute('cy', d0.y);
       ring.setAttribute('r', '9'); ring.setAttribute('fill','none');

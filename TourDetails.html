@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#F8F6F3">
 <title>Dubai Luxury Escape – Visavera Tours</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nav.css">
 <style>
 /* ─── ROOT TOKENS (same as tours.html) ─── */
 :root {
@@ -31,52 +32,6 @@ img{display:block;max-width:100%;height:auto}
 a{color:inherit;text-decoration:none}
 button{font-family:Outfit,sans-serif;cursor:pointer}
 
-/* ════════════════════════════════════════════
-   NAV — exact copy from tours.html
-   ════════════════════════════════════════════ */
-nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(248,246,243,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm)}
-.nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--black);display:flex;align-items:center;gap:2px;letter-spacing:-0.5px;cursor:pointer}
-.nav-logo span{color:var(--red)}
-.nav-dot{width:7px;height:7px;background:var(--red);border-radius:50%;margin-left:3px}
-.nav-links{display:flex;align-items:center;gap:2px;list-style:none}
-.nav-links a{color:var(--text-2);text-decoration:none;font-size:13.5px;font-weight:500;padding:6px 13px;border-radius:7px;transition:all .2s;cursor:pointer}
-.nav-links a:hover{color:var(--text);background:var(--bg2)}
-.nav-links a.active{color:var(--red);background:var(--red-light);font-weight:600}
-.nav-cta{background:var(--red)!important;color:#fff!important;padding:8px 20px!important;border-radius:8px!important;font-weight:600!important;box-shadow:0 2px 12px var(--red-glow)}
-.nav-cta:hover{background:var(--red-dark)!important;transform:translateY(-1px)}
-
-/* Visa dropdown (tours.html) */
-.nav-visa-li{position:relative;list-style:none}
-.nav-visa-trigger{color:var(--text-2);text-decoration:none;font-size:13.5px;font-weight:500;padding:6px 13px;border-radius:7px;transition:all .2s;cursor:pointer;display:flex;align-items:center;gap:2px;user-select:none}
-.nav-visa-trigger:hover,.nav-visa-trigger.open{color:var(--text);background:var(--bg2)}
-.nav-visa-trigger.open{color:var(--red);background:var(--red-light);font-weight:600}
-.nav-visa-drop{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(-6px);min-width:230px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 16px 48px rgba(0,0,0,0.14);padding:6px;opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;z-index:700}
-.nav-visa-drop.open{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
-.nav-visa-drop::before{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-bottom-color:#fff;border-top:none;filter:drop-shadow(0 -2px 2px rgba(0,0,0,0.06))}
-.nav-visa-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:background .16s;text-decoration:none;color:var(--text)}
-.nav-visa-item:hover{background:var(--red-light)}
-.nav-visa-item:hover .nvi-title{color:var(--red)}
-.nvi-icon{font-size:20px;flex-shrink:0;line-height:1;width:28px;text-align:center}
-.nvi-text{display:flex;flex-direction:column;gap:2px}
-.nvi-title{font-size:13.5px;font-weight:600;color:var(--black);transition:color .16s}
-.nvi-sub{font-size:11px;color:var(--text-3)}
-
-/* Hamburger */
-.nav-hamburger{display:none;align-items:center;justify-content:center;flex-direction:column;gap:5px;width:44px;height:44px;padding:10px;border-radius:9px;background:transparent;border:1.5px solid var(--border-2);cursor:pointer;transition:all .2s;flex-shrink:0}
-.nav-hamburger:hover{border-color:var(--red);background:var(--red-light)}
-.nav-hamburger.open{background:var(--red-light);border-color:var(--red)}
-.nav-hamburger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;transition:all .35s cubic-bezier(.77,0,.175,1);transform-origin:center}
-.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
-.nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
-.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-
-/* Mobile menu */
-.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;background:rgba(248,246,243,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.12);z-index:600;padding:12px 16px 20px;flex-direction:column;gap:4px;transform:translateY(-12px);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.mobile-menu.open{transform:translateY(0);opacity:1;pointer-events:auto}
-.mobile-menu a{display:flex;align-items:center;min-height:44px;color:var(--text-2);text-decoration:none;font-size:15px;font-weight:500;padding:10px 16px;border-radius:10px;transition:all .2s;cursor:pointer}
-.mobile-menu a:hover{color:var(--text);background:var(--bg2)}
-.mobile-menu a.active{color:var(--red);background:var(--red-light);font-weight:600}
-.mobile-menu .mob-cta{display:flex;align-items:center;justify-content:center;min-height:44px;background:var(--red);color:#fff!important;font-weight:600!important;text-align:center;margin-top:8px;padding:10px 16px;border-radius:10px;box-shadow:0 4px 16px var(--red-glow)}
 
 /* ════════════════════════════════════════════
    HERO
@@ -390,9 +345,9 @@ body.pt-leaving #pageTransition{
    ENTRANCE CHOREOGRAPHY — nav + hero stagger in
    once the destination data has been applied
    ════════════════════════════════════════════ */
-nav{opacity:0;transform:translateY(-14px);transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1)}
+#main-nav{opacity:0;transform:translateY(-14px);transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1)}
 .hero-badge,.hero-title,.hero-meta,.hero-cta{opacity:0;transform:translateY(26px);transition:opacity .85s cubic-bezier(.22,1,.36,1),transform .85s cubic-bezier(.22,1,.36,1)}
-body.page-ready nav{opacity:1;transform:translateY(0);transition-delay:.05s}
+body.page-ready #main-nav{opacity:1;transform:translateY(0);transition-delay:.05s}
 body.page-ready .hero-badge{opacity:1;transform:translateY(0);transition-delay:.12s}
 body.page-ready .hero-title{opacity:1;transform:translateY(0);transition-delay:.22s}
 body.page-ready .hero-meta{opacity:1;transform:translateY(0);transition-delay:.36s}
@@ -407,7 +362,7 @@ body.page-ready .hero-cta{opacity:1;transform:translateY(0);transition-delay:.48
   .reveal{transition:none;opacity:1;transform:none}
   *{animation-duration:0s!important;transition-duration:0s!important}
   #pageTransition{display:none!important}
-  nav,.hero-badge,.hero-title,.hero-meta,.hero-cta{opacity:1!important;transform:none!important}
+  #main-nav,.hero-badge,.hero-title,.hero-meta,.hero-cta{opacity:1!important;transform:none!important}
 }
 </style>
 </head>
@@ -423,46 +378,6 @@ body.page-ready .hero-cta{opacity:1;transform:translateY(0);transition-delay:.48
   <div class="pt-mark">Visa<span>vera</span><div class="pt-dot"></div></div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     NAV (exact from tours.html)
-     ══════════════════════════════════════════ -->
-<nav>
-  <div class="nav-logo" onclick="window.ptNavigate('index.html')">Visa<span>vera</span><div class="nav-dot"></div></div>
-  <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="about.html">About Us</a></li>
-    <li class="nav-visa-li" id="navVisaLi">
-      <a class="nav-visa-trigger" id="navVisaTrigger" onclick="toggleVisaNavDrop(event)">Visas
-        <svg style="display:inline;vertical-align:middle;margin-left:3px;margin-top:-2px;transition:transform .25s" id="visaNavChevronSvg" width="11" height="11" viewBox="0 0 12 12" fill="none">
-          <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </a>
-      <div class="nav-visa-drop" id="navVisaDrop">
-        <a class="nav-visa-item" href="visas.html"><span class="nvi-icon">🌍</span><span class="nvi-text"><span class="nvi-title">Visitor Visa</span><span class="nvi-sub">Tourist &amp; family visits</span></span></a>
-        <a class="nav-visa-item" href="visas.html"><span class="nvi-icon">🎓</span><span class="nvi-text"><span class="nvi-title">Student Visa</span><span class="nvi-sub">Study abroad programs</span></span></a>
-        <a class="nav-visa-item" href="visas.html"><span class="nvi-icon">💼</span><span class="nvi-text"><span class="nvi-title">Work Visa</span><span class="nvi-sub">Global employment visas</span></span></a>
-      </div>
-    </li>
-    <li><a href="tours.html" class="active" onclick="sessionStorage.removeItem('visavera_tours_state')">Tours &amp; Packages</a></li>
-    <li><a href="success.html">Success Stories</a></li>
-    <li><a href="#inquiry" class="nav-cta">Contact</a></li>
-  </ul>
-  <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
-
-<div class="mobile-menu" id="mobileMenu">
-  <a href="index.html">Home</a>
-  <a href="about.html">About Us</a>
-  <a style="font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3);padding:10px 16px 4px;pointer-events:none">Visas</a>
-  <a href="visas.html" style="padding-left:28px">↳ Visitor Visa</a>
-  <a href="visas.html" style="padding-left:28px">↳ Student Visa</a>
-  <a href="visas.html" style="padding-left:28px">↳ Work Visa</a>
-  <a href="tours.html" class="active" onclick="sessionStorage.removeItem('visavera_tours_state')">Tours &amp; Packages</a>
-  <a href="success.html">Success Stories</a>
-  <a href="#inquiry" class="mob-cta">Contact</a>
-</div>
 
 <!-- ══════════════════════════════════════════
      HERO
@@ -1206,45 +1121,7 @@ const bar = document.getElementById('bottomBar');
 const heroEl = document.getElementById('hero');
 new IntersectionObserver(([e]) => bar.classList.toggle('visible', !e.isIntersecting), {threshold:.12}).observe(heroEl);
 
-/* ── Nav dropdown ── */
-let visaNavDropOpen = false;
-function toggleVisaNavDrop(e){
-  e.stopPropagation();
-  visaNavDropOpen ? closeVisaNavDrop() : openVisaNavDrop();
-}
-function openVisaNavDrop(){
-  visaNavDropOpen = true;
-  document.getElementById('navVisaDrop').classList.add('open');
-  document.getElementById('navVisaTrigger').classList.add('open');
-  document.getElementById('visaNavChevronSvg').style.transform = 'rotate(180deg)';
-}
-function closeVisaNavDrop(){
-  visaNavDropOpen = false;
-  document.getElementById('navVisaDrop').classList.remove('open');
-  document.getElementById('navVisaTrigger').classList.remove('open');
-  document.getElementById('visaNavChevronSvg').style.transform = 'rotate(0deg)';
-}
-document.addEventListener('mousedown', function(e){
-  const li = document.getElementById('navVisaLi');
-  if(li && !li.contains(e.target) && visaNavDropOpen) closeVisaNavDrop();
-});
 
-/* ── Mobile menu ── */
-function toggleMobileMenu(){
-  const ham = document.getElementById('navHamburger');
-  const menu = document.getElementById('mobileMenu');
-  const isOpen = menu.classList.contains('open');
-  ham.classList.toggle('open', !isOpen);
-  menu.classList.toggle('open', !isOpen);
-}
-document.addEventListener('click', e => {
-  if(!e.target.closest('#navHamburger') && !e.target.closest('#mobileMenu')){
-    const ham = document.getElementById('navHamburger');
-    const menu = document.getElementById('mobileMenu');
-    if(ham) ham.classList.remove('open');
-    if(menu) menu.classList.remove('open');
-  }
-});
 
 /* ── Carousel ── */
 (function(){
@@ -1338,5 +1215,6 @@ window.submitForm = function(btn){
   });
 })();
 </script>
+<script src="nav.js"></script>
 </body>
 </html>

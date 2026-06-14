@@ -9,6 +9,7 @@
     '': 'home',
     'about.html': 'about',
     'tours.html': 'tours',
+    'TourDetails.html': 'tours',
     'success.html': 'success',
     'contact.html': 'contact',
   };

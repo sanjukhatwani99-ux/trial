@@ -1028,8 +1028,15 @@ window.addEventListener('pageshow', function() {
     /* Also hide label while focused and has value */
     .pkg-bar-has-value .pkg-bar-label { opacity: 0; pointer-events: none; }
     .pkg-bar-has-value #pkgSearch { opacity: 1; }
-    /* While dropdown is open, let clicks pass through pkgSearch to pkgDropFilter */
-    .pkg-dropdown-open #pkgSearch { pointer-events: none; }
+    /* While dropdown is open: pill input IS the filter — show it, keep pointer events */
+    .pkg-dropdown-open #pkgSearch {
+      pointer-events: auto;
+      opacity: 1;
+      color: rgba(20,20,28,0.88);
+    }
+    .pkg-dropdown-open #pkgSearch::placeholder { color: rgba(80,80,90,0.45); }
+    /* Hide the typewriter label while dropdown is open */
+    .pkg-dropdown-open .pkg-bar-label { opacity: 0 !important; pointer-events: none; }
 
     /* ══ RIGHT — divider + chevron ══ */
     .pkg-bar-right {
@@ -1173,7 +1180,7 @@ window.addEventListener('pageshow', function() {
 
       <!-- Real invisible input (activates on click/focus) -->
       <input id="pkgSearch" type="search"
-        placeholder=" "
+        placeholder="Type to filter destinations…"
         autocomplete="off" spellcheck="false" inputmode="search"
         onclick="togglePkgDropdown()"
         ontouchend="this.focus();togglePkgDropdown();event.preventDefault()"
@@ -1188,7 +1195,7 @@ window.addEventListener('pageshow', function() {
     </div>
 
     <div id="pkgDropdown">
-      <div class="pkg-drop-filter-row">
+      <div class="pkg-drop-filter-row" style="display:none">
         <input id="pkgDropFilter" type="text" placeholder="Filter destinations…"
           autocomplete="off" spellcheck="false"
           oninput="filterPkgDropdown(this.value)">
@@ -1253,13 +1260,19 @@ window.addEventListener('pageshow', function() {
     setTimeout(tick, 800);
   })();
 
-  /* Show/hide label when user types */
+  /* Show/hide label when user types; also relay to dropdown filter when open */
   window.pkgHandleInput = function(inp) {
     const pill = document.getElementById('pkgPill');
     if (inp.value.length > 0) {
       pill.classList.add('pkg-bar-has-value');
     } else {
       pill.classList.remove('pkg-bar-has-value');
+    }
+    // When dropdown is open, pipe typing straight into the filter
+    if (inp.getAttribute('data-filter-mode') === '1') {
+      const fi = document.getElementById('pkgDropFilter');
+      if (fi) fi.value = inp.value;
+      if (window.filterPkgDropdown) window.filterPkgDropdown(inp.value);
     }
   };
   </script>
@@ -1937,6 +1950,7 @@ function selectVisitorCountry(c) {
 }
 
 function openVisitorDropdown() {
+  if (visitorDropOpen) return; // already open — don't rebuild/reset/refocus and break typing
   visitorDropOpen = true;
   buildVisitorDropdown('');
   const dd = document.getElementById('visitorDropdown');
@@ -3902,8 +3916,20 @@ function openPkgDropdown() {
   if (dd) { dd.style.maxHeight = '360px'; dd.classList.add('open'); }
   if (chev) chev.classList.add('open');
   if (pill) pill.classList.add('pkg-dropdown-open');
+  // Make the pill input itself the live search filter while dropdown is open.
+  // This avoids focus fights with the map canvas that steal keyboard events
+  // from the separate #pkgDropFilter input inside the dropdown.
+  const ps = document.getElementById('pkgSearch');
+  if (ps) {
+    ps.value = '';
+    ps.style.opacity = '1';
+    ps.style.pointerEvents = 'auto';
+    ps.setAttribute('data-filter-mode', '1');
+    ps.focus({ preventScroll: true });
+  }
+  // Keep pkgDropFilter in sync (relay) but don't focus it
   const fi = document.getElementById('pkgDropFilter');
-  if (fi) { fi.value = ''; fi.focus({preventScroll:true}); }
+  if (fi) { fi.value = ''; }
 }
 
 function closePkgDropdown() {
@@ -3916,6 +3942,17 @@ function closePkgDropdown() {
   dd.classList.remove('open');
   if (chev) chev.classList.remove('open');
   if (pill) pill.classList.remove('pkg-dropdown-open');
+  // Revert pkgSearch to its normal invisible state
+  const ps = document.getElementById('pkgSearch');
+  if (ps) {
+    ps.removeAttribute('data-filter-mode');
+    // Only clear & hide if no country is selected (no value shown)
+    if (!document.getElementById('pkgSelectedDisplay') ||
+        document.getElementById('pkgSelectedDisplay').style.display === 'none') {
+      ps.value = '';
+      ps.style.opacity = '';
+    }
+  }
   const fi = document.getElementById('pkgDropFilter');
   if (fi) fi.blur();
   if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();

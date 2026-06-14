@@ -1028,6 +1028,8 @@ window.addEventListener('pageshow', function() {
     /* Also hide label while focused and has value */
     .pkg-bar-has-value .pkg-bar-label { opacity: 0; pointer-events: none; }
     .pkg-bar-has-value #pkgSearch { opacity: 1; }
+    /* While dropdown is open, let clicks pass through pkgSearch to pkgDropFilter */
+    .pkg-dropdown-open #pkgSearch { pointer-events: none; }
 
     /* ══ RIGHT — divider + chevron ══ */
     .pkg-bar-right {
@@ -3896,8 +3898,10 @@ function openPkgDropdown() {
   buildPkgDropdown('');
   const dd = document.getElementById('pkgDropdown');
   const chev = document.getElementById('pkgChevron');
+  const pill = document.getElementById('pkgPill');
   if (dd) { dd.style.maxHeight = '360px'; dd.classList.add('open'); }
   if (chev) chev.classList.add('open');
+  if (pill) pill.classList.add('pkg-dropdown-open');
   const fi = document.getElementById('pkgDropFilter');
   if (fi) { fi.value = ''; fi.focus({preventScroll:true}); }
 }
@@ -3906,10 +3910,12 @@ function closePkgDropdown() {
   pkgDropOpen = false;
   const dd = document.getElementById('pkgDropdown');
   const chev = document.getElementById('pkgChevron');
+  const pill = document.getElementById('pkgPill');
   if (!dd) return;
   dd.style.maxHeight = '0';
   dd.classList.remove('open');
   if (chev) chev.classList.remove('open');
+  if (pill) pill.classList.remove('pkg-dropdown-open');
   const fi = document.getElementById('pkgDropFilter');
   if (fi) fi.blur();
   if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();

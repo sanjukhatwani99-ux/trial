@@ -613,6 +613,9 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
              border-color .25s;
   transform-style:preserve-3d;
   will-change:transform;
+  /* Prevent double-tap delay on touch screens */
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:rgba(200,16,46,0.12);
 }
 
 /* Lift + deepen shadow on hover */
@@ -728,6 +731,8 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   white-space:nowrap;flex-shrink:0;
   transition:background .2s, transform .28s cubic-bezier(0.22,1,0.36,1), box-shadow .28s;
   position:relative;overflow:hidden;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
 }
 .pkg-card2-book::before{
   content:'';position:absolute;inset:0;
@@ -4639,13 +4644,29 @@ function renderPkgCards(pkg, filter, skipAnimation) {
 
   // Build DOM elements with start state (invisible), append all at once, then stagger-animate
   const cards = destinations.map((d) => {
-    const link = d.link ? `saveStateAndGo('${d.link.replace(/'/g,"\\'")}')` : `saveStateAndGo('TourDetails.html?country='+encodeURIComponent('${countryKey}')+'&dest='+encodeURIComponent('${d.name}'))`;
+    const destUrl = d.link ? d.link : `TourDetails.html?country=${encodeURIComponent(countryKey)}&dest=${encodeURIComponent(d.name)}`;
+    const destUrlEscaped = destUrl.replace(/'/g, "\\'");
     const el = document.createElement('div');
     el.className = 'pkg-card2';
     el.style.cssText = skipAnimation
       ? 'opacity:1;transform:translateY(0)'
       : 'opacity:0;transform:translateY(16px);will-change:transform,opacity';
-    el.setAttribute('onclick', `event.stopPropagation();${link}`);
+    el.setAttribute('onclick', `event.stopPropagation();saveStateAndGo('${destUrlEscaped}')`);
+    // Fix double-tap issue on touch screens: fire navigation on touchend directly
+    let _tStartX = 0, _tStartY = 0;
+    el.addEventListener('touchstart', (e) => {
+      _tStartX = e.touches[0].clientX;
+      _tStartY = e.touches[0].clientY;
+    }, { passive: true });
+    el.addEventListener('touchend', (e) => {
+      const dx = Math.abs(e.changedTouches[0].clientX - _tStartX);
+      const dy = Math.abs(e.changedTouches[0].clientY - _tStartY);
+      if (dx < 8 && dy < 8) { // it's a tap, not a scroll
+        e.preventDefault();
+        e.stopPropagation();
+        window.saveStateAndGo(destUrl);
+      }
+    }, { passive: false });
     el.innerHTML = `<div class="pkg-card2-tag">${d.tag}</div>
       <div class="pkg-card2-img-wrap" style="height:120px;">
         <img class="pkg-card2-img" src="${d.img}" alt="${d.name}" style="height:120px;" onerror="this.parentNode.style.background='linear-gradient(135deg,#e8edf2,#d0d8e0)'">
@@ -4660,7 +4681,7 @@ function renderPkgCards(pkg, filter, skipAnimation) {
             <div style="font-size:13px;font-weight:700;color:#C8102E;font-family:Outfit,sans-serif;line-height:1">${d.price}</div>
             <div style="font-size:9px;color:#aaa;font-family:Outfit,sans-serif">per person</div>
           </div>
-          <button class="pkg-card2-book" onclick="event.stopPropagation();${link}">Book Now</button>
+          <button class="pkg-card2-book" onclick="event.stopPropagation();saveStateAndGo('${destUrlEscaped}')">Book Now</button>
         </div>
       </div>`;
     return el;
@@ -5763,7 +5784,7 @@ function populateTourDetail(d) {
 
   // Similar
   document.getElementById('tdSimilar').innerHTML = similars.map(s=>`
-    <div class="td-similar-card" onclick="window.location.href='TourDetails.html?country='+encodeURIComponent('${s.country}')+'&dest='+encodeURIComponent('${s.name}')">
+    <div class="td-similar-card" style="touch-action:manipulation;-webkit-tap-highlight-color:rgba(200,16,46,0.12)" onclick="window.location.href='TourDetails.html?country='+encodeURIComponent('${s.country}')+'&dest='+encodeURIComponent('${s.name}')">
       <img src="${s.img}" alt="${s.name}" onerror="this.style.background='#e8edf2'">
       <div class="td-similar-card-body">
         <div class="td-similar-card-name">${s.flag} ${s.name}</div>

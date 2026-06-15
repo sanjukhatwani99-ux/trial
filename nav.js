@@ -102,7 +102,12 @@
     menu.setAttribute('aria-hidden', !open);
     document.body.style.overflow = open ? 'hidden' : '';
   }
-  btn.addEventListener('click', () => setOpen(!menu.classList.contains('open')));
+  /* Mobile menu — fire on touchend so first tap opens/closes instantly.
+     preventDefault() stops the 300 ms ghost-click that would follow. */
+  function toggleMenu() { setOpen(!menu.classList.contains('open')); }
+  btn.addEventListener('click',    toggleMenu);
+  btn.addEventListener('touchend', function(e) { e.preventDefault(); toggleMenu(); }, { passive: false });
+
   document.addEventListener('click', e => {
     if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) setOpen(false);
   });
@@ -110,21 +115,43 @@
     if (e.key === 'Escape' && menu.classList.contains('open')) { setOpen(false); btn.focus(); }
   });
 
-  /* Page transitions */
+  /* Page transitions
+     ─────────────────────────────────────────────────────────────
+     Problem: touch browsers fire :hover on tap-1, click on tap-2.
+     Fix: intercept touchend directly so navigation fires on the
+     first tap. We mark the anchor with a flag so the subsequent
+     synthetic click event (which browsers fire ~300 ms later) is
+     ignored rather than triggering a second navigation.
+     ─────────────────────────────────────────────────────────────*/
   function navigate(href) {
     document.documentElement.classList.add('page-leaving');
     setTimeout(() => { location.href = href; }, 280);
   }
-  document.addEventListener('click', e => {
-    const a = e.target.closest('a[href]');
-    if (!a) return;
-    const href = a.getAttribute('href');
+
+  function handleAnchor(e, anchor) {
+    const href = anchor.getAttribute('href');
     if (!href || /^(https?:|mailto:|tel:|#)/.test(href)) return;
     const cur = location.pathname.split('/').pop() || 'index.html';
     if (href === cur) return;
     e.preventDefault();
     setOpen(false);
     navigate(href);
+  }
+
+  // touchend — fires on first tap, marks the anchor so click is skipped
+  document.addEventListener('touchend', function(e) {
+    const anchor = e.target.closest('a[href]');
+    if (!anchor) return;
+    anchor._touchNavigated = true;
+    handleAnchor(e, anchor);
+  }, { passive: false });
+
+  // click — used by mouse users; skipped if touchend already handled it
+  document.addEventListener('click', function(e) {
+    const anchor = e.target.closest('a[href]');
+    if (!anchor) return;
+    if (anchor._touchNavigated) { anchor._touchNavigated = false; return; }
+    handleAnchor(e, anchor);
   });
 
   /* Page enter */

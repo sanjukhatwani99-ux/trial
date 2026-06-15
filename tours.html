@@ -339,7 +339,11 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 }
 
 /* ── Touch device optimizations ── */
-@media (hover: none) and (pointer: coarse){
+/* Use (hover:none) without (pointer:coarse) so touchscreen laptops are
+   also covered — those devices report pointer:fine but still have no
+   persistent hover, so the same double-tap problem applies. */
+@media (hover: none) {
+  /* Minimum touch target sizes for accessibility */
   .nav-link, .mob-link, .btn-primary, .btn-ghost, .nav-cta{
     min-height:44px;
     min-width:44px;
@@ -350,6 +354,210 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   .pkg-card2-book, .card-apply-btn{
     min-height:44px;
     padding:12px 16px;
+  }
+  
+  /* DISABLE ALL HOVER EFFECTS - prevent double-tap behavior */
+  /* Replace hover with active states for immediate visual feedback */
+  
+  /* Primary buttons */
+  .btn-primary:hover{
+    background:var(--red);
+    transform:none;
+    box-shadow:0 4px 18px var(--red-glow);
+  }
+  .btn-primary:active{
+    background:var(--red-dark);
+    transform:translateY(-2px);
+    box-shadow:0 8px 28px var(--red-glow);
+  }
+  
+  /* Ghost buttons */
+  .btn-ghost:hover{
+    border-color:var(--border-2);
+    color:var(--text);
+  }
+  .btn-ghost:active{
+    border-color:var(--red);
+    color:var(--red);
+  }
+  
+  /* Card close button */
+  .card-close:hover{
+    background:rgba(0,0,0,0.35);
+    color:#fff;
+  }
+  .card-close:active{
+    background:rgba(200,16,46,0.7);
+    color:#fff;
+  }
+  
+  /* Apply buttons */
+  .card-apply-btn:hover{
+    background:var(--red);
+    transform:none;
+    box-shadow:0 4px 14px var(--red-glow);
+  }
+  .card-apply-btn:active{
+    background:var(--red-dark);
+    transform:translateY(-2px);
+    box-shadow:0 8px 24px var(--red-glow);
+  }
+  
+  /* Visa marquee chips */
+  .vm-chip:hover::before{
+    opacity:0;
+  }
+  .vm-chip:active::before{
+    opacity:0.18;
+  }
+  .vm-chip:hover .vm-flag-img{
+    transform:none;
+    box-shadow:0 2px 8px rgba(0,0,0,0.35);
+  }
+  .vm-chip:active .vm-flag-img{
+    transform:scale(1.08);
+    box-shadow:0 4px 16px rgba(0,0,0,0.5);
+  }
+  .vm-chip:hover .vm-name{
+    color:rgba(255,255,255,0.75);
+  }
+  .vm-chip:active .vm-name{
+    color:#fff;
+  }
+  
+  /* Package cards v2 */
+  .pkg-card2:hover{
+    transform:none;
+    border-color:rgba(255,255,255,0.18);
+  }
+  .pkg-card2:active{
+    transform:translateY(-8px) scale(1.025);
+    border-color:rgba(200,16,46,0.25);
+  }
+  .pkg-card2:hover::before{
+    background-position:0 0;
+  }
+  .pkg-card2:active::before{
+    background-position:-100% 0;
+  }
+  .pkg-card2:hover::after{
+    opacity:0;
+    transform:scaleY(0);
+  }
+  .pkg-card2:active::after{
+    opacity:1;
+    transform:scaleY(1);
+  }
+  .pkg-card2:hover .pkg-card2-img{
+    transform:none;
+    filter:none;
+  }
+  .pkg-card2:active .pkg-card2-img{
+    transform:scale(1.1);
+    filter:brightness(1.08) saturate(1.1);
+  }
+  .pkg-card2:hover .pkg-card2-img-wrap::after{
+    opacity:0;
+  }
+  .pkg-card2:active .pkg-card2-img-wrap::after{
+    opacity:1;
+  }
+  .pkg-card2:hover .pkg-card2-explore{
+    opacity:0;
+    transform:translateY(12px);
+  }
+  .pkg-card2:active .pkg-card2-explore{
+    opacity:1;
+    transform:translateY(0);
+  }
+  .pkg-card2:hover .pkg-card2-body{
+    background:#fff;
+  }
+  .pkg-card2:active .pkg-card2-body{
+    background:#fafafa;
+  }
+  .pkg-card2:hover .pkg-card2-dest{
+    color:#111;
+  }
+  .pkg-card2:active .pkg-card2-dest{
+    color:#C8102E;
+  }
+  .pkg-card2:hover .pkg-card2-tag{
+    transform:none;
+    box-shadow:0 2px 8px rgba(200,16,46,0.25);
+  }
+  .pkg-card2:active .pkg-card2-tag{
+    transform:translateY(-2px) scale(1.06);
+    box-shadow:0 4px 14px rgba(200,16,46,0.4);
+  }
+  .pkg-card2:hover .pkg-card2-book{
+    transform:none;
+    box-shadow:0 4px 14px rgba(200,16,46,0.3);
+    background:var(--red);
+  }
+  .pkg-card2:active .pkg-card2-book{
+    transform:translateY(-2px);
+    box-shadow:0 6px 18px rgba(200,16,46,0.45);
+    background:#a80d26;
+  }
+  .pkg-card2:hover .pkg-card2-book::before{
+    background-position:0 0;
+  }
+  .pkg-card2:active .pkg-card2-book::before{
+    background-position:-100% 0;
+  }
+  
+  /* Visa chips */
+  .pvchip:hover{
+    background:rgba(255,255,255,0.08);
+    border-color:rgba(255,255,255,0.14);
+    color:rgba(255,255,255,0.82);
+    transform:none;
+    box-shadow:none;
+  }
+  .pvchip:active{
+    background:rgba(200,16,46,0.28);
+    border-color:rgba(200,16,46,0.6);
+    color:#fff;
+    transform:translateY(-1px);
+    box-shadow:0 4px 16px rgba(200,16,46,0.25);
+  }
+  
+  /* Nav items */
+  .nav-visa-item:hover{
+    background:transparent;
+  }
+  .nav-visa-item:active{
+    background:var(--red-light);
+  }
+  .nav-visa-item:hover .nvi-title{
+    color:var(--text);
+  }
+  .nav-visa-item:active .nvi-title{
+    color:var(--red);
+  }
+  
+  /* Visa marquee pause on hover - disable for touch */
+  .visa-marquee-inner:hover{
+    animation-play-state:running;
+  }
+  
+  /* Nav CTA */
+  .nav-cta:hover{
+    transform:none;
+    box-shadow:0 1px 0 rgba(255,255,255,0.10) inset, 0 2px 10px rgba(0,0,0,0.20);
+  }
+  .nav-cta:active{
+    transform:translateY(-2px);
+    box-shadow:0 1px 0 rgba(255,255,255,0.12) inset, 0 8px 28px rgba(0,0,0,0.24);
+  }
+  
+  /* Ensure touch events work immediately */
+  button, a, .clickable, [onclick], [role="button"],
+  .pkg-card2, .pkg-card2-book, .pvchip, .vm-chip,
+  .card-apply-btn, .card-close, .btn-primary, .btn-ghost {
+    -webkit-tap-highlight-color:rgba(200,16,46,0.2);
+    touch-action:manipulation;
   }
 }
 

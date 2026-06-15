@@ -623,6 +623,50 @@ body.page-ready .hero-cta{opacity:1;transform:translateY(0);transition-delay:.48
   #main-nav,.hero-title,.hero-meta,.hero-cta{opacity:1!important;transform:none!important}
   .hero-badge{opacity:1!important;transform:translateX(-50%)!important}
 }
+
+/* ══════════════════════════════════════════════════════
+   TOUCH FIXES — first-tap action, no double-tap needed
+   ══════════════════════════════════════════════════════ */
+
+/* touch-action: manipulation eliminates the 300 ms tap delay */
+.btn-hero,
+.ov-cta,
+.form-submit,
+.bar-btn,
+.bar-wa,
+.view-all,
+.carousel-btn,
+.c-dot,
+.pkg-card2,
+.card-apply-btn,
+.card-close,
+.vm-chip { touch-action: manipulation; }
+
+/* On pure-touch devices: remove hover-only visual states so the
+   browser has nothing to "preview" on tap-1 before firing click */
+@media (hover: none) {
+  .btn-hero:hover            { background: #fff; color: var(--black); transform: none; box-shadow: 0 8px 36px rgba(0,0,0,.28); }
+  .ov-cta:hover              { background: var(--red); transform: none; box-shadow: 0 4px 20px var(--red-glow); }
+  .ov-highlight:hover        { transform: none; box-shadow: var(--shadow-sm); border-color: var(--border); }
+  .form-submit:hover         { background: var(--red); transform: none; box-shadow: 0 4px 20px var(--red-glow); }
+  .bar-btn:hover             { background: var(--red); transform: none; box-shadow: 0 4px 20px var(--red-glow); }
+  .bar-wa:hover              { background: #25d366; transform: none; box-shadow: 0 4px 16px rgba(37,211,102,.35); }
+  .view-all:hover            { background: var(--red-light); color: var(--red); border-color: rgba(200,16,46,.3); transform: none; }
+  .carousel-btn:hover        { background: rgba(255,255,255,.18); }
+  .card-apply-btn:hover      { background: var(--red); transform: none; box-shadow: 0 4px 14px var(--red-glow); }
+  .card-close:hover          { background: rgba(0,0,0,.35); color: #fff; }
+  .attr-item:hover           { transform: none; box-shadow: var(--shadow-sm); border-color: var(--border); }
+  .pkg-card2:hover           { transform: none; border-color: rgba(0,0,0,.08); box-shadow: 0 2px 12px rgba(0,0,0,.07); }
+  .pkg-card2:hover::before   { background-position: 200% 0; }
+  .pkg-card2:hover::after    { opacity: 0; transform: scaleY(.4); }
+  .pkg-card2:hover .pkg-card2-img { transform: none; filter: none; }
+  .pkg-card2:hover .pkg-card2-img-wrap::after { opacity: 0; }
+  .pkg-card2:hover .pkg-card2-explore { opacity: 0; }
+  .vm-chip:hover::before     { opacity: 0; }
+  .vm-chip:hover .vm-flag-img { transform: none; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+  .vm-chip:hover .vm-name    { color: rgba(255,255,255,.75); }
+  .provides-card:hover       { transform: none; box-shadow: 0 2px 10px rgba(0,0,0,.04); border-color: rgba(255,255,255,.9); }
+}
 </style>
 </head>
 <body>
@@ -1635,9 +1679,18 @@ new IntersectionObserver(([e]) => bar.classList.toggle('visible', !e.isIntersect
   function bwd(){ if(!busy){ busy=true; go((cur-1+total)%total); setTimeout(()=>busy=false,750); } }
   function reset(){ clearInterval(timer); timer=setInterval(fwd,3800); }
 
-  dots.forEach((d,i) => d.addEventListener('click', ()=>{ if(!busy){ busy=true; go(i); setTimeout(()=>busy=false,750); reset(); } }));
-  prev && prev.addEventListener('click', ()=>{ bwd(); reset(); });
-  next && next.addEventListener('click', ()=>{ fwd(); reset(); });
+  dots.forEach((d,i) => {
+    function goDot(){ if(!busy){ busy=true; go(i); setTimeout(()=>busy=false,750); reset(); } }
+    d.addEventListener('click', goDot);
+    d.addEventListener('touchend', function(e){ e.preventDefault(); goDot(); }, { passive: false });
+  });
+  function addCarouselTap(el, fn) {
+    if (!el) return;
+    el.addEventListener('click', fn);
+    el.addEventListener('touchend', function(e){ e.preventDefault(); fn(); }, { passive: false });
+  }
+  addCarouselTap(prev, ()=>{ bwd(); reset(); });
+  addCarouselTap(next, ()=>{ fwd(); reset(); });
   track.addEventListener('touchstart', e=>{ startX=e.changedTouches[0].screenX; }, {passive:true});
   track.addEventListener('touchend', e=>{
     const dx = startX - e.changedTouches[0].screenX;

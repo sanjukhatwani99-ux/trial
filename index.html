@@ -191,6 +191,20 @@ html, body {
 }
 .btn-hero-ghost:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.55); transform: translateY(-1px); }
 
+/* Touch fixes — eliminate 300 ms delay & suppress hover-only states */
+.btn-hero-primary,
+.btn-hero-ghost,
+.slide-thumb,
+.slide-arrow,
+.slide-dot { touch-action: manipulation; }
+
+@media (hover: none) {
+  .btn-hero-primary:hover          { transform: none; box-shadow: 0 2px 0 var(--red-shadow), 0 8px 24px var(--red-glow); }
+  .btn-hero-primary:hover::before  { transform: translateX(-120%); }
+  .btn-hero-ghost:hover            { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.32); transform: none; }
+  .slide-thumb:hover:not(.active)  { opacity: 0.52; }
+}
+
 /* ── Right-side thumbnail strip ── */
 .slide-thumbs {
   position: absolute;
@@ -475,11 +489,16 @@ html, body {
     raf = requestAnimationFrame(tick);
   }
 
-  /* Controls */
-  document.getElementById('prev').addEventListener('click', () => goTo(current - 1));
-  document.getElementById('next').addEventListener('click', () => goTo(current + 1));
-  dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.goto)));
-  thumbs.forEach(t => t.addEventListener('click', () => goTo(+t.dataset.goto)));
+  /* Controls — addTapHandler fires on touchend (first tap) AND click (mouse).
+     preventDefault on touchend stops the 300 ms synthetic click from doubling up. */
+  function addTapHandler(el, fn) {
+    el.addEventListener('click', fn);
+    el.addEventListener('touchend', function(e) { e.preventDefault(); fn(); }, { passive: false });
+  }
+  addTapHandler(document.getElementById('prev'),  () => goTo(current - 1));
+  addTapHandler(document.getElementById('next'),  () => goTo(current + 1));
+  dots.forEach(d   => addTapHandler(d, () => goTo(+d.dataset.goto)));
+  thumbs.forEach(t => addTapHandler(t, () => goTo(+t.dataset.goto)));
 
   /* Pause on hover */
   const hero = document.getElementById('hero');

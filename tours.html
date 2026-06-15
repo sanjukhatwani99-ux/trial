@@ -177,7 +177,8 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   #page-tickets{overflow:hidden}
   #pkgSearchWrap{top:60px!important;width:calc(100% - 20px)!important;left:10px!important;right:10px!important;transform:none!important}
   #pkgDropList{max-height:40vh!important}
-  #pkgPanel{top:56px!important;border-radius:0}
+  #pkgPanel{border-radius:0}
+  #pkgPanelInner{padding-top:120px!important}
   #pkgCards{grid-template-columns:repeat(2,1fr)!important;}
   .pkg-card2{min-width:0}
   .pkg-card2-img{height:90px}
@@ -217,7 +218,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   #pkgSearchWrap{top:56px!important;width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
   #pkgDropList{max-height:38vh!important}
   #pkgHUD{padding:8px 12px}
-  #pkgPanel{top:52px!important}
+  #pkgPanelInner{padding-top:110px!important}
   .minimal-page h2{font-size:28px}
   .pkg-card2{min-width:0}
   .pkg-card2-img{height:80px}
@@ -1310,8 +1311,8 @@ window.addEventListener('pageshow', function() {
   </div>
 
   <!-- Packages panel (slides up) -->
-  <div id="pkgPanel" style="position:absolute;bottom:0;left:0;right:0;top:62px;z-index:30;opacity:0;transform:none;transition:opacity .4s ease-out;display:flex;flex-direction:column;justify-content:flex-start;pointer-events:none;background:#ffffff" onclick="event.stopPropagation()">
-    <div id="pkgPanelInner" style="background:#ffffff;padding:80px 22px 24px;overflow-y:auto;height:100%;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(0,0,0,0.12) transparent">
+  <div id="pkgPanel" style="position:absolute;bottom:0;left:0;right:0;top:0;z-index:30;opacity:0;transform:none;transition:opacity .4s ease-out;display:flex;flex-direction:column;justify-content:flex-start;pointer-events:none;background:#ffffff" onclick="event.stopPropagation()">
+    <div id="pkgPanelInner" style="background:#ffffff;padding:142px 22px 24px;overflow-y:auto;height:100%;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(0,0,0,0.12) transparent">
       <!-- Panel header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-shrink:0">
         <div style="display:flex;align-items:center;gap:12px">
@@ -2028,7 +2029,7 @@ function goPage(name, el) {
     el.classList.add('active');
   } else {
     // Map internal page names to nav link data-page values
-    const navPageMap = { tickets: 'tours', home: 'home', about: 'about', success: 'success', contact: 'contact', visitor: 'tours', student: 'tours', work: 'tours' };
+    const navPageMap = { tickets: 'international-tours', home: 'home', about: 'about', success: 'success', contact: 'contact', visitor: 'international-tours', student: 'international-tours', work: 'international-tours' };
     const navId = navPageMap[name] || name;
     const navLink = document.querySelector('.nav-links a[data-page="' + navId + '"]');
     if (navLink) navLink.classList.add('active');
@@ -2167,7 +2168,7 @@ document.addEventListener('DOMContentLoaded', function(){ var _mm = document.get
 
 function goPageMob(name) {
   // Update desktop nav active state using data-page mapping
-  const navPageMap = { tickets: 'tours', home: 'home', about: 'about', success: 'success', contact: 'contact', visitor: 'tours', student: 'tours', work: 'tours' };
+  const navPageMap = { tickets: 'international-tours', home: 'home', about: 'about', success: 'success', contact: 'contact', visitor: 'international-tours', student: 'international-tours', work: 'international-tours' };
   const navId = navPageMap[name] || name;
   document.querySelectorAll('.nav-links a').forEach(a => a.classList.toggle('active', a.getAttribute('data-page') === navId));
   // Update mobile nav active state
@@ -4268,7 +4269,7 @@ function showPkgPanel(pkg, skipAnimation) {
 
   const navH = (document.querySelector('nav') || {offsetHeight:62}).offsetHeight || 62;
   const panel = document.getElementById('pkgPanel');
-  panel.style.top = navH + 'px';
+  // Panel now starts from top:0 to fill entire screen including navbar area
 
   const container = document.getElementById('pkgCards');
   container.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding-bottom:4px;';
@@ -5382,7 +5383,7 @@ document.addEventListener('DOMContentLoaded', function(){
           if (ticketsPage) ticketsPage.classList.add('active');
           // Update nav active state
           document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-          const ticketsLink = document.querySelector('.nav-links a[onclick*="tickets"]');
+          const ticketsLink = document.querySelector('.nav-links a[data-page="international-tours"]');
           if (ticketsLink) ticketsLink.classList.add('active');
           // Show the panel with cards INSTANTLY — don't wait for the map.
           // The panel has a white background so it covers the map completely.

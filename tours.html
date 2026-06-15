@@ -273,6 +273,40 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   .home-stats{gap:28px}
   .country-card{min-width:270px;max-width:295px}
   .nav-links a{font-size:12.5px;padding:6px 9px}
+  #pkgCards{grid-template-columns:repeat(3,1fr)!important}
+  .pkg-card2-img{height:110px}
+}
+
+/* ── iPad Mini Portrait (768px - 820px) ── */
+@media (min-width:768px) and (max-width:820px) and (orientation:portrait){
+  #page-home h1{font-size:clamp(32px,5vw,48px)}
+  #pkgCards{grid-template-columns:repeat(3,1fr)!important}
+  .visa-marquee-wrap{height:72px}
+  .vm-chip{height:72px;padding:0 18px}
+  .country-card{max-width:90%;left:5%;right:5%}
+}
+
+/* ── iPad Air/Pro Portrait (820px - 1024px) ── */
+@media (min-width:820px) and (max-width:1024px) and (orientation:portrait){
+  #pkgCards{grid-template-columns:repeat(3,1fr)!important}
+  .pkg-card2-img{height:115px}
+}
+
+/* ── iPad Pro Landscape (1024px - 1366px) ── */
+@media (min-width:1024px) and (max-width:1366px) and (orientation:landscape){
+  #pkgCards{grid-template-columns:repeat(4,1fr)!important}
+}
+
+/* ── Large Mobile & iPhone Plus (640px - 768px) ── */
+@media (min-width:640px) and (max-width:768px){
+  #pkgCards{grid-template-columns:repeat(2,1fr)!important;gap:14px}
+  .pkg-card2-img{height:100px}
+  .vm-chip{padding:0 18px}
+}
+
+/* ── Standard Laptop (1366px - 1599px) ── */
+@media (min-width:1366px) and (max-width:1599px){
+  #pkgCards{grid-template-columns:repeat(4,1fr)!important}
 }
 
 /* ── ULTRAWIDE ≥ 1600px ── */
@@ -283,6 +317,36 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   .home-stats{gap:60px}
   .stat-num{font-size:38px}
   .country-card{min-width:340px;max-width:380px}
+  #pkgCards{grid-template-columns:repeat(5,1fr)!important}
+}
+
+/* ── 2K & Higher ≥ 2560px ── */
+@media (min-width:2560px){
+  #pkgCards{grid-template-columns:repeat(6,1fr)!important}
+}
+
+/* ── Touch device optimizations ── */
+@media (hover: none) and (pointer: coarse){
+  .nav-link, .mob-link, .btn-primary, .btn-ghost, .nav-cta{
+    min-height:44px;
+    min-width:44px;
+  }
+  .pkg-card2{
+    min-height:200px;
+  }
+  .pkg-card2-book, .card-apply-btn{
+    min-height:44px;
+    padding:12px 16px;
+  }
+}
+
+/* ── High DPI screens (Retina) ── */
+@media(-webkit-min-device-pixel-ratio:2), (min-resolution:192dpi){
+  .pkg-card2-img, .vm-flag-img, .card-flag-img-big{
+    image-rendering:-webkit-optimize-contrast;
+    image-rendering:crisp-edges;
+  }
+}
 }
 
 
@@ -577,15 +641,44 @@ body.pt-leaving #pageTransition{opacity:1;visibility:visible;pointer-events:auto
 
 <body>
 
-<div id="pageTransition" aria-hidden="true">
+<div id="pageTransition" aria-hidden="true" style="opacity:0;visibility:hidden;pointer-events:none;">
   <div class="pt-mark">Visa<span>vera</span><div class="pt-dot"></div></div>
 </div>
+
+<script>
+// Immediately clear any stuck overlay on page load - CRITICAL FIX
+(function() {
+  var pt = document.getElementById('pageTransition');
+  var body = document.body;
+  if (pt) {
+    pt.style.opacity = '0';
+    pt.style.visibility = 'hidden';
+    pt.style.pointerEvents = 'none';
+    pt.style.display = 'none';
+  }
+  if (body) {
+    body.classList.remove('pt-leaving');
+    body.style.pointerEvents = 'auto';
+  }
+  // Re-enable display after a moment
+  setTimeout(function() {
+    if (pt) pt.style.display = '';
+  }, 50);
+})();
+</script>
 
 <script>
 // Smoothly fade to an overlay before leaving for another page (e.g. TourDetails.html)
 window.ptNavigate = function(url){
   if(!url) return;
   document.body.classList.add('pt-leaving');
+  var pt = document.getElementById('pageTransition');
+  if (pt) {
+    pt.style.display = '';
+    pt.style.opacity = '1';
+    pt.style.visibility = 'visible';
+    pt.style.pointerEvents = 'auto';
+  }
   setTimeout(() => { window.location.href = url; }, 320);
 };
 
@@ -593,9 +686,51 @@ window.ptNavigate = function(url){
 // When the user presses Back from TourDetails, the browser may restore this
 // page from the bfcache with pt-leaving still on <body>, keeping the Visavera
 // overlay permanently visible. Clear it immediately on every pageshow event.
-window.addEventListener('pageshow', function() {
-  document.body.classList.remove('pt-leaving');
+window.addEventListener('pageshow', function(event) {
+  // CRITICAL: Immediately clear transition overlay and restore page interaction
   var pt = document.getElementById('pageTransition');
+  var body = document.body;
+  
+  // Remove the leaving class
+  if (body) {
+    body.classList.remove('pt-leaving');
+    body.style.pointerEvents = 'auto';
+  }
+  
+  // Hide overlay completely
+  if (pt) {
+    pt.style.opacity = '0';
+    pt.style.visibility = 'hidden';
+    pt.style.pointerEvents = 'none';
+    pt.style.display = 'none';
+    
+    // Re-enable display after clearing
+    setTimeout(function() {
+      pt.style.display = '';
+    }, 100);
+  }
+  
+  // If coming back from detail page via back button
+  try {
+    if (sessionStorage.getItem('visavera_returning_from_detail') === 'true') {
+      sessionStorage.removeItem('visavera_returning_from_detail');
+      // Extra insurance - force page to be interactive
+      if (body) {
+        body.style.overflow = 'auto';
+      }
+    }
+  } catch(e) {}
+}, false);
+
+// Additional backup: clear on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+  var pt = document.getElementById('pageTransition');
+  var body = document.body;
+  
+  if (body) {
+    body.classList.remove('pt-leaving');
+  }
+  
   if (pt) {
     pt.style.opacity = '0';
     pt.style.visibility = 'hidden';
@@ -3272,8 +3407,10 @@ function setupMap() {
   }
 
   const isMobileSetup = window.innerWidth <= 860;
+  const isTabletSetup = window.innerWidth > 860 && window.innerWidth <= 1366 && (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
   const isLowPowerSetup = isLowPowerDevice();
-  const initZoom = isMobileSetup ? 1.8 : 2.8;
+  // Ultra-aggressive: lower initial zoom → fewer tiles to load → faster render
+  const initZoom = isMobileSetup ? 1.6 : (isTabletSetup ? 2.2 : 2.5);
 
   map = new maptilersdk.Map({
     container: 'pkgMap',
@@ -3282,23 +3419,32 @@ function setupMap() {
     zoom: initZoom,
     pitch: 0,
     bearing: 0,
-    antialias: !isLowPowerSetup,       // antialias costs GPU on mobile/tablet — disable
+    antialias: false,                  // disable antialias for ALL devices → GPU boost
     interactive: true,
     navigationControl: false,
     geolocateControl: false,
     maptilerLogo: false,
     attributionControl: false,
-    fadeDuration: isLowPowerSetup ? 0 : 300,
+    fadeDuration: isLowPowerSetup ? 0 : 200,  // faster fade
     trackResize: true,
+    maxZoom: isMobileSetup ? 10 : 12,  // cap max zoom → fewer tile requests
     // Smooth touch panning
     dragPan: true,
-    touchZoomRotate: true,
+    touchZoomRotate: isMobileSetup ? { rotate: false } : true,  // disable rotation on mobile for simpler UX
     touchPitch: false,
-    // Cap pixel ratio on mobile/tablet so the GPU renders fewer pixels → smoother pan
-    pixelRatio: isLowPowerSetup ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio,
+    // Ultra-low pixel ratio for mobile → massive GPU savings
+    pixelRatio: isMobileSetup ? 1 : (isTabletSetup ? 1.25 : Math.min(window.devicePixelRatio, 1.5)),
+    // Reduce tile cache → less memory, fewer tiles to manage
+    maxTileCacheSize: isMobileSetup ? 20 : (isTabletSetup ? 30 : 50),
+    preserveDrawingBuffer: false,
+    refreshExpiredTiles: false,
+    // Momentum scrolling for smoother mobile feel
+    dragRotate: false,
+    pitchWithRotate: false,
   });
 
   map.on('load', () => {
+    if (mapReady) return;  // prevent duplicate load events
     mapReady = true;
 
     // Apply touch-action:none to the dynamically created canvas for butter-smooth panning
@@ -3317,39 +3463,31 @@ function setupMap() {
     setTimeout(() => { try { map.resize(); } catch(e) {} }, 300);
     setTimeout(() => { try { map.resize(); } catch(e) {} }, 800);
 
-    // ── Nuke all map UI controls from the DOM ──
+    // ── Nuke all map UI controls from the DOM — simplified selectors for faster query ──
     setTimeout(() => {
       const mapEl = document.getElementById('pkgMap');
       if (!mapEl) return;
-      const selectors = [
-        '[class*="-ctrl-top-left"]',
-        '[class*="-ctrl-top-right"]',
-        '[class*="-ctrl-bottom-left"]',
-        '[class*="-ctrl-bottom-right"]',
-        '[class*="-ctrl-group"]',
-        '[class*="NavigationControl"]',
-        '[class*="GeolocateControl"]',
-        '[class*="AttributionControl"]',
-        '[class*="-ctrl-attrib"]',
-        '[class*="-compact"]',
-      ];
-      selectors.forEach(sel => {
-        mapEl.querySelectorAll(sel).forEach(el => el.remove());
-      });
+      // Single broad selector to catch all control elements
+      mapEl.querySelectorAll('[class*="ctrl"], [class*="Control"]').forEach(el => el.remove());
     }, 500);
 
     addOriginMarker();
     addCityDots();
     startIdleRotation();
 
-    // Redraw SVG overlay whenever map moves/zooms — throttled via rAF.
+    // Redraw SVG overlay whenever map moves/zooms — throttled with timestamp check for max perf.
     // _zoomingIn flag lets phase-3 mobile zoom suppress all SVG work so the
     // WebGL map gets the full GPU budget during zoom-in.
     let _globalMoveRAF = null;
     let _zoomingIn = false;
+    let _lastMoveTime = 0;
+    const MOVE_THROTTLE = isMobileSetup ? 100 : 50;  // throttle move events more aggressively on mobile
     map.on('move', () => {
       clipMarkersToMapBounds();
       if (!activePkg || _zoomingIn) return;
+      const now = Date.now();
+      if (now - _lastMoveTime < MOVE_THROTTLE) return;  // throttle by time
+      _lastMoveTime = now;
       if (_globalMoveRAF) return;
       _globalMoveRAF = requestAnimationFrame(() => {
         _globalMoveRAF = null;
@@ -3373,7 +3511,10 @@ function setupMap() {
     if (pendingFly) { const p = pendingFly; pendingFly = null; doFlight(p); }
   });
 
-  map.on('error', () => {});
+  map.on('error', (e) => {
+    console.warn('Map error (non-critical):', e?.error?.message || 'unknown');
+    // Don't fallback to canvas — just log and continue
+  });
 }
 
 // ── ORIGIN MARKER (India) ──────────────────────────────────────────────────
@@ -3395,26 +3536,36 @@ function addOriginMarker() {
 
 // ── CITY DOTS ──────────────────────────────────────────────────────────────
 function addCityDots() {
-  WORLD_CITIES.forEach((city, i) => {
-    const hasPackage = !!city.key;
-    // Skip non-package cities — they clutter the map edges
-    if (!hasPackage) return;
-    const el = document.createElement('div');
-    el.className = 'pkg-city-marker';
-    el.title = city.name;
-    el.style.cssText = `
-      width:12px;
-      height:12px;
-      border-radius:50%;
-      background:rgba(255,255,255,0.9);
-      border:2px solid rgba(255,255,255,0.7);
-      box-shadow:0 0 12px rgba(255,255,255,0.6);
-      cursor:pointer;
-      animation: pkgCityPop 0.5s ease-out ${i * 40}ms both;
-      position:relative;z-index:1;
-    `;
+  const isMobileDots = window.innerWidth <= 860;
+  const BATCH_SIZE = isMobileDots ? 5 : 10;  // load markers in small batches
+  const BATCH_DELAY = isMobileDots ? 30 : 20;  // delay between batches (ms)
+  
+  const packageCities = WORLD_CITIES.filter(city => !!city.key);  // only cities with packages
+  let batchIndex = 0;
+  
+  function loadNextBatch() {
+    const start = batchIndex * BATCH_SIZE;
+    const end = Math.min(start + BATCH_SIZE, packageCities.length);
+    
+    for (let idx = start; idx < end; idx++) {
+      const city = packageCities[idx];
+      const i = idx;  // for animation delay
+      
+      const el = document.createElement('div');
+      el.className = 'pkg-city-marker';
+      el.title = city.name;
+      el.style.cssText = `
+        width:12px;
+        height:12px;
+        border-radius:50%;
+        background:rgba(255,255,255,0.9);
+        border:2px solid rgba(255,255,255,0.7);
+        box-shadow:0 0 12px rgba(255,255,255,0.6);
+        cursor:pointer;
+        animation: pkgCityPop 0.5s ease-out ${i * 40}ms both;
+        position:relative;z-index:1;
+      `;
 
-    if (hasPackage) {
       // Use touch tracking to distinguish intentional taps from swipe/pan gestures
       let _touchStartX = 0, _touchStartY = 0, _touchMoved = false;
       el.addEventListener('touchstart', (e) => {
@@ -3449,14 +3600,12 @@ function addCityDots() {
         el.style.zIndex = '1';
         hideCityTooltip();
       });
-    }
 
-    el.style.opacity = '0';
-    const marker = new maptilersdk.Marker({ element: el, anchor: 'center' }).setLngLat([city.lng, city.lat]).addTo(map);
-    map.once('idle', () => { el.style.opacity = '1'; });
+      el.style.opacity = '0';
+      const marker = new maptilersdk.Marker({ element: el, anchor: 'center' }).setLngLat([city.lng, city.lat]).addTo(map);
+      map.once('idle', () => { el.style.opacity = '1'; });
 
-    // Country label tag — only for package cities
-    if (hasPackage) {
+      // Country label tag
       const pkg = PKG_DATA[city.key];
       const countryName = city.key;
       // Convert flag emoji to ISO2 code for flagcdn img
@@ -3479,10 +3628,16 @@ function addCityDots() {
       const lblMarker = new maptilersdk.Marker({ element: lblEl, anchor: 'bottom' }).setLngLat([city.lng, city.lat]).addTo(map);
       map.once('idle', () => { lblEl.style.opacity = '1'; });
       cityMarkers.push({ marker, lblMarker, el, city });
-    } else {
-      cityMarkers.push({ marker, lblMarker: null, el, city });
     }
-  });
+    
+    batchIndex++;
+    if (end < packageCities.length) {
+      setTimeout(loadNextBatch, BATCH_DELAY);
+    }
+  }
+  
+  // Start loading first batch
+  loadNextBatch();
 }
 
 // ── CLIP MARKERS TO MAP BOUNDS ────────────────────────────────────────────

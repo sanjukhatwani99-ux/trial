@@ -720,6 +720,51 @@ window.addEventListener('pageshow', function(event) {
       }
     }
   } catch(e) {}
+
+  // ── bfcache state restore (belt-and-suspenders) ──
+  // If the browser serves this page from bfcache (event.persisted === true),
+  // DOMContentLoaded will NOT fire again, so the state-restore block below
+  // would be silently skipped. Run it here too so the panel always reopens.
+  // Note: the Back button in TourDetails.html now uses direct href navigation
+  // (not history.back()), so bfcache hits are rare — but this covers them.
+  if (event.persisted) {
+    try {
+      var raw = sessionStorage.getItem('visavera_tours_state');
+      if (raw) {
+        sessionStorage.removeItem('visavera_tours_state');
+        var state = JSON.parse(raw);
+        if (state.activePkgKey) {
+          // Activate tours page
+          document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+          var tp = document.getElementById('page-tickets');
+          if (tp) tp.classList.add('active');
+          document.querySelectorAll('.nav-links a').forEach(function(a){ a.classList.remove('active'); });
+          var tl = document.querySelector('.nav-links a[data-page="international-tours"]');
+          if (tl) tl.classList.add('active');
+          // Restore panel — retry until pkgShowPanelDirect is ready
+          var attempts = 0;
+          var restore = setInterval(function() {
+            attempts++;
+            if (window.pkgShowPanelDirect) {
+              clearInterval(restore);
+              window.__activePkgKey = state.activePkgKey;
+              var shown = window.pkgShowPanelDirect(state.activePkgKey);
+              if (shown) {
+                requestAnimationFrame(function() {
+                  if (state.activeFilter && state.activeFilter !== 'all' && window.setTourFilter) {
+                    window.setTourFilter(state.activeFilter);
+                  }
+                  var panel = document.getElementById('pkgPanel');
+                  if (panel && state.panelScrollTop) panel.scrollTop = state.panelScrollTop;
+                });
+              }
+            }
+            if (attempts > 30) clearInterval(restore); // give up after 3s
+          }, 100);
+        }
+      }
+    } catch(e) {}
+  }
 }, false);
 
 // Additional backup: clear on DOMContentLoaded

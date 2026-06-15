@@ -930,31 +930,16 @@ body.page-ready .hero-cta{opacity:1;transform:translateY(0);transition-delay:.48
     setTimeout(() => { window.location.href = url; }, EXIT_MS);
   };
 
-  // Same, but goes back in history (falls back to a given URL)
+  // Navigate back — always use direct href so DOMContentLoaded fires on tours.html
+  // and the sessionStorage state-restore block runs correctly.
+  // history.back() must NOT be used: tours.html restores panel state inside
+  // DOMContentLoaded, which is skipped entirely on a bfcache restore.
   window.ptBack = function(fallback){
     const pt = document.getElementById('pageTransition');
     document.body.classList.add('pt-leaving');
     if(pt) pt.classList.remove('pt-hidden');
     setTimeout(() => {
-      // Check if we have a proper referrer from tours.html
-      const referrer = document.referrer;
-      const hasTourReferrer = referrer && (referrer.includes('tours.html') || referrer.includes('/10/') || referrer.includes('localhost'));
-      
-      // Check if there's meaningful history (more than just this page)
-      const hasHistory = window.history.length > 1;
-      
-      if (hasTourReferrer && hasHistory) {
-        // We came from tours.html, use history.back() to preserve state
-        try {
-          window.history.back();
-        } catch(e) {
-          // If history.back() fails, fall back to direct navigation
-          window.location.href = fallback || 'tours.html';
-        }
-      } else {
-        // Direct navigation (opened in new tab or no referrer)
-        window.location.href = fallback || 'tours.html';
-      }
+      window.location.href = fallback || 'tours.html';
     }, EXIT_MS);
   };
 
@@ -1591,46 +1576,12 @@ const DEST_DATA = {
   backBtn.addEventListener('click', function(e) {
     e.preventDefault();
     e.stopPropagation();
-    e.stopImmediatePropagation(); // Ensure no other handlers interfere
-    
-    // Show transition overlay
-    const pt = document.getElementById('pageTransition');
-    document.body.classList.add('pt-leaving');
-    if(pt) pt.classList.remove('pt-hidden');
-    
-    // Store flag in sessionStorage so tours.html knows we're coming back via back button
-    try {
-      sessionStorage.setItem('visavera_returning_from_detail', 'true');
-    } catch(e) {}
-    
-    setTimeout(() => {
-      // Check if we have a proper referrer from tours.html
-      const referrer = document.referrer;
-      const fromTours = referrer && (
-        referrer.includes('tours.html') || 
-        referrer.endsWith('/10/') || 
-        referrer.endsWith('/10')
-      );
-      
-      // Check history
-      const hasHistory = window.history.length > 1;
-      
-      if (fromTours && hasHistory) {
-        // We came from tours.html, use back to preserve panel state
-        try {
-          window.history.back();
-        } catch(err) {
-          console.error('history.back failed:', err);
-          window.location.href = 'tours.html';
-        }
-      } else {
-        // Direct navigation or no referrer
-        window.location.href = 'tours.html';
-      }
-    }, 320);
-    
-    return false;
-  }, true); // capture phase so we win before nav.js bubble listener
+    e.stopImmediatePropagation();
+    // Delegate to ptNavigate — one path, one click.
+    // Direct href navigation ensures DOMContentLoaded fires on tours.html
+    // so the sessionStorage panel-state restore block always runs.
+    window.ptNavigate('tours.html');
+  }, true); // capture phase — wins before nav.js listeners
   // Entrance animation for the floating back button (joins the hero stagger)
   backBtn.style.opacity = '0';
   backBtn.style.transform = 'translateX(-14px)';

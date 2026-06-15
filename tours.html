@@ -500,9 +500,6 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 #pkgMap .maptilergl-canvas,
 #pkgMap .maplibregl-canvas {
   touch-action: none;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
 }
 /* Ensure map fills entire tickets page (behind padding-top) */
 #page-tickets #pkgMap {
@@ -518,21 +515,9 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 #pkgMap .maptilergl-canvas,
 #pkgMap .maplibregl-canvas {
   will-change: transform;
-  transform: translateZ(0) translate3d(0,0,0);
+  transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  -webkit-transform: translate3d(0,0,0);
-  -webkit-perspective: 1000;
-  perspective: 1000;
-}
-/* Mobile-specific touch optimizations */
-@media (max-width: 768px) {
-  #pkgMap {
-    -webkit-overflow-scrolling: touch;
-  }
-  #pkgMap canvas {
-    pointer-events: auto !important;
-  }
 }
 /* Hide scrollbars on dropdown lists, keep scroll functionality */
 #pkgDropList,
@@ -546,7 +531,6 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 }
 .maptilergl-marker, .maplibregl-marker {
   will-change: transform;
-  pointer-events: auto;
 }
 /* ── HIDE ALL MAP CONTROL UI (MapTiler / MapLibre) ── */
 #pkgMap .maptilergl-ctrl-top-left,
@@ -3261,199 +3245,109 @@ function initMap() {
   if (mapInited) return;
   mapInited = true;
 
-  // Show loading indicator during map load
-  const mapContainer = document.getElementById('pkgMap');
-  if (mapContainer) {
-    mapContainer.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a0e1a 0%,#1a1f2e 100%);color:#fff;font-family:Outfit,sans-serif;font-size:14px;font-weight:500;"><div style="text-align:center;"><div style="width:40px;height:40px;border:3px solid rgba(255,255,255,0.1);border-top-color:#C8102E;border-radius:50%;margin:0 auto 12px;animation:spin 0.8s linear infinite;"></div>Loading Map...</div></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
-  }
-
   // Load MapTiler SDK CSS
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = 'https://cdn.maptiler.com/maptiler-sdk-js/v2.4.0/maptiler-sdk.css';
   document.head.appendChild(link);
 
-  // Load MapTiler SDK JS with preconnect for faster loading
-  const preconnect = document.createElement('link');
-  preconnect.rel = 'preconnect';
-  preconnect.href = 'https://cdn.maptiler.com';
-  document.head.appendChild(preconnect);
-
+  // Load MapTiler SDK JS
   const script = document.createElement('script');
   script.src = 'https://cdn.maptiler.com/maptiler-sdk-js/v2.4.0/maptiler-sdk.umd.js';
-  script.async = true;
-  script.onload = () => {
-    // Small delay to let the browser breathe before initializing heavy map
-    if (window.requestIdleCallback) {
-      requestIdleCallback(() => setupMap(), { timeout: 2000 });
-    } else {
-      setTimeout(() => setupMap(), 100);
-    }
-  };
-  script.onerror = () => {
-    console.error('Failed to load MapTiler SDK');
-    setupCanvasFallback();
-  };
+  script.onload = () => setupMap();
+  script.onerror = () => setupCanvasFallback();
   document.head.appendChild(script);
 }
 
 function setupMap() {
-  try {
-    if (!window.maptilersdk) { 
-      console.error('MapTiler SDK not loaded');
-      setupCanvasFallback(); 
-      return; 
-    }
+  if (!window.maptilersdk) { setupCanvasFallback(); return; }
 
-    maptilersdk.config.apiKey = MAPTILER_KEY;
+  maptilersdk.config.apiKey = MAPTILER_KEY;
 
-    // Ensure the map container and its canvas get full native touch control
-    const pkgMapEl = document.getElementById('pkgMap');
-    if (pkgMapEl) {
-      pkgMapEl.style.touchAction = 'none';
-      pkgMapEl.style.overscrollBehavior = 'none';
-      pkgMapEl.innerHTML = ''; // Clear loading indicator
-      // Enable hardware acceleration
-      pkgMapEl.style.webkitTransform = 'translateZ(0)';
-      pkgMapEl.style.transform = 'translateZ(0)';
-      pkgMapEl.style.willChange = 'transform';
-    }
-
-    const isMobileSetup = window.innerWidth <= 860;
-    const isLowPowerSetup = isLowPowerDevice();
-    const isTablet = /iPad|Tablet/i.test(navigator.userAgent) || (window.innerWidth >= 768 && window.innerWidth <= 1024);
-    const isMobile = /iPhone|Android|Mobile/i.test(navigator.userAgent) || window.innerWidth <= 640;
-    const initZoom = isMobileSetup ? 1.8 : 2.8;
-
-    // More aggressive performance settings for tablets/iPads and mobile
-    const performancePixelRatio = isMobile ? Math.min(window.devicePixelRatio, 1.25) :
-                                   isTablet ? Math.min(window.devicePixelRatio, 1.5) : 
-                                   isLowPowerSetup ? Math.min(window.devicePixelRatio, 1.5) : 
-                                   window.devicePixelRatio;
-
-    map = new maptilersdk.Map({
-      container: 'pkgMap',
-      style: maptilersdk.MapStyle.SATELLITE,
-      center: [INDIA_LNG, INDIA_LAT],
-      zoom: initZoom,
-      pitch: 0,
-      bearing: 0,
-      antialias: !(isLowPowerSetup || isTablet || isMobile),       // antialias costs GPU on mobile/tablet — disable
-      interactive: true,
-      navigationControl: false,
-      geolocateControl: false,
-      maptilerLogo: false,
-      attributionControl: false,
-      fadeDuration: (isLowPowerSetup || isTablet || isMobile) ? 0 : 300,
-      trackResize: true,
-      // Smooth touch panning - optimized settings
-      dragPan: true,
-      touchZoomRotate: true,
-      touchPitch: false,
-      // Cap pixel ratio on mobile/tablet so the GPU renders fewer pixels → smoother pan
-      pixelRatio: performancePixelRatio,
-      // Reduce tile loading on tablets/mobile for faster initial load
-      maxTileCacheSize: isMobile ? 30 : isTablet ? 50 : 100,
-      preserveDrawingBuffer: false, // Better performance
-      refreshExpiredTiles: false, // Reduce network requests
-      // Mobile-specific performance optimizations
-      renderWorldCopies: false, // Don't render multiple world copies (saves GPU)
-      maxZoom: isMobile ? 12 : 14, // Limit max zoom on mobile
-      minZoom: isMobile ? 1.5 : 1,
-      // Smooth animations
-      duration: isMobile ? 400 : 600, // Faster animations on mobile
-    });
-
-    // Add passive event listeners for better scroll performance on mobile
-    if (isMobile || isTablet) {
-      map.dragPan.enable({ linearity: 0.3 }); // Smoother momentum on touch
-      map.touchZoomRotate.enable({ around: 'center' });
-      map.touchZoomRotate.disableRotation(); // Disable rotation for simpler interaction
-    }
-
-    map.on('load', () => {
-      mapReady = true;
-
-      // Apply touch-action:none to the dynamically created canvas for butter-smooth panning
-      const mapEl = document.getElementById('pkgMap');
-      if (mapEl) {
-        const canvas = mapEl.querySelector('canvas');
-        if (canvas) {
-          canvas.style.touchAction = 'none';
-          canvas.style.overscrollBehavior = 'none';
-          // Enable hardware acceleration
-          canvas.style.transform = 'translateZ(0)';
-          canvas.style.willChange = 'transform';
-          canvas.style.webkitTransform = 'translate3d(0,0,0)';
-          canvas.style.backfaceVisibility = 'hidden';
-          canvas.style.webkitBackfaceVisibility = 'hidden';
-          // Prevent double-tap zoom on mobile
-          canvas.style.touchAction = 'pan-x pan-y';
-        }
-      }
-
-      // Disable map animations during user interaction for smoother performance
-      if (isMobile || isTablet) {
-        map.on('movestart', () => {
-          map.stop(); // Stop any ongoing animations
-        });
-      }
-
-      // Force resize to ensure map fills container (especially important on mobile
-      // where the packages page may still be display:none during map initialisation)
-      setTimeout(() => { try { map.resize(); } catch(e) {} }, 50);
-      setTimeout(() => { try { map.resize(); } catch(e) {} }, 300);
-      setTimeout(() => { try { map.resize(); } catch(e) {} }, 800);
-
-      // ── Nuke all map UI controls from the DOM ──
-      setTimeout(() => {
-        const mapEl = document.getElementById('pkgMap');
-        if (!mapEl) return;
-        const selectors = [
-          '[class*="-ctrl-top-left"]',
-          '[class*="-ctrl-top-right"]',
-          '[class*="-ctrl-bottom-left"]',
-          '[class*="-ctrl-bottom-right"]',
-          '[class*="-ctrl-group"]',
-          '[class*="NavigationControl"]',
-          '[class*="GeolocateControl"]',
-          '[class*="AttributionControl"]',
-          '[class*="-ctrl-attrib"]',
-          '[class*="-compact"]',
-        ];
-        selectors.forEach(sel => {
-          mapEl.querySelectorAll(sel).forEach(el => el.remove());
-        });
-      }, 500);
-
-      // Defer heavy operations for tablets and mobile
-      if (isTablet || isMobile) {
-        requestAnimationFrame(() => {
-          addOriginMarker();
-          requestAnimationFrame(() => {
-            addCityDots();
-            requestAnimationFrame(() => {
-              startIdleRotation();
-            });
-          });
-        });
-      } else {
-        addOriginMarker();
-        addCityDots();
-        startIdleRotation();
-      }
-
-      // Redraw SVG overlay whenever map moves/zooms — throttled via rAF.
-      // _zoomingIn flag lets phase-3 mobile zoom suppress all SVG work so the
-      // WebGL map gets the full GPU budget during zoom-in.
-      let _globalMoveRAF = null;
-      let _zoomingIn = false;
-      map.on('move', () => {
-  } catch (error) {
-    console.error('Error setting up map:', error);
-    setupCanvasFallback();
+  // Ensure the map container and its canvas get full native touch control
+  const pkgMapEl = document.getElementById('pkgMap');
+  if (pkgMapEl) {
+    pkgMapEl.style.touchAction = 'none';
+    pkgMapEl.style.overscrollBehavior = 'none';
   }
-}
+
+  const isMobileSetup = window.innerWidth <= 860;
+  const isLowPowerSetup = isLowPowerDevice();
+  const initZoom = isMobileSetup ? 1.8 : 2.8;
+
+  map = new maptilersdk.Map({
+    container: 'pkgMap',
+    style: maptilersdk.MapStyle.SATELLITE,
+    center: [INDIA_LNG, INDIA_LAT],
+    zoom: initZoom,
+    pitch: 0,
+    bearing: 0,
+    antialias: !isLowPowerSetup,       // antialias costs GPU on mobile/tablet — disable
+    interactive: true,
+    navigationControl: false,
+    geolocateControl: false,
+    maptilerLogo: false,
+    attributionControl: false,
+    fadeDuration: isLowPowerSetup ? 0 : 300,
+    trackResize: true,
+    // Smooth touch panning
+    dragPan: true,
+    touchZoomRotate: true,
+    touchPitch: false,
+    // Cap pixel ratio on mobile/tablet so the GPU renders fewer pixels → smoother pan
+    pixelRatio: isLowPowerSetup ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio,
+  });
+
+  map.on('load', () => {
+    mapReady = true;
+
+    // Apply touch-action:none to the dynamically created canvas for butter-smooth panning
+    const mapEl = document.getElementById('pkgMap');
+    if (mapEl) {
+      const canvas = mapEl.querySelector('canvas');
+      if (canvas) {
+        canvas.style.touchAction = 'none';
+        canvas.style.overscrollBehavior = 'none';
+      }
+    }
+
+    // Force resize to ensure map fills container (especially important on mobile
+    // where the packages page may still be display:none during map initialisation)
+    setTimeout(() => { try { map.resize(); } catch(e) {} }, 50);
+    setTimeout(() => { try { map.resize(); } catch(e) {} }, 300);
+    setTimeout(() => { try { map.resize(); } catch(e) {} }, 800);
+
+    // ── Nuke all map UI controls from the DOM ──
+    setTimeout(() => {
+      const mapEl = document.getElementById('pkgMap');
+      if (!mapEl) return;
+      const selectors = [
+        '[class*="-ctrl-top-left"]',
+        '[class*="-ctrl-top-right"]',
+        '[class*="-ctrl-bottom-left"]',
+        '[class*="-ctrl-bottom-right"]',
+        '[class*="-ctrl-group"]',
+        '[class*="NavigationControl"]',
+        '[class*="GeolocateControl"]',
+        '[class*="AttributionControl"]',
+        '[class*="-ctrl-attrib"]',
+        '[class*="-compact"]',
+      ];
+      selectors.forEach(sel => {
+        mapEl.querySelectorAll(sel).forEach(el => el.remove());
+      });
+    }, 500);
+
+    addOriginMarker();
+    addCityDots();
+    startIdleRotation();
+
+    // Redraw SVG overlay whenever map moves/zooms — throttled via rAF.
+    // _zoomingIn flag lets phase-3 mobile zoom suppress all SVG work so the
+    // WebGL map gets the full GPU budget during zoom-in.
+    let _globalMoveRAF = null;
+    let _zoomingIn = false;
+    map.on('move', () => {
       clipMarkersToMapBounds();
       if (!activePkg || _zoomingIn) return;
       if (_globalMoveRAF) return;

@@ -268,7 +268,7 @@ button{font-family:Outfit,sans-serif;cursor:pointer}
 .pkg-card2-tag{position:absolute;top:9px;left:9px;background:rgba(200,16,46,0.92);color:#fff;font-size:8.5px;font-weight:700;letter-spacing:.8px;padding:3px 8px;border-radius:10px;text-transform:uppercase;backdrop-filter:blur(6px);transition:transform .3s cubic-bezier(0.22,1,0.36,1),box-shadow .3s;z-index:6}
 .pkg-card2:hover .pkg-card2-tag{transform:translateY(-2px) scale(1.06);box-shadow:0 4px 14px rgba(200,16,46,0.4)}
 
-.pkg-card2-book{background:#C8102E;color:#fff;border:none;border-radius:8px;padding:6px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.3px;white-space:nowrap;flex-shrink:0;transition:background .2s,transform .28s cubic-bezier(0.22,1,0.36,1),box-shadow .28s;position:relative;overflow:hidden}
+.pkg-card2-book{background:#C8102E;color:#fff;border:none;border-radius:8px;padding:6px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.3px;white-space:nowrap;flex-shrink:0;transition:background .2s,transform .28s cubic-bezier(0.22,1,0.36,1),box-shadow .28s;position:relative;overflow:hidden;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .pkg-card2:hover .pkg-card2-book{transform:translateY(-2px);box-shadow:0 6px 18px rgba(200,16,46,0.45);background:#a80d26}
 
 /* ════════════════════════════════════════════
@@ -1578,24 +1578,49 @@ const DEST_DATA = {
 
   const pkgCardsEl = document.getElementById('pkgCards');
   if (pkgCardsEl) {
-    pkgCardsEl.innerHTML = moreTours.slice(0,4).map(t => {
-      const link = `TourDetails.html?country=${encodeURIComponent(t.country)}&dest=${encodeURIComponent(t.dest)}`;
-      return `<div class="pkg-card2" onclick="window.ptNavigate('${link}')" style="cursor:pointer">
+    pkgCardsEl.innerHTML = '';
+    moreTours.slice(0, 4).forEach(t => {
+      const destUrl = `TourDetails.html?country=${encodeURIComponent(t.country)}&dest=${encodeURIComponent(t.dest)}`;
+      const iso2 = flagToIso2(t.flag);
+      const flagHtml = iso2 ? `<img src="https://flagcdn.com/w20/${iso2}.png" alt="${t.country} flag" width="20" loading="lazy">` : t.flag;
+
+      const el = document.createElement('div');
+      el.className = 'pkg-card2';
+      el.style.cursor = 'pointer';
+      el.setAttribute('onclick', `window.ptNavigate('${destUrl.replace(/'/g, "\\'")}')`);
+      el.innerHTML = `
         <div class="pkg-card2-tag">${t.tag}</div>
         <div class="pkg-card2-img-wrap">
           <img class="pkg-card2-img" src="${t.img}" alt="${t.dest}" loading="lazy" onerror="this.parentNode.style.background='linear-gradient(135deg,#e8edf2,#d0d8e0)'">
           <span class="pkg-card2-explore">Explore →</span>
         </div>
         <div class="pkg-card2-body">
-          <div class="pkg-card2-dest">${(function(){ const iso2 = flagToIso2(t.flag); return iso2 ? `<img src="https://flagcdn.com/w20/${iso2}.png" alt="${t.country} flag" width="20" loading="lazy">` : t.flag; })()} ${t.dest}</div>
+          <div class="pkg-card2-dest">${flagHtml} ${t.dest}</div>
           <div class="pkg-card2-days">${t.days}</div>
           <div class="pkg-card2-row">
             <div class="pkg-card2-price">${t.price} <span>/ person</span></div>
-            <button class="pkg-card2-book" onclick="event.stopPropagation();window.ptNavigate('${link}')">Book Now</button>
+            <button class="pkg-card2-book" onclick="event.stopPropagation();window.ptNavigate('${destUrl.replace(/'/g, "\\'")}')">Book Now</button>
           </div>
-        </div>
-      </div>`;
-    }).join('');
+        </div>`;
+
+      // Fix double-tap on touch screens: navigate on touchend directly
+      let _tsx = 0, _tsy = 0;
+      el.addEventListener('touchstart', e => {
+        _tsx = e.touches[0].clientX;
+        _tsy = e.touches[0].clientY;
+      }, { passive: true });
+      el.addEventListener('touchend', e => {
+        const dx = Math.abs(e.changedTouches[0].clientX - _tsx);
+        const dy = Math.abs(e.changedTouches[0].clientY - _tsy);
+        if (dx < 8 && dy < 8) {
+          e.preventDefault();
+          e.stopPropagation();
+          window.ptNavigate(destUrl);
+        }
+      }, { passive: false });
+
+      pkgCardsEl.appendChild(el);
+    });
   }
 
   // Nav logo now links to index.html (Home) like every other page —

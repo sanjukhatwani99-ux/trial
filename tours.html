@@ -295,6 +295,19 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 /* ── iPad Pro Landscape (1024px - 1366px) ── */
 @media (min-width:1024px) and (max-width:1366px) and (orientation:landscape){
   #pkgCards{grid-template-columns:repeat(4,1fr)!important}
+  
+  /* Optimize map container for smooth touch on tablets */
+  #pkgMap {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+    touch-action: pan-x pan-y;
+  }
+  
+  /* Ensure SVG overlay is hardware accelerated on tablets */
+  #pkgFlightSVG {
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+  }
 }
 
 /* ── Large Mobile & iPhone Plus (640px - 768px) ── */
@@ -1510,7 +1523,7 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 
   <!-- SVG flight path overlay — sits directly over pkgMap, z-index above map but below UI -->
-  <svg id="pkgFlightSVG" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;overflow:hidden">
+  <svg id="pkgFlightSVG" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;overflow:hidden;will-change:contents;transform:translateZ(0)">
     <defs>
       <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
         <feGaussianBlur stdDeviation="3" result="blur"/>
@@ -3475,17 +3488,25 @@ function setupMap() {
     maxZoom: isMobileSetup ? 10 : 12,  // cap max zoom → fewer tile requests
     // Smooth touch panning
     dragPan: true,
-    touchZoomRotate: isMobileSetup ? { rotate: false } : true,  // disable rotation on mobile for simpler UX
+    touchZoomRotate: isMobileSetup ? { rotate: false } : (isTabletSetup ? { rotate: false } : true),  // disable rotation on mobile/tablet for smoother UX
     touchPitch: false,
     // Ultra-low pixel ratio for mobile → massive GPU savings
     pixelRatio: isMobileSetup ? 1 : (isTabletSetup ? 1.25 : Math.min(window.devicePixelRatio, 1.5)),
-    // Reduce tile cache → less memory, fewer tiles to manage
-    maxTileCacheSize: isMobileSetup ? 20 : (isTabletSetup ? 30 : 50),
+    // Reduce tile cache → less memory, fewer tiles to manage  
+    maxTileCacheSize: isMobileSetup ? 20 : (isTabletSetup ? 35 : 50),
     preserveDrawingBuffer: false,
     refreshExpiredTiles: false,
-    // Momentum scrolling for smoother mobile feel
+    // Momentum scrolling for smoother mobile/tablet feel
     dragRotate: false,
     pitchWithRotate: false,
+    // Enable inertia for smooth panning especially on tablets
+    dragPanOptions: {
+      inertia: true,
+      inertiaOptions: isTabletSetup ? {
+        decelerationRate: 0.96,  // Smoother deceleration on tablets
+        maxSpeed: 1400,
+      } : undefined
+    },
   });
 
   map.on('load', () => {
@@ -3499,7 +3520,17 @@ function setupMap() {
       if (canvas) {
         canvas.style.touchAction = 'none';
         canvas.style.overscrollBehavior = 'none';
+        // Additional optimizations for smooth touch on tablets
+        canvas.style.webkitUserSelect = 'none';
+        canvas.style.userSelect = 'none';
+        canvas.style.webkitTouchCallout = 'none';
+        // Force hardware acceleration
+        canvas.style.transform = 'translateZ(0)';
+        canvas.style.willChange = 'transform';
       }
+      // Optimize the container as well
+      mapEl.style.touchAction = 'none';
+      mapEl.style.overscrollBehavior = 'none';
     }
 
     // Force resize to ensure map fills container (especially important on mobile
@@ -3526,7 +3557,8 @@ function setupMap() {
     let _globalMoveRAF = null;
     let _zoomingIn = false;
     let _lastMoveTime = 0;
-    const MOVE_THROTTLE = isMobileSetup ? 100 : 50;  // throttle move events more aggressively on mobile
+    // Optimized throttle for tablets in landscape: reduce from 50ms to 30ms for smoother feel
+    const MOVE_THROTTLE = isMobileSetup ? 100 : (isTabletSetup ? 30 : 50);
     map.on('move', () => {
       clipMarkersToMapBounds();
       if (!activePkg || _zoomingIn) return;
@@ -3968,10 +4000,19 @@ function doFlight(pkg) {
     // Drop the filter on low-power devices and use a flat translucent halo
     // (wider stroke / circle) instead so it still reads as a glow.
     const planeGlowCircle = plane ? plane.querySelector('circle') : null;
+    
+    // Force hardware acceleration on plane for smoother animation
+    if (plane) {
+      plane.style.willChange = 'transform';
+      plane.style.transform = 'translateZ(0)';
+    }
+    
     if (isLowPower) {
       glowP.removeAttribute('filter');
       glowP.setAttribute('stroke-width', '5');
       glowP.setAttribute('stroke', 'rgba(200,16,46,0.18)');
+      // Optimize glow path for smoother rendering
+      glowP.style.willChange = 'stroke-dashoffset';
       if (planeGlowCircle) {
         planeGlowCircle.removeAttribute('filter');
         planeGlowCircle.setAttribute('r', '10');
@@ -3981,6 +4022,7 @@ function doFlight(pkg) {
       glowP.setAttribute('filter', 'url(#glow)');
       glowP.setAttribute('stroke-width', '8');
       glowP.setAttribute('stroke', 'rgba(200,16,46,0.25)');
+      glowP.style.willChange = 'stroke-dashoffset';
       if (planeGlowCircle) {
         planeGlowCircle.setAttribute('filter', 'url(#glow)');
         planeGlowCircle.setAttribute('r', '14');
@@ -4032,8 +4074,10 @@ function doFlight(pkg) {
     // Set up dash: start fully hidden (offset = totalLen), animate to 0 to reveal
     mainP.style.strokeDasharray = totalLen + 'px';
     mainP.style.strokeDashoffset = totalLen + 'px';
+    mainP.style.willChange = 'stroke-dashoffset';  // Optimize for animation
     glowP.style.strokeDasharray = totalLen + 'px';
     glowP.style.strokeDashoffset = totalLen + 'px';
+    glowP.style.willChange = 'stroke-dashoffset';  // Optimize for animation
     plane.style.display = 'block';
 
     // Separate path element for getPointAtLength
@@ -4048,6 +4092,9 @@ function doFlight(pkg) {
     // Mobile/tablet: spawn fewer particles for perf
     const particleChance = isMobile ? 0.15 : isTabletLandscape ? 0.18 : 0.3;
     const startTime = Date.now();
+    
+    // Use transform3d for better hardware acceleration
+    let lastTransform = '';
 
     function animFlight() {
       const elapsed = Date.now() - startTime;
@@ -4057,14 +4104,21 @@ function doFlight(pkg) {
 
       // Reveal trail: offset goes from totalLen → 0
       const offset = totalLen * (1 - t);
-      mainP.style.strokeDashoffset = offset + 'px';
-      glowP.style.strokeDashoffset = offset + 'px';
+      const offsetPx = offset + 'px';
+      mainP.style.strokeDashoffset = offsetPx;
+      glowP.style.strokeDashoffset = offsetPx;
 
-      // Move plane
+      // Move plane - use transform3d for better GPU acceleration
       const pt = planePath.getPointAtLength(t * totalLen);
       const ptB = planePath.getPointAtLength(Math.max(0, t * totalLen - 3));
       const angle = Math.atan2(pt.y - ptB.y, pt.x - ptB.x) * 180 / Math.PI;
-      plane.setAttribute('transform', `translate(${pt.x},${pt.y}) rotate(${angle})`);
+      
+      // Use translate3d and rotate3d for hardware acceleration
+      const newTransform = `translate(${pt.x}px,${pt.y}px) translateZ(0) rotate(${angle}deg)`;
+      if (newTransform !== lastTransform) {
+        plane.setAttribute('transform', `translate(${pt.x},${pt.y}) rotate(${angle})`);
+        lastTransform = newTransform;
+      }
 
       // Particles (fewer on mobile)
       if (Math.random() < particleChance) spawnParticle(pt.x, pt.y, pkg.color);
@@ -4080,6 +4134,10 @@ function doFlight(pkg) {
         flightRAF = requestAnimationFrame(animFlight);
       } else {
         document.getElementById('pkgFlightSVG').removeChild(planePath);
+        // Clean up willChange to free resources
+        if (plane) plane.style.willChange = 'auto';
+        mainP.style.willChange = 'auto';
+        glowP.style.willChange = 'auto';
         onArrived(pkg, dstXY);
       }
     }

@@ -339,10 +339,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 }
 
 /* ── Touch device optimizations ── */
-/* Use (hover:none) without (pointer:coarse) so touchscreen laptops are
-   also covered — those devices report pointer:fine but still have no
-   persistent hover, so the same double-tap problem applies. */
-@media (hover: none) {
+@media (hover: none) and (pointer: coarse){
   /* Minimum touch target sizes for accessibility */
   .nav-link, .mob-link, .btn-primary, .btn-ghost, .nav-cta{
     min-height:44px;
@@ -553,9 +550,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   }
   
   /* Ensure touch events work immediately */
-  button, a, .clickable, [onclick], [role="button"],
-  .pkg-card2, .pkg-card2-book, .pvchip, .vm-chip,
-  .card-apply-btn, .card-close, .btn-primary, .btn-ghost {
+  button, a, .clickable, [onclick], [role="button"]{
     -webkit-tap-highlight-color:rgba(200,16,46,0.2);
     touch-action:manipulation;
   }
@@ -1723,7 +1718,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div id="pkgPanelSub" style="font-size:11px;color:#888;margin-top:2px"></div>
           </div>
         </div>
-        <button onclick="closePkgPanel()" style="background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.1);color:#888;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s" onmouseover="this.style.background='rgba(200,16,46,0.12)';this.style.color='#C8102E';this.style.borderColor='rgba(200,16,46,0.3)'" onmouseout="this.style.background='rgba(0,0,0,0.05)';this.style.color='#888';this.style.borderColor='rgba(0,0,0,0.1)'">✕</button>
+        <button id="pkgPanelCloseBtn" aria-label="Close panel" style="background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.1);color:#888;width:44px;height:44px;min-width:44px;min-height:44px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s,color .2s,border-color .2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent">✕</button>
       </div>
       <!-- Cards grid -->
       <div id="pkgCards" style="display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch"></div>
@@ -5033,6 +5028,38 @@ window.closePkgPanel = function() {
     map.flyTo({ center: [INDIA_LNG, INDIA_LAT], zoom: window.innerWidth <= 860 ? 1.8 : 2.8, pitch: 0, bearing: 0, duration: 1000, essential: true });
   }
 };
+
+// ── Panel close button — wire click + touchend so first tap always fires ──
+(function wirePkgCloseBtn() {
+  function attach() {
+    const btn = document.getElementById('pkgPanelCloseBtn');
+    if (!btn) { setTimeout(attach, 100); return; }
+    // Mouse hover effects (desktop only — no hover-state on touch)
+    btn.addEventListener('mouseenter', function() {
+      btn.style.background = 'rgba(200,16,46,0.12)';
+      btn.style.color = '#C8102E';
+      btn.style.borderColor = 'rgba(200,16,46,0.3)';
+    });
+    btn.addEventListener('mouseleave', function() {
+      btn.style.background = 'rgba(0,0,0,0.05)';
+      btn.style.color = '#888';
+      btn.style.borderColor = 'rgba(0,0,0,0.1)';
+    });
+    // Fire on click (mouse) — but skip if touchend already handled it
+    btn.addEventListener('click', function(e) {
+      if (btn._touchFired) { btn._touchFired = false; return; }
+      window.closePkgPanel();
+    });
+    // Fire on touchend (first tap on touch devices) — prevents double-tap
+    btn.addEventListener('touchend', function(e) {
+      e.preventDefault(); // stop synthesised click + any scroll
+      e.stopPropagation();
+      btn._touchFired = true;
+      window.closePkgPanel();
+    }, { passive: false });
+  }
+  attach();
+})();
 
 // ── CANVAS FALLBACK ────────────────────────────────────────────────────────
 function setupCanvasFallback() {

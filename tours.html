@@ -4,11 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Visavera – Tours & Packages</title>
+<!-- DNS prefetch & preconnect for faster CDN loads -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cesium.com">
+<link rel="preconnect" href="https://cdn.maptiler.com">
+<link rel="preconnect" href="https://flagcdn.com">
+<link rel="dns-prefetch" href="https://server.arcgisonline.com">
+<link rel="dns-prefetch" href="https://raw.githubusercontent.com">
+<!-- Fonts: display=swap prevents FOIT, loads async -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nav.css">
 <script src="nav.js" defer></script>
+<!-- Cesium CSS loads early (tiny), JS deferred so it never blocks first paint -->
 <link rel="stylesheet" href="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Widgets/widgets.css">
-<script src="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Cesium.js"></script>
+<script>
+// Load Cesium JS lazily — only when the globe page is first visited.
+// This eliminates the 3MB+ blocking script that causes first-load jank.
+var _cesiumLoaded = false, _cesiumCallbacks = [];
+function _loadCesium(cb) {
+  if (typeof Cesium !== 'undefined') { if (cb) cb(); return; }
+  if (cb) _cesiumCallbacks.push(cb);
+  if (_cesiumLoaded) return;
+  _cesiumLoaded = true;
+  var s = document.createElement('script');
+  s.src = 'https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Cesium.js';
+  s.onload = function() {
+    // Apply Ion token immediately
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkMzhiOTQ5NS0wNGVjLTRhM2ItOWZiZC1jNjA5OWJlNGY5MjUiLCJpZCI6NDM4Njg2LCJpc3MiOiJodHRwczovL2FwaS5jZXNpdW0uY29tIiwiYXVkIjoidW5kZWZpbmVkX2RlZmF1bHQiLCJpYXQiOjE3ODAyNTI3Njh9.RXzlRrOzCNHHHS-4RmY3LPoUXVooaZpp7z2BeO-x7RM';
+    _cesiumCallbacks.forEach(function(fn){ try { fn(); } catch(e){} });
+    _cesiumCallbacks = [];
+  };
+  document.head.appendChild(s);
+}
+</script>
 <style>
 :root {
   --red:#C8102E; --red-dark:#9B0E24; --red-light:#fdeaed; --red-glow:rgba(200,16,46,0.2);
@@ -26,6 +55,7 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
 
 
 .page{display:none;width:100%;height:100vh;height:100dvh;padding-top:var(--nav-h)}
+.page:not(.active){content-visibility:auto;contain-intrinsic-size:0 100dvh}
 .page.active{display:flex}
 
 #page-home{flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse 70% 55% at 50% 38%,rgba(200,16,46,0.07) 0%,transparent 70%),var(--bg)}
@@ -90,7 +120,7 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
 
 /* ── MARQUEE STRIP ── */
 .visa-marquee-wrap{position:absolute;bottom:0;left:0;right:0;z-index:25;background:rgba(5,13,25,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.08);box-shadow:0 -4px 24px rgba(0,0,0,0.3);height:80px;display:flex;align-items:center;overflow:hidden}
-.visa-marquee-inner{display:flex;align-items:center;width:max-content;animation:marqueeScroll 45s linear infinite;will-change:transform}
+.visa-marquee-inner{display:flex;align-items:center;width:max-content;animation:marqueeScroll 45s linear infinite;will-change:transform;transform:translateZ(0);backface-visibility:hidden}
 .visa-marquee-inner:hover{animation-play-state:paused}
 .visa-marquee-track{display:flex;align-items:center;gap:0}
 .vm-chip{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0 24px;cursor:pointer;border-right:1px solid rgba(255,255,255,0.06);transition:all .22s ease;white-space:nowrap;font-family:'Outfit',sans-serif;height:80px;box-sizing:border-box;position:relative}
@@ -563,8 +593,6 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     image-rendering:crisp-edges;
   }
 }
-}
-
 
 /* ── VISAS NAV DROPDOWN ── */
 .nav-visa-li{position:relative;list-style:none}
@@ -1010,7 +1038,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-<div class="page" id="page-home">
+<div class="page active" id="page-home">
   <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;text-align:center;padding:40px 20px">
     <div class="home-badge">Premium Visa Services</div>
     <h1>Your Journey Begins<br>With a <em>Single Visa</em></h1>
@@ -1034,8 +1062,9 @@ document.addEventListener('DOMContentLoaded', function() {
     background:#ffffff;
     display:flex;flex-direction:column;
     align-items:center;justify-content:center;gap:18px;
-    transition:opacity 0.6s ease;
+    transition:opacity 0.5s ease;
     pointer-events:none;
+    will-change:opacity;
   ">
     <div style="display:flex;flex-direction:column;align-items:center;gap:14px">
       <!-- Animated Visavera logo mark -->
@@ -2435,7 +2464,7 @@ function goPage(name, el) {
     const navLink = document.querySelector('.nav-links a[data-page="' + navId + '"]');
     if (navLink) navLink.classList.add('active');
   }
-  if (name === 'visitor' && !globeBuilt) { globeBuilt = true; setTimeout(initGlobe, 80); }
+  if (name === 'visitor' && !globeBuilt) { globeBuilt = true; _loadCesium(function(){ setTimeout(initGlobe, 80); }); }
   if (name === 'tickets') {
     setTimeout(() => {
       updateSVGSize();
@@ -2577,7 +2606,7 @@ function goPageMob(name) {
   // Navigate
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
-  if (name === 'visitor' && !globeBuilt) { globeBuilt = true; setTimeout(initGlobe, 80); }
+  if (name === 'visitor' && !globeBuilt) { globeBuilt = true; _loadCesium(function(){ setTimeout(initGlobe, 80); }); }
   if (name === 'tickets') {
     setTimeout(() => {
       updateSVGSize();
@@ -2643,33 +2672,43 @@ const ISO2 = {
   YEM:'ye', ZMB:'zm', ZWE:'zw',
 };
 
+// Marquee builds in idle time after first paint — zero impact on initial load
 (function buildMarquee() {
-  // Only show countries that have available visa details (COUNTRIES array = available visas only)
-  function makeChips() {
-    return COUNTRIES.map(c => {
-      const chip = document.createElement('div');
-      chip.className = 'vm-chip';
-      chip.dataset.id = c.id;
-      const code = ISO2[c.iso] || c.iso.toLowerCase().slice(0,2);
-      chip.innerHTML =
-        `<img class="vm-flag-img" src="https://flagcdn.com/w80/${code}.png" alt="${c.name} flag" loading="lazy">` +
-        `<span class="vm-name">${c.name}</span>`;
-      chip.addEventListener('click', () => flyTo(c));
-      return chip;
-    });
+  function doRender() {
+    function makeChips() {
+      return COUNTRIES.map(c => {
+        const chip = document.createElement('div');
+        chip.className = 'vm-chip';
+        chip.dataset.id = c.id;
+        const code = ISO2[c.iso] || c.iso.toLowerCase().slice(0,2);
+        chip.innerHTML =
+          `<img class="vm-flag-img" src="https://flagcdn.com/w80/${code}.png" alt="${c.name} flag" loading="lazy">` +
+          `<span class="vm-name">${c.name}</span>`;
+        chip.addEventListener('click', () => flyTo(c));
+        return chip;
+      });
+    }
+    const t1 = document.getElementById('marqueeTrack');
+    const t2 = document.getElementById('marqueeTrack2');
+    if (t1 && t2) {
+      // Use DocumentFragment for single reflow
+      const frag1 = document.createDocumentFragment();
+      const frag2 = document.createDocumentFragment();
+      makeChips().forEach(ch => frag1.appendChild(ch));
+      makeChips().forEach(ch => frag2.appendChild(ch));
+      t1.appendChild(frag1);
+      t2.appendChild(frag2);
+    }
   }
-  const t1 = document.getElementById('marqueeTrack');
-  const t2 = document.getElementById('marqueeTrack2');
-  if (t1 && t2) {
-    makeChips().forEach(ch => t1.appendChild(ch));
-    makeChips().forEach(ch => t2.appendChild(ch));
+  // requestIdleCallback lets browser finish first paint, then builds the marquee
+  if (window.requestIdleCallback) {
+    requestIdleCallback(doRender, { timeout: 2000 });
+  } else {
+    setTimeout(doRender, 200);
   }
 })();
 
-// Cesium — disable default Ion requests entirely
-if (typeof Cesium !== 'undefined') {
-  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkMzhiOTQ5NS0wNGVjLTRhM2ItOWZiZC1jNjA5OWJlNGY5MjUiLCJpZCI6NDM4Njg2LCJpc3MiOiJodHRwczovL2FwaS5jZXNpdW0uY29tIiwiYXVkIjoidW5kZWZpbmVkX2RlZmF1bHQiLCJpYXQiOjE3ODAyNTI3Njh9.RXzlRrOzCNHHHS-4RmY3LPoUXVooaZpp7z2BeO-x7RM';
-}
+// Cesium Ion token is set in the lazy-loader (_loadCesium) once the script loads.
 
 let viewer = null;
 let currentCountry = null;
@@ -2740,19 +2779,30 @@ function initGlobe() {
       setTimeout(() => { overlay.style.display = 'none'; }, 650);
     }
 
-    // Primary: listen for Cesium's tileLoadProgress going to 0 after first render
+    // Primary: wait for tile load to complete (globe actually has imagery),
+    // then dismiss on the next two animation frames so canvas has real pixels.
+    let tilesDone = false;
+    const removeTileProgress = globe.tileLoadProgressEvent.addEventListener(function(tilesRemaining) {
+      if (tilesRemaining === 0 && !tilesDone) {
+        tilesDone = true;
+        removeTileProgress();
+        requestAnimationFrame(() => requestAnimationFrame(dismissOverlay));
+      }
+    });
+
+    // Secondary: first postRender fires when WebGL context is ready (canvas has content)
     let firstRenderDone = false;
     const removePostRender = scene.postRender.addEventListener(function () {
       if (!firstRenderDone) {
         firstRenderDone = true;
-        // Give one extra frame so the canvas actually has pixels
-        requestAnimationFrame(() => requestAnimationFrame(dismissOverlay));
+        // Only dismiss via postRender if tile event hasn't fired yet after 1.5s
+        setTimeout(() => { if (!tilesDone) { tilesDone = true; requestAnimationFrame(() => requestAnimationFrame(dismissOverlay)); } }, 1500);
         removePostRender();
       }
     });
 
-    // Fallback: dismiss after 4 s regardless, so the overlay never gets stuck
-    setTimeout(dismissOverlay, 4000);
+    // Hard fallback: dismiss after 5 s regardless
+    setTimeout(dismissOverlay, 5000);
   })();
 
   // ── LOAD COUNTRY POLYGONS (GeoJSON) ────────────────────
@@ -5131,11 +5181,9 @@ window.goPage = function(name, el) {
   }
 };
 
-window.addEventListener('load', () => {
-  // Pre-initialise the map so it loads in the background and is
-  // ready immediately when the user opens the Packages page
-  setTimeout(initMap, 150);
-});
+// Map is initialised on-demand when the user navigates to the Packages page.
+// Removed eager preload that caused heavy background CPU/GPU work on first load.
+// initMap() is called by goPage('tickets') and goPageMob('tickets') instead.
 
 // ══════════════════════════════════════════════════════════
 //  STUDENT VISA PAGE — full globe + search + card
@@ -5165,19 +5213,22 @@ const studentIsoMap={};
 STUDENT_COUNTRIES.forEach(c=>studentIsoMap[c.iso]=c);
 
 (function buildStudentMarquee(){
-  function makeChips(){
-    return STUDENT_COUNTRIES.map(c=>{
-      const chip=document.createElement('div');
-      chip.className='vm-chip'; chip.dataset.id=c.id;
-      const code=STUDENT_ISO2[c.iso]||c.iso.toLowerCase().slice(0,2);
-      chip.innerHTML=`<img class="vm-flag-img" src="https://flagcdn.com/w80/${code}.png" alt="${c.name}" loading="lazy"><span class="vm-name">${c.name}</span>`;
-      chip.addEventListener('click',()=>studentFlyTo(c));
-      return chip;
-    });
+  function doRender(){
+    function makeChips(){
+      return STUDENT_COUNTRIES.map(c=>{
+        const chip=document.createElement('div');
+        chip.className='vm-chip'; chip.dataset.id=c.id;
+        const code=STUDENT_ISO2[c.iso]||c.iso.toLowerCase().slice(0,2);
+        chip.innerHTML=`<img class="vm-flag-img" src="https://flagcdn.com/w80/${code}.png" alt="${c.name}" loading="lazy"><span class="vm-name">${c.name}</span>`;
+        chip.addEventListener('click',()=>studentFlyTo(c));
+        return chip;
+      });
+    }
+    const t1=document.getElementById('studentMarqueeTrack');
+    const t2=document.getElementById('studentMarqueeTrack2');
+    if(t1&&t2){const f1=document.createDocumentFragment(),f2=document.createDocumentFragment();makeChips().forEach(ch=>f1.appendChild(ch));makeChips().forEach(ch=>f2.appendChild(ch));t1.appendChild(f1);t2.appendChild(f2);}
   }
-  const t1=document.getElementById('studentMarqueeTrack');
-  const t2=document.getElementById('studentMarqueeTrack2');
-  if(t1&&t2){makeChips().forEach(ch=>t1.appendChild(ch));makeChips().forEach(ch=>t2.appendChild(ch));}
+  if(window.requestIdleCallback){requestIdleCallback(doRender,{timeout:2000});}else{setTimeout(doRender,300);}
 })();
 
 function initStudentGlobe(){
@@ -5343,19 +5394,22 @@ const workIsoMap={};
 WORK_COUNTRIES.forEach(c=>workIsoMap[c.iso]=c);
 
 (function buildWorkMarquee(){
-  function makeChips(){
-    return WORK_COUNTRIES.map(c=>{
-      const chip=document.createElement('div');
-      chip.className='vm-chip'; chip.dataset.id=c.id;
-      const code=WORK_ISO2[c.iso]||c.iso.toLowerCase().slice(0,2);
-      chip.innerHTML=`<img class="vm-flag-img" src="https://flagcdn.com/w80/${code}.png" alt="${c.name}" loading="lazy"><span class="vm-name">${c.name}</span>`;
-      chip.addEventListener('click',()=>workFlyTo(c));
-      return chip;
-    });
+  function doRender(){
+    function makeChips(){
+      return WORK_COUNTRIES.map(c=>{
+        const chip=document.createElement('div');
+        chip.className='vm-chip'; chip.dataset.id=c.id;
+        const code=WORK_ISO2[c.iso]||c.iso.toLowerCase().slice(0,2);
+        chip.innerHTML=`<img class="vm-flag-img" src="https://flagcdn.com/w80/${code}.png" alt="${c.name}" loading="lazy"><span class="vm-name">${c.name}</span>`;
+        chip.addEventListener('click',()=>workFlyTo(c));
+        return chip;
+      });
+    }
+    const t1=document.getElementById('workMarqueeTrack');
+    const t2=document.getElementById('workMarqueeTrack2');
+    if(t1&&t2){const f1=document.createDocumentFragment(),f2=document.createDocumentFragment();makeChips().forEach(ch=>f1.appendChild(ch));makeChips().forEach(ch=>f2.appendChild(ch));t1.appendChild(f1);t2.appendChild(f2);}
   }
-  const t1=document.getElementById('workMarqueeTrack');
-  const t2=document.getElementById('workMarqueeTrack2');
-  if(t1&&t2){makeChips().forEach(ch=>t1.appendChild(ch));makeChips().forEach(ch=>t2.appendChild(ch));}
+  if(window.requestIdleCallback){requestIdleCallback(doRender,{timeout:2000});}else{setTimeout(doRender,400);}
 })();
 
 function initWorkGlobe(){
@@ -5496,8 +5550,8 @@ document.addEventListener('mousedown',function(e){const w=document.getElementByI
 const _origGoPageSW=window.goPage;
 window.goPage=function(name,el){
   _origGoPageSW(name,el);
-  if(name==='student'&&!studentGlobeBuilt){studentGlobeBuilt=true;setTimeout(initStudentGlobe,80);}
-  if(name==='work'&&!workGlobeBuilt){workGlobeBuilt=true;setTimeout(initWorkGlobe,80);}
+  if(name==='student'&&!studentGlobeBuilt){studentGlobeBuilt=true;_loadCesium(function(){setTimeout(initStudentGlobe,80);});}
+  if(name==='work'&&!workGlobeBuilt){workGlobeBuilt=true;_loadCesium(function(){setTimeout(initWorkGlobe,80);});}
 };
 // Also hook mobile navigation
 const _origGoPageMobSW=window.goPageMob;
@@ -5505,8 +5559,8 @@ const _origGoPageMobSW=window.goPageMob;
 const _origGoPageMobFn=goPageMob;
 window.goPageMob=function(name){
   _origGoPageMobFn(name);
-  if(name==='student'&&!studentGlobeBuilt){studentGlobeBuilt=true;setTimeout(initStudentGlobe,80);}
-  if(name==='work'&&!workGlobeBuilt){workGlobeBuilt=true;setTimeout(initWorkGlobe,80);}
+  if(name==='student'&&!studentGlobeBuilt){studentGlobeBuilt=true;_loadCesium(function(){setTimeout(initStudentGlobe,80);});}
+  if(name==='work'&&!workGlobeBuilt){workGlobeBuilt=true;_loadCesium(function(){setTimeout(initWorkGlobe,80);});}
 };
 
 window.addEventListener('resize', () => {
